@@ -1,0 +1,2 @@
+aww,Sends a random aww image,aww,cats,lazycats
+funny,Sends a random image from /r/funny,funny
