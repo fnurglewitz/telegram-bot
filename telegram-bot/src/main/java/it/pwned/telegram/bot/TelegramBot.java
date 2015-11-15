@@ -161,7 +161,7 @@ public final class TelegramBot {
 		do {
 			try {
 
-				log.info("Fetching updates, offset = " + last_update);
+				//log.info("Fetching updates, offset = " + last_update);
 
 				Response<Update[]> updates = api.getUpdates(last_update + 1, null, 60);
 

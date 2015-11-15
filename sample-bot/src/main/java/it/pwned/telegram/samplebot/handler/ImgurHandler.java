@@ -256,7 +256,7 @@ public class ImgurHandler extends MessageHandler {
 
 	@Autowired
 	public void setCommands(@Value("${imgur.commands_file}") String file) {
-		log.info(String.format("Loading imgur commands from file: ", file));
+		log.info(String.format("Loading imgur commands from file: %s", file));
 
 		StringBuilder sb = new StringBuilder("Avaible imgur commands:\n");
 
@@ -270,8 +270,10 @@ public class ImgurHandler extends MessageHandler {
 		} catch (IOException e) {
 			e.printStackTrace(); // shit happens
 		}
-
+		
 		this.avaible_cmds = sb.toString();
+		
+		log.info(this.avaible_cmds);		
 	}
 
 	@Override
@@ -281,7 +283,7 @@ public class ImgurHandler extends MessageHandler {
 			bot.api.sendMessage(m.chat.id, this.avaible_cmds, null, null, null, null);
 		} else {
 
-			final String[] array_ref = subreddits.get(m.text);
+			final String[] array_ref = subreddits.get(m.command);
 
 			bot.submitToExecutor(() -> {
 				String subreddit = array_ref[new Random().nextInt(array_ref.length)];
