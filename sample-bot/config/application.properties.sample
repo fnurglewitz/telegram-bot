@@ -1,5 +1,3 @@
-sample application.properties file:
-
 app.name = Sample Bot
 spring.application.name= Sample Bot
 bot.token=
