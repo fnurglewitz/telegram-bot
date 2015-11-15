@@ -14,7 +14,7 @@ public class GreeterHandler extends MessageHandler {
 
 	@Override
 	protected boolean processMessage(Message m) {
-
+		
 		if (m.new_chat_participant != null) {
 
 			bot.submitToExecutor(() -> {

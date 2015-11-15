@@ -135,7 +135,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Response<Message> sendMessage(int chat_id, String text, String parse_mode, Boolean disable_web_page_preview,
+	public Response<Message> sendMessage(long chat_id, String text, String parse_mode, Boolean disable_web_page_preview,
 			Integer reply_to_message_id, DummyKeyboard reply_markup) {
 
 		if (text == null)
@@ -180,7 +180,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Response<Message> forwardMessage(int chat_id, int from_chat_id, int message_id) {
+	public Response<Message> forwardMessage(long chat_id, long from_chat_id, int message_id) {
 
 		MultiValueMap<String, Object> body = new LinkedMultiValueMap<String, Object>();
 
@@ -210,7 +210,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Response<Message> sendLocation(int chat_id, float latitude, float longitude, Integer reply_to_message_id,
+	public Response<Message> sendLocation(long chat_id, float latitude, float longitude, Integer reply_to_message_id,
 			DummyKeyboard reply_markup) {
 
 		MultiValueMap<String, Object> body = new LinkedMultiValueMap<String, Object>();
@@ -247,7 +247,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public void sendChatAction(int chat_id, ChatAction action) {
+	public void sendChatAction(long chat_id, ChatAction action) {
 		if (action == null)
 			throw new InvalidParameterException("(sendChatAction) Null value is not allowed for field: action");
 
@@ -300,7 +300,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Response<Message> sendPhoto(int chat_id, Resource photo, String caption, Integer reply_to_message_id,
+	public Response<Message> sendPhoto(long chat_id, Resource photo, String caption, Integer reply_to_message_id,
 			DummyKeyboard reply_markup) {
 		if (photo == null)
 			throw new InvalidParameterException("(sendPhoto) Null value is not allowed for field: photo");
@@ -341,7 +341,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Response<Message> sendAudio(int chat_id, Resource audio, Integer duration, String performer, String title,
+	public Response<Message> sendAudio(long chat_id, Resource audio, Integer duration, String performer, String title,
 			Integer reply_to_message_id, DummyKeyboard reply_markup) {
 		if (audio == null)
 			throw new InvalidParameterException("(sendAudio) Null value is not allowed for field: audio");
@@ -388,7 +388,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Response<Message> sendDocument(int chat_id, Resource document, Integer reply_to_message_id,
+	public Response<Message> sendDocument(long chat_id, Resource document, Integer reply_to_message_id,
 			DummyKeyboard reply_markup) {
 		if (document == null)
 			throw new InvalidParameterException("(sendDocument) Null value is not allowed for field: document");
@@ -426,7 +426,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Response<Message> sendSticker(int chat_id, Resource sticker, Integer reply_to_message_id,
+	public Response<Message> sendSticker(long chat_id, Resource sticker, Integer reply_to_message_id,
 			DummyKeyboard reply_markup) {
 		if (sticker == null)
 			throw new InvalidParameterException("(sendSticker) Null value is not allowed for field: sticker");
@@ -464,7 +464,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Response<Message> sendVideo(int chat_id, Resource video, Integer duration, String caption,
+	public Response<Message> sendVideo(long chat_id, Resource video, Integer duration, String caption,
 			Integer reply_to_message_id, DummyKeyboard reply_markup) {
 		if (video == null)
 			throw new InvalidParameterException("(sendVideo) Null value is not allowed for field: video");
@@ -508,7 +508,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Response<Message> sendVoice(int chat_id, Resource voice, Integer duration, Integer reply_to_message_id,
+	public Response<Message> sendVoice(long chat_id, Resource voice, Integer duration, Integer reply_to_message_id,
 			DummyKeyboard reply_markup) {
 		if (voice == null)
 			throw new InvalidParameterException("(sendVoice) Null value is not allowed for field: voice");

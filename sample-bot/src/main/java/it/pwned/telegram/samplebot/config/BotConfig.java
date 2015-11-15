@@ -1,14 +1,15 @@
 package it.pwned.telegram.samplebot.config;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import it.pwned.telegram.bot.TelegramBot;
 import it.pwned.telegram.bot.api.TelegramBotApi;
 import it.pwned.telegram.bot.api.TelegramBotRestApi;
-import it.pwned.telegram.bot.authorization.Authorization;
-import it.pwned.telegram.bot.authorization.NullAuthorization;
 
 @Configuration
 public class BotConfig {
@@ -17,14 +18,16 @@ public class BotConfig {
 	public TelegramBotApi telegramBotApi(@Value("${bot.token}") String token) {
 		return new TelegramBotRestApi(token);
 	}
-
+	
 	@Bean
-	public Authorization botAuthorization() {
-		return new NullAuthorization();
+	public JdbcTemplate jdbcTemplate(DataSource ds) {
+		JdbcTemplate jdbc = new JdbcTemplate(ds);
+				
+		return jdbc;
 	}
 
 	@Bean
-	public TelegramBot telegramBot(TelegramBotApi api, Authorization auth) throws Exception {
-		return new TelegramBot(api, auth);
+	public TelegramBot telegramBot(TelegramBotApi api) throws Exception {
+		return new TelegramBot(api);
 	}
 }

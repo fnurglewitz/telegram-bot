@@ -2,11 +2,12 @@ package it.pwned.telegram.bot;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,14 +18,18 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.pwned.telegram.bot.api.TelegramBotApi;
 import it.pwned.telegram.bot.api.type.Message;
 import it.pwned.telegram.bot.api.type.Response;
 import it.pwned.telegram.bot.api.type.Update;
 import it.pwned.telegram.bot.api.type.User;
-import it.pwned.telegram.bot.authorization.Authorization;
 import it.pwned.telegram.bot.command.BotCommand;
 
 public final class TelegramBot {
@@ -36,10 +41,13 @@ public final class TelegramBot {
 
 	public final TelegramBotApi api;
 
-	public final Authorization auth;
-
 	@Autowired
 	private ThreadPoolTaskExecutor executor;
+
+	private JdbcTemplate jdbc;
+
+	@Autowired
+	private ObjectMapper mapper;
 
 	private Set<MessageHandler> handlers;
 
@@ -50,12 +58,7 @@ public final class TelegramBot {
 	private final Map<MessageHandler, Thread> thread_ref;
 
 	public TelegramBot(TelegramBotApi api) throws Exception {
-		this(api, null);
-	}
-
-	public TelegramBot(TelegramBotApi api, Authorization auth) throws Exception {
 		this.api = api;
-		this.auth = auth;
 
 		// api test
 		Response<User> me = api.getMe();
@@ -95,8 +98,8 @@ public final class TelegramBot {
 			}
 
 			for (BotCommand c : commands) {
-				if(c.command() != null)  {
-					this.registerCommand(c.command(), h);
+				if (c.command() != null) {
+					this.registerCommand(c.command(), c.description(), h);
 					sb.append(String.format("%s - %s\n", c.command().substring(1), c.description()));
 				}
 			}
@@ -110,7 +113,12 @@ public final class TelegramBot {
 		}
 	}
 
-	public void registerCommand(String command, MessageHandler handler) {
+	@Autowired(required = false)
+	public void setJdbcTemplate(JdbcTemplate jdbc) {
+		this.jdbc = jdbc;
+	}
+
+	public void registerCommand(String command, String description, MessageHandler handler) {
 		command_handlers.put(command, handler);
 	}
 
@@ -143,11 +151,9 @@ public final class TelegramBot {
 		return executor.submit(task);
 	}
 
-	public void run() throws InterruptedException {
+	public void run() throws InterruptedException {	
 
-		for (Entry<MessageHandler, Thread> e : thread_ref.entrySet()) {
-			e.getValue().start();
-		}
+		thread_ref.forEach((k,v) -> v.start());
 
 		boolean go_on = true;
 		int last_update = -1;
@@ -155,7 +161,7 @@ public final class TelegramBot {
 		do {
 			try {
 
-				log.info("Fetching updates, offset = " + last_update);
+				//log.info("Fetching updates, offset = " + last_update);
 
 				Response<Update[]> updates = api.getUpdates(last_update + 1, null, 60);
 
@@ -172,6 +178,28 @@ public final class TelegramBot {
 
 							Message m = u.message;
 							MessageHandler handler = null;
+
+							if (jdbc != null) {
+
+								this.submitToExecutor(() -> {
+									try {
+										final String strMsg = mapper.writeValueAsString(m);
+										// @formatter:off
+										jdbc.update(
+												"insert into message (ts,message) values (current_timestamp,?::json);",
+												new PreparedStatementSetter() {
+													public void setValues(PreparedStatement preparedStatement) throws SQLException {
+															preparedStatement.setString(1, strMsg);
+													}
+												}
+										);
+										// @formatter:on
+									} catch (JsonProcessingException e) {
+										log.error("Error while logging message to DB", e);
+									}
+								});
+
+							}
 
 							for (MessageHandler h : handlers)
 								h.enqueueMessage(m);
@@ -200,14 +228,6 @@ public final class TelegramBot {
 								if (m.command_recipient != null && !m.command_recipient.equals(this.username))
 									continue;
 
-								if (auth != null && !auth.isCommandAllowed(m.command, m.from.id, m.chat.id)) {
-									executor.submit(() -> {
-										api.sendMessage(m.chat.id, String.format("%s is not allowed to use command %s",
-												m.from.first_name, m.command), null, null, m.message_id, null);
-									});
-									continue;
-								}
-
 								handler = command_handlers.get(m.command);
 								if (handler != null) {
 									handler.enqueueMessage(m);
@@ -225,12 +245,15 @@ public final class TelegramBot {
 			}
 		} while (go_on);
 
-		for (Entry<MessageHandler, Thread> e : thread_ref.entrySet()) {
-			e.getValue().interrupt();
-		}
+		thread_ref.forEach((k, v) -> v.interrupt());
+		thread_ref.forEach((k, v) -> joinThreadAndIgnoreInterrupt(v));
 
-		for (Entry<MessageHandler, Thread> e : thread_ref.entrySet()) {
-			e.getValue().join();
-		}
 	}
+
+	private static void joinThreadAndIgnoreInterrupt(Thread t) {
+		// @formatter:off
+		try { t.join(); } catch (InterruptedException e) { }
+		// @formatter:on
+	}
+
 }
