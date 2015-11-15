@@ -16,3 +16,5 @@ sample-bot/.classpath
 sample-bot/.project
 telegram-bot/.project
 telegram-bot/.classpath
+sample-bot/commands_help.txt
+sample-bot/config/application.properties
