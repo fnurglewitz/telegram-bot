@@ -265,7 +265,7 @@ public class ImgurHandler extends MessageHandler {
 				String[] splitted = line.split(",");
 				sb.append(String.format("/%s : %s\n", splitted[0], splitted[1]));
 				subreddits.put(String.format("/%s", splitted[0]), Arrays.copyOfRange(splitted, 2, splitted.length));
-				bot.registerCommand(String.format("/%s", splitted[0]), this);
+				bot.registerCommand(String.format("/%s", splitted[0]), splitted[1], this);
 			}
 		} catch (IOException e) {
 			e.printStackTrace(); // shit happens

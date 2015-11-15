@@ -34,59 +34,59 @@ public interface TelegramBotApi {
 	 */
 	Response<Update[]> getUpdates(Integer offset, Integer limit, Integer timeout);
 
-	Response<Message> sendMessage(int chat_id, String text, String parse_mode, Boolean disable_web_page_preview,
+	Response<Message> sendMessage(long chat_id, String text, String parse_mode, Boolean disable_web_page_preview,
 			Integer reply_to_message_id, DummyKeyboard reply_markup);
 
 	Response<Message> sendMessage(String chat_id, String text, String parse_mode, Boolean disable_web_page_preview,
 			Integer reply_to_message_id, DummyKeyboard reply_markup);
 
-	Response<Message> forwardMessage(int chat_id, int from_chat_id, int message_id);
+	Response<Message> forwardMessage(long chat_id, long from_chat_id, int message_id);
 
 	Response<Message> forwardMessage(String chat_id, String from_chat_id, int message_id);
 
-	Response<Message> sendLocation(int chat_id, float latitude, float longitude, Integer reply_to_message_id,
+	Response<Message> sendLocation(long chat_id, float latitude, float longitude, Integer reply_to_message_id,
 			DummyKeyboard reply_markup);
 
 	Response<Message> sendLocation(String chat_id, float latitude, float longitude, Integer reply_to_message_id,
 			DummyKeyboard reply_markup);
 
-	void sendChatAction(int chat_id, ChatAction action);
+	void sendChatAction(long chat_id, ChatAction action);
 
 	void sendChatAction(String chat_id, ChatAction action);
 
 	Response<UserProfilePhotos> getUserProfilePhotos(int user_id, Integer offset, Integer limit);
 
-	Response<Message> sendPhoto(int chat_id, Resource photo, String caption, Integer reply_to_message_id,
+	Response<Message> sendPhoto(long chat_id, Resource photo, String caption, Integer reply_to_message_id,
 			DummyKeyboard reply_markup);
 
 	Response<Message> sendPhoto(String chat_id, Resource photo, String caption, Integer reply_to_message_id,
 			DummyKeyboard reply_markup);
 
-	Response<Message> sendAudio(int chat_id, Resource audio, Integer duration, String performer, String title,
+	Response<Message> sendAudio(long chat_id, Resource audio, Integer duration, String performer, String title,
 			Integer reply_to_message_id, DummyKeyboard reply_markup);
 
 	Response<Message> sendAudio(String chat_id, Resource audio, Integer duration, String performer, String title,
 			Integer reply_to_message_id, DummyKeyboard reply_markup);
 
-	Response<Message> sendDocument(int chat_id, Resource document, Integer reply_to_message_id,
+	Response<Message> sendDocument(long chat_id, Resource document, Integer reply_to_message_id,
 			DummyKeyboard reply_markup);
 
 	Response<Message> sendDocument(String chat_id, Resource document, Integer reply_to_message_id,
 			DummyKeyboard reply_markup);
 
-	Response<Message> sendSticker(int chat_id, Resource sticker, Integer reply_to_message_id,
+	Response<Message> sendSticker(long chat_id, Resource sticker, Integer reply_to_message_id,
 			DummyKeyboard reply_markup);
 
 	Response<Message> sendSticker(String chat_id, Resource sticker, Integer reply_to_message_id,
 			DummyKeyboard reply_markup);
 
-	Response<Message> sendVideo(int chat_id, Resource video, Integer duration, String caption,
+	Response<Message> sendVideo(long chat_id, Resource video, Integer duration, String caption,
 			Integer reply_to_message_id, DummyKeyboard reply_markup);
 
 	Response<Message> sendVideo(String chat_id, Resource video, Integer duration, String caption,
 			Integer reply_to_message_id, DummyKeyboard reply_markup);
 
-	Response<Message> sendVoice(int chat_id, Resource voice, Integer duration, Integer reply_to_message_id,
+	Response<Message> sendVoice(long chat_id, Resource voice, Integer duration, Integer reply_to_message_id,
 			DummyKeyboard reply_markup);
 
 	Response<Message> sendVoice(String chat_id, Resource voice, Integer duration, Integer reply_to_message_id,
