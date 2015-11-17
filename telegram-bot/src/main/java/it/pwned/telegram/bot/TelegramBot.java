@@ -41,6 +41,8 @@ public final class TelegramBot {
 
 	public final TelegramBotApi api;
 
+	private volatile boolean go_on = true;
+
 	@Autowired
 	private ThreadPoolTaskExecutor executor;
 
@@ -151,17 +153,22 @@ public final class TelegramBot {
 		return executor.submit(task);
 	}
 
-	public void run() throws InterruptedException {	
+	public void shutdown() {
+		if (go_on)
+			log.info("Bot shutting down...");
+		go_on = false;
+	}
 
-		thread_ref.forEach((k,v) -> v.start());
+	public void run() throws InterruptedException {
 
-		boolean go_on = true;
+		thread_ref.forEach((k, v) -> v.start());
+
 		int last_update = -1;
 
 		do {
 			try {
 
-				//log.info("Fetching updates, offset = " + last_update);
+				// log.info("Fetching updates, offset = " + last_update);
 
 				Response<Update[]> updates = api.getUpdates(last_update + 1, null, 60);
 
@@ -245,9 +252,11 @@ public final class TelegramBot {
 			}
 		} while (go_on);
 
+		log.info("Sending interrupt to handler threads...");
 		thread_ref.forEach((k, v) -> v.interrupt());
+		log.info("Waiting for threads to stop...");
 		thread_ref.forEach((k, v) -> joinThreadAndIgnoreInterrupt(v));
-
+		log.info("Done");
 	}
 
 	private static void joinThreadAndIgnoreInterrupt(Thread t) {

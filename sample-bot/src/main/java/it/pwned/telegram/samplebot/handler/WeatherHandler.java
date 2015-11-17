@@ -27,7 +27,7 @@ public final class WeatherHandler extends MessageHandler {
 	}
 	
 	@Autowired
-	public void setWeatherApi(@Value("${openweather.api_key}") String api_key) {
+	public void setWeatherApi(@Value("${openweather.api-key}") String api_key) {
 		this.owm = new OpenWeatherMap(Units.METRIC, Language.ITALIAN, api_key);
 	}
 

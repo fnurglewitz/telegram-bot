@@ -250,12 +250,12 @@ public class ImgurHandler extends MessageHandler {
 	}
 	
 	@Autowired
-	public void setImgurApi(@Value("${imgur.client_id}") String client_id) {
+	public void setImgurApi(@Value("${imgur.client-id}") String client_id) {
 		this.api = new ImgurApi(client_id);
 	}
 
 	@Autowired
-	public void setCommands(@Value("${imgur.commands_file}") String file) {
+	public void setCommands(@Value("${imgur.commands-file}") String file) {
 		log.info(String.format("Loading imgur commands from file: %s", file));
 
 		StringBuilder sb = new StringBuilder("Avaible imgur commands:\n");

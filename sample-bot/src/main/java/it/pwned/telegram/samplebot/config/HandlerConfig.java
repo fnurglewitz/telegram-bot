@@ -2,7 +2,6 @@ package it.pwned.telegram.samplebot.config;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +17,6 @@ import it.pwned.telegram.samplebot.handler.WeatherHandler;
 public class HandlerConfig {
 	
 	@Bean
-	@Qualifier(value="hndlr")
 	public MessageHandler greeter(TelegramBot bot) {
 		LinkedBlockingQueue<Message> message_queue = new LinkedBlockingQueue<Message>();
 		return new GreeterHandler(bot, message_queue);
@@ -31,7 +29,7 @@ public class HandlerConfig {
 	}
 	
 	@Bean
-	public MessageHandler weather(TelegramBot bot, @Value("${openweather.api_key}") String api_key) {
+	public MessageHandler weather(TelegramBot bot, @Value("${openweather.api-key}") String api_key) {
 		LinkedBlockingQueue<Message> message_queue = new LinkedBlockingQueue<Message>();
 		return new WeatherHandler(bot, message_queue);		
 	}
