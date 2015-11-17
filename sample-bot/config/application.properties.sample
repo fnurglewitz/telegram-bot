@@ -1,9 +1,11 @@
 app.name = Sample Bot
 spring.application.name= Sample Bot
 bot.token=
-imgur.client_id=
-imgur.commands_file=./imgurcommands.txt
-openweather.api_key=
+bot.executor.core-pool-size=15
+bot.executor.max-pool-size=15
+imgur.client-id=
+imgur.commands-file=./imgurcommands.txt
+openweather.api-key=
 spring.main.web-environment=false
 spring.main.show-banner=true
 spring.jmx.enabled=false
