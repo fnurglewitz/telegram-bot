@@ -90,7 +90,7 @@ public final class TelegramBot {
 			if (h == null)
 				continue;
 
-			thread_ref.put(h, new Thread(h));
+			thread_ref.put(h, new Thread(h, h.getClass().getSimpleName()));
 
 			BotCommand[] commands = h.getClass().getAnnotationsByType(BotCommand.class);
 

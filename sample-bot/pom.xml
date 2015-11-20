@@ -27,6 +27,10 @@
 			<artifactId>spring-boot-starter-jdbc</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-remote-shell</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>it.pwned</groupId>
 			<artifactId>telegram-bot</artifactId>
 			<version>0.0.1</version>
@@ -44,7 +48,7 @@
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
 		</dependency>
-		
+
 	</dependencies>
 
 	<build>
