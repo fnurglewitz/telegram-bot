@@ -17,3 +17,9 @@ spring.datasource.password=
 spring.datasource.driverClassName=org.postgresql.Driver
 
 spring.jpa.generate-ddl=true
+
+shell.auth.simple.user.name=
+shell.auth.simple.user.password=
+shell.command-path-patterns=classpath*:/crash/commands/**
+shell.ssh.enabled=true
+shell.telnet.enabled=false

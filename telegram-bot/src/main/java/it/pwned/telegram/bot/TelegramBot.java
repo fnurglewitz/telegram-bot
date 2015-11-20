@@ -18,6 +18,7 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -195,13 +196,13 @@ public final class TelegramBot {
 										jdbc.update(
 												"insert into message (ts,message) values (current_timestamp,?::json);",
 												new PreparedStatementSetter() {
-													public void setValues(PreparedStatement preparedStatement) throws SQLException {
-															preparedStatement.setString(1, strMsg);
-													}
-												}
-										);
+											public void setValues(PreparedStatement preparedStatement)
+													throws SQLException {
+												preparedStatement.setString(1, strMsg);
+											}
+										});
 										// @formatter:on
-									} catch (JsonProcessingException e) {
+									} catch (JsonProcessingException | DataAccessException e) {
 										log.error("Error while logging message to DB", e);
 									}
 								});
@@ -261,7 +262,10 @@ public final class TelegramBot {
 
 	private static void joinThreadAndIgnoreInterrupt(Thread t) {
 		// @formatter:off
-		try { t.join(); } catch (InterruptedException e) { }
+		try {
+			t.join();
+		} catch (InterruptedException e) {
+		}
 		// @formatter:on
 	}
 
