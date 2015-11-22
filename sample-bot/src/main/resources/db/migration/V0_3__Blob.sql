@@ -1,0 +1,1 @@
+alter table public.message add column blob bytea;
