@@ -10,6 +10,7 @@ spring.main.web-environment=false
 spring.main.show-banner=true
 spring.jmx.enabled=false
 logging.file=samplebot.log
+logging.level.it.pwned.telegram.bot.api.debug=INFO
 
 spring.datasource.url=jdbc:postgresql://localhost/bot
 spring.datasource.username=postgres

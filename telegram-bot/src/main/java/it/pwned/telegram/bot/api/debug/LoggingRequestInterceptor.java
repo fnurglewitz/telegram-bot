@@ -17,8 +17,10 @@ public class LoggingRequestInterceptor implements ClientHttpRequestInterceptor {
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
 
         ClientHttpResponse response = execution.execute(request, body);
-
-        log.info("");
+        
+        if(log.isDebugEnabled()) {
+        	log.debug(request.getURI() + "\n\n" + new String(body));
+        }
 
         return response;
     }

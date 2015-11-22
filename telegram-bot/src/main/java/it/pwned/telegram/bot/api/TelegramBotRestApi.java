@@ -3,6 +3,7 @@ package it.pwned.telegram.bot.api;
 import java.net.MalformedURLException;
 import java.nio.charset.Charset;
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,6 +14,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.BufferingClientHttpRequestFactory;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.FormHttpMessageConverter;
@@ -27,6 +30,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriTemplate;
 
+import it.pwned.telegram.bot.api.debug.LoggingRequestInterceptor;
 import it.pwned.telegram.bot.api.type.ChatAction;
 import it.pwned.telegram.bot.api.type.DummyKeyboard;
 import it.pwned.telegram.bot.api.type.File;
@@ -68,14 +72,12 @@ public class TelegramBotRestApi implements TelegramBotApi {
 			}
 		}
 
-		/*
-		 * ClientHttpRequestInterceptor ri = new LoggingRequestInterceptor();
-		 * List<ClientHttpRequestInterceptor> ris = new
-		 * ArrayList<ClientHttpRequestInterceptor>(); ris.add(ri);
-		 * rest.setInterceptors(ris); rest.setRequestFactory(new
-		 * BufferingClientHttpRequestFactory(new
-		 * SimpleClientHttpRequestFactory()));
-		 */
+		 ClientHttpRequestInterceptor ri = new LoggingRequestInterceptor();
+		 List<ClientHttpRequestInterceptor> ris = new ArrayList<ClientHttpRequestInterceptor>(); 
+		 ris.add(ri);
+		 rest.setInterceptors(ris); 
+		 rest.setRequestFactory(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
+		 
 	}
 
 	@Override

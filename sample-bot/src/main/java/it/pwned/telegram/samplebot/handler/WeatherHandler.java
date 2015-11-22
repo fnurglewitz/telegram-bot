@@ -89,7 +89,7 @@ public final class WeatherHandler extends MessageHandler {
 		}
 
 		return String.format(
-				"Current weather in: %s\n%s\nT: %.2f �C\nTmin: %.2f �C\nTmax: %.2f �C\nPressure: %.2f hPa\nHumidity: %.2f%%",
+				"Current weather in: %s\n%s\nT: %.2f°C\nTmin: %.2f°C\nTmax: %.2f°C\nPressure: %.2f hPa\nHumidity: %.2f%%",
 				location, weather_desc, temp, min_temp, max_temp, pressure, humidity);
 	}
 
