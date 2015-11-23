@@ -9,7 +9,7 @@ import it.pwned.telegram.bot.MessageHandler;
 import it.pwned.telegram.bot.TelegramBot;
 import it.pwned.telegram.bot.api.type.ForceReply;
 import it.pwned.telegram.bot.api.type.Message;
-import it.pwned.telegram.bot.api.type.Response;
+import it.pwned.telegram.bot.api.type.TelegramBotApiException;
 import it.pwned.telegram.bot.command.BotCommand;
 import net.aksingh.owmjapis.AbstractWeather.Weather;
 import net.aksingh.owmjapis.CurrentWeather;
@@ -25,7 +25,7 @@ public final class WeatherHandler extends MessageHandler {
 	public WeatherHandler(TelegramBot bot, BlockingQueue<Message> message_queue) {
 		super(bot, message_queue);
 	}
-	
+
 	@Autowired
 	public void setWeatherApi(@Value("${openweather.api-key}") String api_key) {
 		this.owm = new OpenWeatherMap(Units.METRIC, Language.ITALIAN, api_key);
@@ -36,30 +36,34 @@ public final class WeatherHandler extends MessageHandler {
 
 		if (m.is_command) {
 			bot.submitToExecutor(() -> {
-				Response<Message> res = bot.api.sendMessage(m.chat.id, "Please send me a location", null, true,
-						m.message_id, new ForceReply(true));
+				Message res;
+				try {
+					res = bot.api.sendMessage(m.chat.id, "Please send me a location", null, true, m.message_id,
+							new ForceReply(true));
 
-				if (res.ok && res.result.message_id != null) {
-					bot.reserveReply(res.result.message_id, this);
+					if (res.message_id != null) {
+						bot.reserveReply(res.message_id, this);
+					}
+				} catch (Exception e) {
+
 				}
 			});
 		} else {
 
 			bot.submitToExecutor(() -> {
-				
-				if (m.location != null) {
-					CurrentWeather cw = owm.currentWeatherByCoordinates(m.location.latitude, m.location.longitude);
+				try {
+					if (m.location != null) {
+						CurrentWeather cw = owm.currentWeatherByCoordinates(m.location.latitude, m.location.longitude);
 
-					Response<Message> rm = bot.api.sendMessage(m.chat.id, getFormattedString(cw), null, null, m.message_id, null);
+						bot.api.sendMessage(m.chat.id, getFormattedString(cw), null, null, m.message_id, null);
 
-					if (!rm.ok) {
-						bot.api.sendMessage(m.chat.id, "Sorry, something went wrong. Try again", null, null, m.message_id, null);
-					}
+					} else
+						bot.api.sendMessage(m.chat.id, "Send me a location, please", null, null, m.message_id, null);
+
+					bot.releaseReservedReply(m.reply_to_message.message_id);
+				} catch (TelegramBotApiException ae) {
+
 				}
-				else
-					bot.api.sendMessage(m.chat.id, "Send me a location, please", null, null, m.message_id, null);
-
-				bot.releaseReservedReply(m.reply_to_message.message_id);
 			});
 		}
 

@@ -1,12 +1,7 @@
 package it.pwned.telegram.bot;
 
-import org.springframework.core.io.Resource;
-
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,17 +16,11 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.pwned.telegram.bot.api.TelegramBotApi;
 import it.pwned.telegram.bot.api.type.Message;
-import it.pwned.telegram.bot.api.type.Response;
+import it.pwned.telegram.bot.api.type.TelegramBotApiException;
 import it.pwned.telegram.bot.api.type.Update;
 import it.pwned.telegram.bot.api.type.User;
 import it.pwned.telegram.bot.command.BotCommand;
@@ -50,12 +39,6 @@ public final class TelegramBot {
 	@Autowired
 	private ThreadPoolTaskExecutor executor;
 
-	private JdbcTemplate jdbc;
-	private boolean save_files;
-
-	@Autowired
-	private ObjectMapper mapper;
-
 	private Set<MessageHandler> handlers;
 
 	private final ConcurrentMap<Integer, MessageHandler> reply_handlers;
@@ -64,17 +47,14 @@ public final class TelegramBot {
 
 	private final Map<MessageHandler, Thread> thread_ref;
 
-	public TelegramBot(TelegramBotApi api) throws Exception {
+	public TelegramBot(TelegramBotApi api) throws TelegramBotApiException {
 		this.api = api;
 
 		// api test
-		Response<User> me = api.getMe();
+		User me = api.getMe();
 
-		if (!me.ok)
-			throw new Exception("Bot's getMe endpoint check failed");
-
-		this.id = me.result.id;
-		this.username = me.result.username;
+		this.id = me.id;
+		this.username = me.username;
 
 		command_handlers = new ConcurrentHashMap<String, MessageHandler>();
 		reply_handlers = new ConcurrentHashMap<Integer, MessageHandler>();
@@ -118,12 +98,6 @@ public final class TelegramBot {
 			// well, shit happens
 			log.warn("Could not save commands help file.", e);
 		}
-	}
-
-	@Autowired(required = false)
-	public void setJdbcTemplate(JdbcTemplate jdbc, @Value("${bot.save-files:#{false}}") Boolean save_files) {
-		this.jdbc = jdbc;
-		this.save_files = save_files;
 	}
 
 	public void registerCommand(String command, String description, MessageHandler handler) {
@@ -176,13 +150,18 @@ public final class TelegramBot {
 
 				// log.info("Fetching updates, offset = " + last_update);
 
-				Response<Update[]> updates = api.getUpdates(last_update + 1, null, 60);
+				Update[] updates = null;
 
-				if (updates != null && updates.ok && updates.result.length > 0) {
+				try {
+					updates = api.getUpdates(last_update + 1, null, 60);
+				} catch (TelegramBotApiException ae) {
+				}
 
-					Arrays.sort(updates.result);
+				if (updates != null && updates.length > 0) {
 
-					for (Update u : updates.result) {
+					Arrays.sort(updates);
+
+					for (Update u : updates) {
 
 						if (u.update_id > last_update)
 							last_update = u.update_id;
@@ -191,10 +170,6 @@ public final class TelegramBot {
 
 							Message m = u.message;
 							MessageHandler handler = null;
-
-							if (jdbc != null) {
-								saveMessageToDb(m);
-							}
 
 							for (MessageHandler h : handlers)
 								h.enqueueMessage(m);
@@ -254,59 +229,6 @@ public final class TelegramBot {
 		} catch (InterruptedException e) {
 		}
 		// @formatter:on
-	}
-
-	private void saveMessageToDb(Message m) {
-		this.submitToExecutor(() -> {
-			try {
-				final String strMsg = mapper.writeValueAsString(m);
-
-				// @formatter:off
-				Resource r = null;
-				if(save_files) {
-					String file_id = null;
-					
-					if(m.audio!=null)	file_id = m.audio.file_id;
-					if(m.document!=null) file_id = m.document.file_id;
-					if(m.photo!=null) file_id = m.photo[m.photo.length-1].file_id;;
-					if(m.sticker!=null) file_id = m.sticker.file_id;
-					if(m.video!=null) file_id = m.video.file_id;
-					if(m.voice!=null) file_id = m.voice.file_id;
-					if(m.new_chat_photo!=null) file_id = m.new_chat_photo[m.new_chat_photo.length-1].file_id;
-					
-					if(file_id!=null) {
-						Response<it.pwned.telegram.bot.api.type.File> file = api.getFile(file_id);
-						
-						if(file.ok) {
-							r = api.getResourceFromTelegramFile(file.result);
-						}
-					}
-				}
-				
-				final InputStream is;
-				if(r != null)
-					is = r.getInputStream();
-				else
-					is = null;
-				
-				jdbc.update(
-						"insert into message (ts,message,blob) values (current_timestamp,?::json,?);",
-						new PreparedStatementSetter() {
-					public void setValues(PreparedStatement preparedStatement)
-							throws SQLException {
-						preparedStatement.setString(1, strMsg);
-						if(is==null)
-							preparedStatement.setNull(2, java.sql.Types.LONGVARBINARY);
-						else
-							preparedStatement.setBinaryStream(2, is);
-					}
-				});
-				// @formatter:on
-			} catch (IOException | DataAccessException e) {
-				log.error("Error while logging message to DB", e);
-			}
-		});
-
 	}
 
 }

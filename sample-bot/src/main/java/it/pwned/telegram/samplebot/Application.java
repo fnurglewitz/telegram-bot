@@ -46,7 +46,8 @@ public class Application {
 
 	@Bean
 	public JdbcTemplate jdbcTemplate(DataSource ds) {
-		return new JdbcTemplate(ds);
+		JdbcTemplate jdbc = new JdbcTemplate(ds);
+		return jdbc;
 	}
 
 	@Bean

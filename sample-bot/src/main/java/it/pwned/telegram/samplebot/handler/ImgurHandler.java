@@ -34,6 +34,7 @@ import it.pwned.telegram.bot.TelegramBot;
 import it.pwned.telegram.bot.api.type.ChatAction;
 import it.pwned.telegram.bot.api.type.Message;
 import it.pwned.telegram.bot.api.type.SendAction;
+import it.pwned.telegram.bot.api.type.TelegramBotApiException;
 import it.pwned.telegram.bot.command.BotCommand;
 import it.pwned.telegram.samplebot.handler.ImgurHandler.ImgurApi.GalleryImage;
 import it.pwned.telegram.samplebot.handler.ImgurHandler.ImgurApi.ImgurResponse;
@@ -129,16 +130,15 @@ public class ImgurHandler extends MessageHandler {
 					@JsonProperty("width") Integer width, @JsonProperty("height") Integer height,
 					@JsonProperty("size") Integer size, @JsonProperty("views") Integer views,
 					@JsonProperty("bandwidth") BigInteger bandwidth, @JsonProperty("deletehash") String deletehash,
-					@JsonProperty("link") String link, @JsonProperty("gifv") String gifv,
-					@JsonProperty("mp4") String mp4, @JsonProperty("webm") String webm,
-					@JsonProperty("looping") Boolean looping, @JsonProperty("vote") String vote,
-					@JsonProperty("favorite") Boolean favorite, @JsonProperty("nsfw") Boolean nsfw,
-					@JsonProperty("comment_count") Integer comment_count,
+					@JsonProperty("link") String link, @JsonProperty("gifv") String gifv, @JsonProperty("mp4") String mp4,
+					@JsonProperty("webm") String webm, @JsonProperty("looping") Boolean looping,
+					@JsonProperty("vote") String vote, @JsonProperty("favorite") Boolean favorite,
+					@JsonProperty("nsfw") Boolean nsfw, @JsonProperty("comment_count") Integer comment_count,
 					@JsonProperty("comment_preview") Comment[] comment_preview, @JsonProperty("topic") String topic,
 					@JsonProperty("topic_id") BigInteger topic_id, @JsonProperty("section") String section,
 					@JsonProperty("account_url") String account_url, @JsonProperty("account_id") BigInteger account_id,
-					@JsonProperty("ups") Integer ups, @JsonProperty("downs") Integer downs,
-					@JsonProperty("score") Integer score, @JsonProperty("is_album") Boolean is_album) {
+					@JsonProperty("ups") Integer ups, @JsonProperty("downs") Integer downs, @JsonProperty("score") Integer score,
+					@JsonProperty("is_album") Boolean is_album) {
 				this.id = id;
 				this.title = title;
 				this.description = description;
@@ -244,11 +244,11 @@ public class ImgurHandler extends MessageHandler {
 
 	public ImgurHandler(TelegramBot bot, BlockingQueue<Message> message_queue) {
 		super(bot, message_queue);
-		
+
 		this.subreddits = new HashMap<String, String[]>();
 		this.rand = new Random();
 	}
-	
+
 	@Autowired
 	public void setImgurApi(@Value("${imgur.client-id}") String client_id) {
 		this.api = new ImgurApi(client_id);
@@ -270,17 +270,20 @@ public class ImgurHandler extends MessageHandler {
 		} catch (IOException e) {
 			e.printStackTrace(); // shit happens
 		}
-		
+
 		this.avaible_cmds = sb.toString();
-		
-		log.info(this.avaible_cmds);		
+
+		log.info(this.avaible_cmds);
 	}
 
 	@Override
 	protected boolean processMessage(Message m) {
 
 		if (m.is_command && "/imgur".equals(m.text)) {
-			bot.api.sendMessage(m.chat.id, this.avaible_cmds, null, null, null, null);
+			try {
+				bot.api.sendMessage(m.chat.id, this.avaible_cmds, null, null, null, null);
+			} catch (TelegramBotApiException e) {
+			}
 		} else {
 
 			final String[] array_ref = subreddits.get(m.command);
@@ -288,38 +291,44 @@ public class ImgurHandler extends MessageHandler {
 			bot.submitToExecutor(() -> {
 				String subreddit = array_ref[new Random().nextInt(array_ref.length)];
 
-				bot.api.sendChatAction(m.chat.id, ChatAction.upload_photo);
-
 				try {
-					int retry = 5;
-					ImgurResponse gi = null;
-					do {
-						gi = api.getSubredditPhotosByPage(subreddit, rand.nextInt(101), "time", "all");
-						if (gi != null && gi.success && gi.data.length > 0)
-							retry = -1;
-						else
-							retry--;
-					} while (retry >= 0);
 
-					if (gi != null && gi.success && gi.data.length > 0) {
-						GalleryImage rand_img = gi.data[rand.nextInt(gi.data.length)];
+					bot.api.sendChatAction(m.chat.id, ChatAction.upload_photo);
 
-						SendAction sa = SendAction.getSendActionFromMimeType(rand_img.type);
+					try {
+						int retry = 5;
+						ImgurResponse gi = null;
+						do {
+							gi = api.getSubredditPhotosByPage(subreddit, rand.nextInt(101), "time", "all");
+							if (gi != null && gi.success && gi.data.length > 0)
+								retry = -1;
+							else
+								retry--;
+						} while (retry >= 0);
 
-						switch (sa) {
-						case Photo:
-							bot.api.sendPhoto(m.chat.id, new UrlResource(rand_img.link), rand_img.title, null, null);
-							break;
-						default:
-							bot.api.sendDocument(m.chat.id, new UrlResource(rand_img.link), null, null);
-						}
+						if (gi != null && gi.success && gi.data.length > 0) {
+							GalleryImage rand_img = gi.data[rand.nextInt(gi.data.length)];
 
-					} else
+							SendAction sa = SendAction.getSendActionFromMimeType(rand_img.type);
+
+							switch (sa) {
+							case Photo:
+								bot.api.sendPhoto(m.chat.id, new UrlResource(rand_img.link), rand_img.title, null, null);
+								break;
+							default:
+								bot.api.sendDocument(m.chat.id, new UrlResource(rand_img.link), null, null);
+							}
+
+						} else
+							bot.api.sendMessage(m.chat.id, "Error while fetching the image.", null, null, null, null);
+
+					} catch (Exception e) {
+						log.error("Error while fetching the image.", e);
 						bot.api.sendMessage(m.chat.id, "Error while fetching the image.", null, null, null, null);
+					}
 
-				} catch (Exception e) {
-					log.error("Error while fetching the image.", e);
-					bot.api.sendMessage(m.chat.id, "Error while fetching the image.", null, null, null, null);
+				} catch (TelegramBotApiException ae) {
+
 				}
 
 			});

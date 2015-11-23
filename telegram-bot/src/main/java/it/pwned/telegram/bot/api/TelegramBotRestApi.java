@@ -25,7 +25,6 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriTemplate;
@@ -36,6 +35,7 @@ import it.pwned.telegram.bot.api.type.DummyKeyboard;
 import it.pwned.telegram.bot.api.type.File;
 import it.pwned.telegram.bot.api.type.Message;
 import it.pwned.telegram.bot.api.type.Response;
+import it.pwned.telegram.bot.api.type.TelegramBotApiException;
 import it.pwned.telegram.bot.api.type.Update;
 import it.pwned.telegram.bot.api.type.User;
 import it.pwned.telegram.bot.api.type.UserProfilePhotos;
@@ -72,16 +72,16 @@ public class TelegramBotRestApi implements TelegramBotApi {
 			}
 		}
 
-		 ClientHttpRequestInterceptor ri = new LoggingRequestInterceptor();
-		 List<ClientHttpRequestInterceptor> ris = new ArrayList<ClientHttpRequestInterceptor>(); 
-		 ris.add(ri);
-		 rest.setInterceptors(ris); 
-		 rest.setRequestFactory(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
-		 
+		ClientHttpRequestInterceptor ri = new LoggingRequestInterceptor();
+		List<ClientHttpRequestInterceptor> ris = new ArrayList<ClientHttpRequestInterceptor>();
+		ris.add(ri);
+		rest.setInterceptors(ris);
+		rest.setRequestFactory(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
+
 	}
 
 	@Override
-	public Response<User> getMe() {
+	public User getMe() throws TelegramBotApiException {
 		Response<User> res = null;
 
 		try {
@@ -89,20 +89,17 @@ public class TelegramBotRestApi implements TelegramBotApi {
 					new ParameterizedTypeReference<Response<User>>() {
 					}).getBody();
 		} catch (RestClientException e) {
-			res = new Response<User>();
-			res.ok = false;
-
-			if (e instanceof HttpClientErrorException) {
-				res.error_code = ((HttpClientErrorException) e).getStatusCode().value();
-				res.description = ((HttpClientErrorException) e).getStatusText();
-			}
+			throw new TelegramBotApiException(e);
 		}
 
-		return res;
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
 	}
 
 	@Override
-	public Response<Update[]> getUpdates(Integer offset, Integer limit, Integer timeout) {
+	public Update[] getUpdates(Integer offset, Integer limit, Integer timeout) throws TelegramBotApiException {
 
 		MultiValueMap<String, Object> body = new LinkedMultiValueMap<String, Object>();
 
@@ -124,21 +121,18 @@ public class TelegramBotRestApi implements TelegramBotApi {
 					new ParameterizedTypeReference<Response<Update[]>>() {
 					}).getBody();
 		} catch (RestClientException e) {
-			res = new Response<Update[]>();
-			res.ok = false;
-
-			if (e instanceof HttpClientErrorException) {
-				res.error_code = ((HttpClientErrorException) e).getStatusCode().value();
-				res.description = ((HttpClientErrorException) e).getStatusText();
-			}
+			throw new TelegramBotApiException(e);
 		}
 
-		return res;
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
 	}
 
 	@Override
-	public Response<Message> sendMessage(long chat_id, String text, String parse_mode, Boolean disable_web_page_preview,
-			Integer reply_to_message_id, DummyKeyboard reply_markup) {
+	public Message sendMessage(long chat_id, String text, String parse_mode, Boolean disable_web_page_preview,
+			Integer reply_to_message_id, DummyKeyboard reply_markup) throws TelegramBotApiException {
 
 		if (text == null)
 			throw new InvalidParameterException("(sendMessage) Null value is not allowed for field: text");
@@ -169,20 +163,17 @@ public class TelegramBotRestApi implements TelegramBotApi {
 					new ParameterizedTypeReference<Response<Message>>() {
 					}).getBody();
 		} catch (RestClientException e) {
-			res = new Response<Message>();
-			res.ok = false;
-
-			if (e instanceof HttpClientErrorException) {
-				res.error_code = ((HttpClientErrorException) e).getStatusCode().value();
-				res.description = ((HttpClientErrorException) e).getStatusText();
-			}
+			throw new TelegramBotApiException(e);
 		}
 
-		return res;
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
 	}
 
 	@Override
-	public Response<Message> forwardMessage(long chat_id, long from_chat_id, int message_id) {
+	public Message forwardMessage(long chat_id, long from_chat_id, int message_id) throws TelegramBotApiException {
 
 		MultiValueMap<String, Object> body = new LinkedMultiValueMap<String, Object>();
 
@@ -199,21 +190,18 @@ public class TelegramBotRestApi implements TelegramBotApi {
 					new ParameterizedTypeReference<Response<Message>>() {
 					}).getBody();
 		} catch (RestClientException e) {
-			res = new Response<Message>();
-			res.ok = false;
-
-			if (e instanceof HttpClientErrorException) {
-				res.error_code = ((HttpClientErrorException) e).getStatusCode().value();
-				res.description = ((HttpClientErrorException) e).getStatusText();
-			}
+			throw new TelegramBotApiException(e);
 		}
 
-		return res;
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
 	}
 
 	@Override
-	public Response<Message> sendLocation(long chat_id, float latitude, float longitude, Integer reply_to_message_id,
-			DummyKeyboard reply_markup) {
+	public Message sendLocation(long chat_id, float latitude, float longitude, Integer reply_to_message_id,
+			DummyKeyboard reply_markup) throws TelegramBotApiException {
 
 		MultiValueMap<String, Object> body = new LinkedMultiValueMap<String, Object>();
 
@@ -236,20 +224,17 @@ public class TelegramBotRestApi implements TelegramBotApi {
 					new ParameterizedTypeReference<Response<Message>>() {
 					}).getBody();
 		} catch (RestClientException e) {
-			res = new Response<Message>();
-			res.ok = false;
-
-			if (e instanceof HttpClientErrorException) {
-				res.error_code = ((HttpClientErrorException) e).getStatusCode().value();
-				res.description = ((HttpClientErrorException) e).getStatusText();
-			}
+			throw new TelegramBotApiException(e);
 		}
 
-		return res;
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
 	}
 
 	@Override
-	public void sendChatAction(long chat_id, ChatAction action) {
+	public void sendChatAction(long chat_id, ChatAction action) throws TelegramBotApiException {
 		if (action == null)
 			throw new InvalidParameterException("(sendChatAction) Null value is not allowed for field: action");
 
@@ -268,7 +253,8 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Response<UserProfilePhotos> getUserProfilePhotos(int user_id, Integer offset, Integer limit) {
+	public UserProfilePhotos getUserProfilePhotos(int user_id, Integer offset, Integer limit)
+			throws TelegramBotApiException {
 
 		MultiValueMap<String, Object> body = new LinkedMultiValueMap<String, Object>();
 
@@ -289,21 +275,18 @@ public class TelegramBotRestApi implements TelegramBotApi {
 					new ParameterizedTypeReference<Response<UserProfilePhotos>>() {
 					}).getBody();
 		} catch (RestClientException e) {
-			res = new Response<UserProfilePhotos>();
-			res.ok = false;
-
-			if (e instanceof HttpClientErrorException) {
-				res.error_code = ((HttpClientErrorException) e).getStatusCode().value();
-				res.description = ((HttpClientErrorException) e).getStatusText();
-			}
+			throw new TelegramBotApiException(e);
 		}
 
-		return res;
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
 	}
 
 	@Override
-	public Response<Message> sendPhoto(long chat_id, Resource photo, String caption, Integer reply_to_message_id,
-			DummyKeyboard reply_markup) {
+	public Message sendPhoto(long chat_id, Resource photo, String caption, Integer reply_to_message_id,
+			DummyKeyboard reply_markup) throws TelegramBotApiException {
 		if (photo == null)
 			throw new InvalidParameterException("(sendPhoto) Null value is not allowed for field: photo");
 
@@ -330,21 +313,18 @@ public class TelegramBotRestApi implements TelegramBotApi {
 					new ParameterizedTypeReference<Response<Message>>() {
 					}).getBody();
 		} catch (RestClientException e) {
-			res = new Response<Message>();
-			res.ok = false;
-
-			if (e instanceof HttpClientErrorException) {
-				res.error_code = ((HttpClientErrorException) e).getStatusCode().value();
-				res.description = ((HttpClientErrorException) e).getStatusText();
-			}
+			throw new TelegramBotApiException(e);
 		}
 
-		return res;
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
 	}
 
 	@Override
-	public Response<Message> sendAudio(long chat_id, Resource audio, Integer duration, String performer, String title,
-			Integer reply_to_message_id, DummyKeyboard reply_markup) {
+	public Message sendAudio(long chat_id, Resource audio, Integer duration, String performer, String title,
+			Integer reply_to_message_id, DummyKeyboard reply_markup) throws TelegramBotApiException {
 		if (audio == null)
 			throw new InvalidParameterException("(sendAudio) Null value is not allowed for field: audio");
 
@@ -377,21 +357,18 @@ public class TelegramBotRestApi implements TelegramBotApi {
 					new ParameterizedTypeReference<Response<Message>>() {
 					}).getBody();
 		} catch (RestClientException e) {
-			res = new Response<Message>();
-			res.ok = false;
-
-			if (e instanceof HttpClientErrorException) {
-				res.error_code = ((HttpClientErrorException) e).getStatusCode().value();
-				res.description = ((HttpClientErrorException) e).getStatusText();
-			}
+			throw new TelegramBotApiException(e);
 		}
 
-		return res;
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
 	}
 
 	@Override
-	public Response<Message> sendDocument(long chat_id, Resource document, Integer reply_to_message_id,
-			DummyKeyboard reply_markup) {
+	public Message sendDocument(long chat_id, Resource document, Integer reply_to_message_id, DummyKeyboard reply_markup)
+			throws TelegramBotApiException {
 		if (document == null)
 			throw new InvalidParameterException("(sendDocument) Null value is not allowed for field: document");
 
@@ -415,21 +392,18 @@ public class TelegramBotRestApi implements TelegramBotApi {
 					new ParameterizedTypeReference<Response<Message>>() {
 					}).getBody();
 		} catch (RestClientException e) {
-			res = new Response<Message>();
-			res.ok = false;
-
-			if (e instanceof HttpClientErrorException) {
-				res.error_code = ((HttpClientErrorException) e).getStatusCode().value();
-				res.description = ((HttpClientErrorException) e).getStatusText();
-			}
+			throw new TelegramBotApiException(e);
 		}
 
-		return res;
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
 	}
 
 	@Override
-	public Response<Message> sendSticker(long chat_id, Resource sticker, Integer reply_to_message_id,
-			DummyKeyboard reply_markup) {
+	public Message sendSticker(long chat_id, Resource sticker, Integer reply_to_message_id, DummyKeyboard reply_markup)
+			throws TelegramBotApiException {
 		if (sticker == null)
 			throw new InvalidParameterException("(sendSticker) Null value is not allowed for field: sticker");
 
@@ -453,21 +427,18 @@ public class TelegramBotRestApi implements TelegramBotApi {
 					new ParameterizedTypeReference<Response<Message>>() {
 					}).getBody();
 		} catch (RestClientException e) {
-			res = new Response<Message>();
-			res.ok = false;
-
-			if (e instanceof HttpClientErrorException) {
-				res.error_code = ((HttpClientErrorException) e).getStatusCode().value();
-				res.description = ((HttpClientErrorException) e).getStatusText();
-			}
+			throw new TelegramBotApiException(e);
 		}
 
-		return res;
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
 	}
 
 	@Override
-	public Response<Message> sendVideo(long chat_id, Resource video, Integer duration, String caption,
-			Integer reply_to_message_id, DummyKeyboard reply_markup) {
+	public Message sendVideo(long chat_id, Resource video, Integer duration, String caption, Integer reply_to_message_id,
+			DummyKeyboard reply_markup) throws TelegramBotApiException {
 		if (video == null)
 			throw new InvalidParameterException("(sendVideo) Null value is not allowed for field: video");
 
@@ -497,21 +468,18 @@ public class TelegramBotRestApi implements TelegramBotApi {
 					new ParameterizedTypeReference<Response<Message>>() {
 					}).getBody();
 		} catch (RestClientException e) {
-			res = new Response<Message>();
-			res.ok = false;
-
-			if (e instanceof HttpClientErrorException) {
-				res.error_code = ((HttpClientErrorException) e).getStatusCode().value();
-				res.description = ((HttpClientErrorException) e).getStatusText();
-			}
+			throw new TelegramBotApiException(e);
 		}
 
-		return res;
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
 	}
 
 	@Override
-	public Response<Message> sendVoice(long chat_id, Resource voice, Integer duration, Integer reply_to_message_id,
-			DummyKeyboard reply_markup) {
+	public Message sendVoice(long chat_id, Resource voice, Integer duration, Integer reply_to_message_id,
+			DummyKeyboard reply_markup) throws TelegramBotApiException {
 		if (voice == null)
 			throw new InvalidParameterException("(sendVoice) Null value is not allowed for field: voice");
 
@@ -538,20 +506,17 @@ public class TelegramBotRestApi implements TelegramBotApi {
 					new ParameterizedTypeReference<Response<Message>>() {
 					}).getBody();
 		} catch (RestClientException e) {
-			res = new Response<Message>();
-			res.ok = false;
-
-			if (e instanceof HttpClientErrorException) {
-				res.error_code = ((HttpClientErrorException) e).getStatusCode().value();
-				res.description = ((HttpClientErrorException) e).getStatusText();
-			}
+			throw new TelegramBotApiException(e);
 		}
 
-		return res;
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
 	}
 
 	@Override
-	public Response<File> getFile(String file_id) {
+	public File getFile(String file_id) throws TelegramBotApiException {
 		if (file_id == null)
 			throw new InvalidParameterException("(getFile) Null value is not allowed for field: file_id");
 
@@ -568,23 +533,19 @@ public class TelegramBotRestApi implements TelegramBotApi {
 					new ParameterizedTypeReference<Response<File>>() {
 					}).getBody();
 		} catch (RestClientException e) {
-			res = new Response<File>();
-			res.ok = false;
-
-			if (e instanceof HttpClientErrorException) {
-				res.error_code = ((HttpClientErrorException) e).getStatusCode().value();
-				res.description = ((HttpClientErrorException) e).getStatusText();
-			}
+			throw new TelegramBotApiException(e);
 		}
 
-		return res;
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
 	}
 
 	@Override
 	public Resource getResourceFromTelegramFile(File file) {
 		if (file == null)
-			throw new InvalidParameterException(
-					"(getResourceFromTelegramFile) Null value is not allowed for field: file");
+			throw new InvalidParameterException("(getResourceFromTelegramFile) Null value is not allowed for field: file");
 
 		try {
 			return new UrlResource(file_uri_template.expand(file.file_path));
@@ -594,8 +555,8 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Response<Message> sendMessage(String chat_id, String text, String parse_mode,
-			Boolean disable_web_page_preview, Integer reply_to_message_id, DummyKeyboard reply_markup) {
+	public Message sendMessage(String chat_id, String text, String parse_mode, Boolean disable_web_page_preview,
+			Integer reply_to_message_id, DummyKeyboard reply_markup) throws TelegramBotApiException {
 
 		if (chat_id == null || text == null)
 			throw new InvalidParameterException("(sendMessage) Null value is not allowed for fields: chat_id, text");
@@ -626,20 +587,17 @@ public class TelegramBotRestApi implements TelegramBotApi {
 					new ParameterizedTypeReference<Response<Message>>() {
 					}).getBody();
 		} catch (RestClientException e) {
-			res = new Response<Message>();
-			res.ok = false;
-
-			if (e instanceof HttpClientErrorException) {
-				res.error_code = ((HttpClientErrorException) e).getStatusCode().value();
-				res.description = ((HttpClientErrorException) e).getStatusText();
-			}
+			throw new TelegramBotApiException(e);
 		}
 
-		return res;
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
 	}
 
 	@Override
-	public Response<Message> forwardMessage(String chat_id, String from_chat_id, int message_id) {
+	public Message forwardMessage(String chat_id, String from_chat_id, int message_id) throws TelegramBotApiException {
 		if (chat_id == null || from_chat_id == null)
 			throw new InvalidParameterException(
 					"(forwardMessage) Null value is not allowed for fields: chat_id, from_chat_id");
@@ -659,21 +617,18 @@ public class TelegramBotRestApi implements TelegramBotApi {
 					new ParameterizedTypeReference<Response<Message>>() {
 					}).getBody();
 		} catch (RestClientException e) {
-			res = new Response<Message>();
-			res.ok = false;
-
-			if (e instanceof HttpClientErrorException) {
-				res.error_code = ((HttpClientErrorException) e).getStatusCode().value();
-				res.description = ((HttpClientErrorException) e).getStatusText();
-			}
+			throw new TelegramBotApiException(e);
 		}
 
-		return res;
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
 	}
 
 	@Override
-	public Response<Message> sendLocation(String chat_id, float latitude, float longitude, Integer reply_to_message_id,
-			DummyKeyboard reply_markup) {
+	public Message sendLocation(String chat_id, float latitude, float longitude, Integer reply_to_message_id,
+			DummyKeyboard reply_markup) throws TelegramBotApiException {
 		if (chat_id == null)
 			throw new InvalidParameterException("(sendLocation) Null value is not allowed for field: chat_id");
 
@@ -698,23 +653,19 @@ public class TelegramBotRestApi implements TelegramBotApi {
 					new ParameterizedTypeReference<Response<Message>>() {
 					}).getBody();
 		} catch (RestClientException e) {
-			res = new Response<Message>();
-			res.ok = false;
-
-			if (e instanceof HttpClientErrorException) {
-				res.error_code = ((HttpClientErrorException) e).getStatusCode().value();
-				res.description = ((HttpClientErrorException) e).getStatusText();
-			}
+			throw new TelegramBotApiException(e);
 		}
 
-		return res;
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
 	}
 
 	@Override
 	public void sendChatAction(String chat_id, ChatAction action) {
 		if (chat_id == null || action == null)
-			throw new InvalidParameterException(
-					"(sendChatAction) Null value is not allowed for fields: chat_id, action");
+			throw new InvalidParameterException("(sendChatAction) Null value is not allowed for fields: chat_id, action");
 
 		MultiValueMap<String, Object> body = new LinkedMultiValueMap<String, Object>();
 
@@ -731,8 +682,8 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Response<Message> sendPhoto(String chat_id, Resource photo, String caption, Integer reply_to_message_id,
-			DummyKeyboard reply_markup) {
+	public Message sendPhoto(String chat_id, Resource photo, String caption, Integer reply_to_message_id,
+			DummyKeyboard reply_markup) throws TelegramBotApiException {
 		if (chat_id == null || photo == null)
 			throw new InvalidParameterException("(sendPhoto) Null value is not allowed for fields: chat_id, photo");
 
@@ -759,21 +710,18 @@ public class TelegramBotRestApi implements TelegramBotApi {
 					new ParameterizedTypeReference<Response<Message>>() {
 					}).getBody();
 		} catch (RestClientException e) {
-			res = new Response<Message>();
-			res.ok = false;
-
-			if (e instanceof HttpClientErrorException) {
-				res.error_code = ((HttpClientErrorException) e).getStatusCode().value();
-				res.description = ((HttpClientErrorException) e).getStatusText();
-			}
+			throw new TelegramBotApiException(e);
 		}
 
-		return res;
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
 	}
 
 	@Override
-	public Response<Message> sendAudio(String chat_id, Resource audio, Integer duration, String performer, String title,
-			Integer reply_to_message_id, DummyKeyboard reply_markup) {
+	public Message sendAudio(String chat_id, Resource audio, Integer duration, String performer, String title,
+			Integer reply_to_message_id, DummyKeyboard reply_markup) throws TelegramBotApiException {
 		if (chat_id == null || audio == null)
 			throw new InvalidParameterException("(sendAudio) Null value is not allowed for fields: chat_id, audio");
 
@@ -806,24 +754,20 @@ public class TelegramBotRestApi implements TelegramBotApi {
 					new ParameterizedTypeReference<Response<Message>>() {
 					}).getBody();
 		} catch (RestClientException e) {
-			res = new Response<Message>();
-			res.ok = false;
-
-			if (e instanceof HttpClientErrorException) {
-				res.error_code = ((HttpClientErrorException) e).getStatusCode().value();
-				res.description = ((HttpClientErrorException) e).getStatusText();
-			}
+			throw new TelegramBotApiException(e);
 		}
 
-		return res;
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
 	}
 
 	@Override
-	public Response<Message> sendDocument(String chat_id, Resource document, Integer reply_to_message_id,
-			DummyKeyboard reply_markup) {
+	public Message sendDocument(String chat_id, Resource document, Integer reply_to_message_id,
+			DummyKeyboard reply_markup) throws TelegramBotApiException {
 		if (chat_id == null || document == null)
-			throw new InvalidParameterException(
-					"(sendDocument) Null value is not allowed for fields: chat_id, document");
+			throw new InvalidParameterException("(sendDocument) Null value is not allowed for fields: chat_id, document");
 
 		MultiValueMap<String, Object> body = new LinkedMultiValueMap<String, Object>();
 
@@ -845,21 +789,18 @@ public class TelegramBotRestApi implements TelegramBotApi {
 					new ParameterizedTypeReference<Response<Message>>() {
 					}).getBody();
 		} catch (RestClientException e) {
-			res = new Response<Message>();
-			res.ok = false;
-
-			if (e instanceof HttpClientErrorException) {
-				res.error_code = ((HttpClientErrorException) e).getStatusCode().value();
-				res.description = ((HttpClientErrorException) e).getStatusText();
-			}
+			throw new TelegramBotApiException(e);
 		}
 
-		return res;
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
 	}
 
 	@Override
-	public Response<Message> sendSticker(String chat_id, Resource sticker, Integer reply_to_message_id,
-			DummyKeyboard reply_markup) {
+	public Message sendSticker(String chat_id, Resource sticker, Integer reply_to_message_id, DummyKeyboard reply_markup)
+			throws TelegramBotApiException {
 		if (chat_id == null || sticker == null)
 			throw new InvalidParameterException("(sendSticker) Null value is not allowed for fields: chat_id, sticker");
 
@@ -883,21 +824,18 @@ public class TelegramBotRestApi implements TelegramBotApi {
 					new ParameterizedTypeReference<Response<Message>>() {
 					}).getBody();
 		} catch (RestClientException e) {
-			res = new Response<Message>();
-			res.ok = false;
-
-			if (e instanceof HttpClientErrorException) {
-				res.error_code = ((HttpClientErrorException) e).getStatusCode().value();
-				res.description = ((HttpClientErrorException) e).getStatusText();
-			}
+			throw new TelegramBotApiException(e);
 		}
 
-		return res;
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
 	}
 
 	@Override
-	public Response<Message> sendVideo(String chat_id, Resource video, Integer duration, String caption,
-			Integer reply_to_message_id, DummyKeyboard reply_markup) {
+	public Message sendVideo(String chat_id, Resource video, Integer duration, String caption,
+			Integer reply_to_message_id, DummyKeyboard reply_markup) throws TelegramBotApiException {
 		if (chat_id == null || video == null)
 			throw new InvalidParameterException("(sendVideo) Null value is not allowed for fields: chat_id, video");
 
@@ -927,21 +865,18 @@ public class TelegramBotRestApi implements TelegramBotApi {
 					new ParameterizedTypeReference<Response<Message>>() {
 					}).getBody();
 		} catch (RestClientException e) {
-			res = new Response<Message>();
-			res.ok = false;
-
-			if (e instanceof HttpClientErrorException) {
-				res.error_code = ((HttpClientErrorException) e).getStatusCode().value();
-				res.description = ((HttpClientErrorException) e).getStatusText();
-			}
+			throw new TelegramBotApiException(e);
 		}
 
-		return res;
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
 	}
 
 	@Override
-	public Response<Message> sendVoice(String chat_id, Resource voice, Integer duration, Integer reply_to_message_id,
-			DummyKeyboard reply_markup) {
+	public Message sendVoice(String chat_id, Resource voice, Integer duration, Integer reply_to_message_id,
+			DummyKeyboard reply_markup) throws TelegramBotApiException {
 		if (chat_id == null || voice == null)
 			throw new InvalidParameterException("(sendVoice) Null value is not allowed for fields: chat_id, voice");
 
@@ -968,16 +903,13 @@ public class TelegramBotRestApi implements TelegramBotApi {
 					new ParameterizedTypeReference<Response<Message>>() {
 					}).getBody();
 		} catch (RestClientException e) {
-			res = new Response<Message>();
-			res.ok = false;
-
-			if (e instanceof HttpClientErrorException) {
-				res.error_code = ((HttpClientErrorException) e).getStatusCode().value();
-				res.description = ((HttpClientErrorException) e).getStatusText();
-			}
+			throw new TelegramBotApiException(e);
 		}
 
-		return res;
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
 	}
 
 }

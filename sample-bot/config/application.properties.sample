@@ -3,6 +3,7 @@ spring.application.name= Sample Bot
 bot.token=
 bot.executor.core-pool-size=15
 bot.executor.max-pool-size=15
+pg-logger.save-files=false
 imgur.client-id=
 imgur.commands-file=./imgurcommands.txt
 openweather.api-key=
