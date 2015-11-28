@@ -3,10 +3,11 @@ package it.pwned.telegram.bot;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -16,6 +17,7 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import it.pwned.telegram.bot.api.TelegramBotApi;
@@ -39,7 +41,7 @@ public final class TelegramBot {
 	@Autowired
 	private ThreadPoolTaskExecutor executor;
 
-	private Set<MessageHandler> handlers;
+	private List<MessageHandler> handlers;
 
 	private final ConcurrentMap<Integer, MessageHandler> reply_handlers;
 	private final ConcurrentMap<Integer, MessageHandler> chat_handlers;
@@ -59,7 +61,7 @@ public final class TelegramBot {
 		command_handlers = new ConcurrentHashMap<String, MessageHandler>();
 		reply_handlers = new ConcurrentHashMap<Integer, MessageHandler>();
 		chat_handlers = new ConcurrentHashMap<Integer, MessageHandler>();
-		handlers = new HashSet<MessageHandler>();
+		// handlers = new LinkedList<MessageHandler>();
 
 		thread_ref = new HashMap<MessageHandler, Thread>();
 
@@ -67,9 +69,11 @@ public final class TelegramBot {
 	}
 
 	@Autowired
-	public void setupHandlers(Set<MessageHandler> handlers) {
+	public void setupHandlers(List<MessageHandler> handlers) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Avaible commands:\n");
+
+		Collections.sort(handlers, AnnotationAwareOrderComparator.INSTANCE);
 
 		for (MessageHandler h : handlers) {
 			if (h == null)
@@ -80,9 +84,10 @@ public final class TelegramBot {
 			BotCommand[] commands = h.getClass().getAnnotationsByType(BotCommand.class);
 
 			if (commands.length == 0) {
-				this.handlers.add(h);
 				continue;
 			}
+
+			handlers.remove(h);
 
 			for (BotCommand c : commands) {
 				if (c.command() != null) {
@@ -91,6 +96,8 @@ public final class TelegramBot {
 				}
 			}
 		}
+
+		this.handlers = handlers;
 
 		try {
 			FileUtils.writeStringToFile(new File("commands_help.txt"), sb.toString());
@@ -134,9 +141,10 @@ public final class TelegramBot {
 	}
 
 	public void shutdown() {
-		if (go_on)
+		if (go_on) {
 			log.info("Bot shutting down...");
-		go_on = false;
+			go_on = false;
+		}
 	}
 
 	public void run() throws InterruptedException {
@@ -224,10 +232,7 @@ public final class TelegramBot {
 
 	private static void joinThreadAndIgnoreInterrupt(Thread t) {
 		// @formatter:off
-		try {
-			t.join();
-		} catch (InterruptedException e) {
-		}
+		try { t.join(); } catch (InterruptedException e) { }
 		// @formatter:on
 	}
 

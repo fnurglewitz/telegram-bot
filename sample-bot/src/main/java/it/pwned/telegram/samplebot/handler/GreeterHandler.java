@@ -2,10 +2,13 @@ package it.pwned.telegram.samplebot.handler;
 
 import java.util.concurrent.BlockingQueue;
 
+import org.springframework.core.annotation.Order;
+
 import it.pwned.telegram.bot.MessageHandler;
 import it.pwned.telegram.bot.TelegramBot;
 import it.pwned.telegram.bot.api.type.Message;
 
+@Order(value=1)
 public class GreeterHandler extends MessageHandler {
 
 	public GreeterHandler(TelegramBot bot, BlockingQueue<Message> message_queue) {

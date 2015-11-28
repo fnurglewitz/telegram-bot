@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -39,6 +40,7 @@ import it.pwned.telegram.bot.command.BotCommand;
 import it.pwned.telegram.samplebot.handler.ImgurHandler.ImgurApi.GalleryImage;
 import it.pwned.telegram.samplebot.handler.ImgurHandler.ImgurApi.ImgurResponse;
 
+@Order(value=3)
 @BotCommand(command = "/imgur", description = "Prints avaible imgur commands")
 public class ImgurHandler extends MessageHandler {
 

@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.Resource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -23,6 +24,7 @@ import it.pwned.telegram.bot.api.type.File;
 import it.pwned.telegram.bot.api.type.Message;
 import it.pwned.telegram.bot.api.type.TelegramBotApiException;
 
+@Order(value=2)
 public class PGLoggerHandler extends MessageHandler {
 
 	private static final Logger log = LoggerFactory.getLogger(TelegramBot.class);
