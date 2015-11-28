@@ -14,9 +14,16 @@ public abstract class MessageHandler implements Runnable {
 		this.message_queue = message_queue;
 	}
 
-	public void enqueueMessage(Message m) throws InterruptedException {
+	/**
+	 * 
+	 * @param m message to dispatch
+	 * @return if true the message is forwarded to other generic handlers
+	 * @throws InterruptedException
+	 */
+	public boolean enqueueMessage(Message m) throws InterruptedException {
 		if (m != null)
 			message_queue.put(m);
+		return true;
 	}
 
 	protected abstract boolean processMessage(Message m);

@@ -18,7 +18,6 @@ import net.aksingh.owmjapis.OpenWeatherMap;
 import net.aksingh.owmjapis.OpenWeatherMap.Language;
 import net.aksingh.owmjapis.OpenWeatherMap.Units;
 
-@Order(value=4)
 @BotCommand(command = "/weather", description = "get current weather at a location")
 public final class WeatherHandler extends MessageHandler {
 

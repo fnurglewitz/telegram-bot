@@ -40,7 +40,6 @@ import it.pwned.telegram.bot.command.BotCommand;
 import it.pwned.telegram.samplebot.handler.ImgurHandler.ImgurApi.GalleryImage;
 import it.pwned.telegram.samplebot.handler.ImgurHandler.ImgurApi.ImgurResponse;
 
-@Order(value=3)
 @BotCommand(command = "/imgur", description = "Prints avaible imgur commands")
 public class ImgurHandler extends MessageHandler {
 

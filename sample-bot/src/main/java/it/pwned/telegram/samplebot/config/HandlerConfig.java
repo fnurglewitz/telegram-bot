@@ -13,6 +13,7 @@ import it.pwned.telegram.bot.MessageHandler;
 import it.pwned.telegram.bot.TelegramBot;
 import it.pwned.telegram.bot.api.type.Message;
 import it.pwned.telegram.samplebot.handler.GreeterHandler;
+import it.pwned.telegram.samplebot.handler.HelpHandler;
 import it.pwned.telegram.samplebot.handler.ImgurHandler;
 import it.pwned.telegram.samplebot.handler.PGLoggerHandler;
 import it.pwned.telegram.samplebot.handler.WeatherHandler;
@@ -42,6 +43,12 @@ public class HandlerConfig {
 	public MessageHandler weather(TelegramBot bot, @Value("${openweather.api-key}") String api_key) {
 		LinkedBlockingQueue<Message> message_queue = new LinkedBlockingQueue<Message>();
 		return new WeatherHandler(bot, message_queue);		
+	}
+	
+	@Bean
+	public MessageHandler help(TelegramBot bot) {
+		LinkedBlockingQueue<Message> message_queue = new LinkedBlockingQueue<Message>();
+		return new HelpHandler(bot, message_queue);		
 	}
 	
 }

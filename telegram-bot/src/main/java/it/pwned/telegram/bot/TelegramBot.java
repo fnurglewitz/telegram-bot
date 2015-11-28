@@ -1,7 +1,5 @@
 package it.pwned.telegram.bot;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,7 +11,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Future;
 
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +45,8 @@ public final class TelegramBot {
 	private final ConcurrentMap<String, MessageHandler> command_handlers;
 
 	private final Map<MessageHandler, Thread> thread_ref;
+	
+	private String avaible_commands;
 
 	public TelegramBot(TelegramBotApi api) throws TelegramBotApiException {
 		this.api = api;
@@ -74,6 +73,8 @@ public final class TelegramBot {
 		sb.append("Avaible commands:\n");
 
 		Collections.sort(handlers, AnnotationAwareOrderComparator.INSTANCE);
+		
+		LinkedList<MessageHandler> generic_handlers = new LinkedList<MessageHandler>(); 
 
 		for (MessageHandler h : handlers) {
 			if (h == null)
@@ -84,10 +85,9 @@ public final class TelegramBot {
 			BotCommand[] commands = h.getClass().getAnnotationsByType(BotCommand.class);
 
 			if (commands.length == 0) {
+				generic_handlers.add(h);
 				continue;
 			}
-
-			handlers.remove(h);
 
 			for (BotCommand c : commands) {
 				if (c.command() != null) {
@@ -97,14 +97,13 @@ public final class TelegramBot {
 			}
 		}
 
-		this.handlers = handlers;
-
-		try {
-			FileUtils.writeStringToFile(new File("commands_help.txt"), sb.toString());
-		} catch (IOException e) {
-			// well, shit happens
-			log.warn("Could not save commands help file.", e);
-		}
+		this.handlers = generic_handlers;
+		
+		avaible_commands = sb.toString();
+	}
+	
+	public String getAvaibleCommands() {
+		return this.avaible_commands;
 	}
 
 	public void registerCommand(String command, String description, MessageHandler handler) {
@@ -180,7 +179,11 @@ public final class TelegramBot {
 							MessageHandler handler = null;
 
 							for (MessageHandler h : handlers)
-								h.enqueueMessage(m);
+							{
+								if(!h.enqueueMessage(m)){
+									break;
+								};
+							}
 
 							if (m.is_reply) {
 
