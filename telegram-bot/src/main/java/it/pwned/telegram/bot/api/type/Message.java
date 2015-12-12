@@ -31,6 +31,10 @@ public class Message {
 	public final PhotoSize[] new_chat_photo;
 	public final Boolean delete_chat_photo;
 	public final Boolean group_chat_created;
+	public final Boolean supergroup_chat_created;
+	public final Boolean channel_chat_created;
+	public final Integer migrate_to_chat_id;
+	public final Integer migrate_from_chat_id;
 
 	// utility fields
 	@JsonIgnore
@@ -58,7 +62,13 @@ public class Message {
 			@JsonProperty("new_chat_title") String new_chat_title,
 			@JsonProperty("new_chat_photo") PhotoSize[] new_chat_photo,
 			@JsonProperty("delete_chat_photo") Boolean delete_chat_photo,
-			@JsonProperty("group_chat_created") Boolean group_chat_created) {
+			@JsonProperty("group_chat_created") Boolean group_chat_created,
+			@JsonProperty("supergroup_chat_created") Boolean supergroup_chat_created,
+			@JsonProperty("channel_chat_created") Boolean channel_chat_created,
+			@JsonProperty("migrate_to_chat_id") Integer migrate_to_chat_id,
+			@JsonProperty("migrate_from_chat_id") Integer migrate_from_chat_id
+			
+			) {
 		this.message_id = message_id;
 		this.from = from;
 		this.date = date;
@@ -82,6 +92,10 @@ public class Message {
 		this.new_chat_photo = new_chat_photo;
 		this.delete_chat_photo = delete_chat_photo;
 		this.group_chat_created = group_chat_created;
+		this.supergroup_chat_created = supergroup_chat_created;
+		this.channel_chat_created = channel_chat_created;
+		this.migrate_to_chat_id = migrate_to_chat_id;
+		this.migrate_from_chat_id = migrate_from_chat_id;
 
 		// utility fields
 		this.is_command = (text != null && text.charAt(0) == '/');

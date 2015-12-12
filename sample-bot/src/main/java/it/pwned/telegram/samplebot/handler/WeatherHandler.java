@@ -4,7 +4,6 @@ import java.util.concurrent.BlockingQueue;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.annotation.Order;
 
 import it.pwned.telegram.bot.MessageHandler;
 import it.pwned.telegram.bot.TelegramBot;
