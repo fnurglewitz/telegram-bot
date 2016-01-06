@@ -1,10 +1,13 @@
 package it.pwned.telegram.bot.api;
 
+import java.util.List;
+
 import org.springframework.core.io.Resource;
 
 import it.pwned.telegram.bot.api.type.ChatAction;
 import it.pwned.telegram.bot.api.type.DummyKeyboard;
 import it.pwned.telegram.bot.api.type.File;
+import it.pwned.telegram.bot.api.type.InlineQueryResult;
 import it.pwned.telegram.bot.api.type.Message;
 import it.pwned.telegram.bot.api.type.TelegramBotApiException;
 import it.pwned.telegram.bot.api.type.Update;
@@ -68,23 +71,23 @@ public interface TelegramBotApi {
 	Message sendAudio(String chat_id, Resource audio, Integer duration, String performer, String title,
 			Integer reply_to_message_id, DummyKeyboard reply_markup) throws TelegramBotApiException;
 
-	Message sendDocument(long chat_id, Resource document, Integer reply_to_message_id,
+	Message sendDocument(long chat_id, Resource document, Integer reply_to_message_id, DummyKeyboard reply_markup)
+			throws TelegramBotApiException;
+
+	Message sendDocument(String chat_id, Resource document, Integer reply_to_message_id, DummyKeyboard reply_markup)
+			throws TelegramBotApiException;
+
+	Message sendSticker(long chat_id, Resource sticker, Integer reply_to_message_id, DummyKeyboard reply_markup)
+			throws TelegramBotApiException;
+
+	Message sendSticker(String chat_id, Resource sticker, Integer reply_to_message_id, DummyKeyboard reply_markup)
+			throws TelegramBotApiException;
+
+	Message sendVideo(long chat_id, Resource video, Integer duration, String caption, Integer reply_to_message_id,
 			DummyKeyboard reply_markup) throws TelegramBotApiException;
 
-	Message sendDocument(String chat_id, Resource document, Integer reply_to_message_id,
+	Message sendVideo(String chat_id, Resource video, Integer duration, String caption, Integer reply_to_message_id,
 			DummyKeyboard reply_markup) throws TelegramBotApiException;
-
-	Message sendSticker(long chat_id, Resource sticker, Integer reply_to_message_id,
-			DummyKeyboard reply_markup) throws TelegramBotApiException;
-
-	Message sendSticker(String chat_id, Resource sticker, Integer reply_to_message_id,
-			DummyKeyboard reply_markup) throws TelegramBotApiException;
-
-	Message sendVideo(long chat_id, Resource video, Integer duration, String caption,
-			Integer reply_to_message_id, DummyKeyboard reply_markup) throws TelegramBotApiException;
-
-	Message sendVideo(String chat_id, Resource video, Integer duration, String caption,
-			Integer reply_to_message_id, DummyKeyboard reply_markup) throws TelegramBotApiException;
 
 	Message sendVoice(long chat_id, Resource voice, Integer duration, Integer reply_to_message_id,
 			DummyKeyboard reply_markup) throws TelegramBotApiException;
@@ -95,5 +98,8 @@ public interface TelegramBotApi {
 	File getFile(String file_id) throws TelegramBotApiException;
 
 	Resource getResourceFromTelegramFile(File file) throws TelegramBotApiException;
+
+	Boolean answerInlineQuery(String inline_query_id, List<InlineQueryResult> results, Integer cache_time,
+			Boolean is_personal, String next_offset) throws TelegramBotApiException;
 
 }

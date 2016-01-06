@@ -33,6 +33,7 @@ import it.pwned.telegram.bot.api.debug.LoggingRequestInterceptor;
 import it.pwned.telegram.bot.api.type.ChatAction;
 import it.pwned.telegram.bot.api.type.DummyKeyboard;
 import it.pwned.telegram.bot.api.type.File;
+import it.pwned.telegram.bot.api.type.InlineQueryResult;
 import it.pwned.telegram.bot.api.type.Message;
 import it.pwned.telegram.bot.api.type.Response;
 import it.pwned.telegram.bot.api.type.TelegramBotApiException;
@@ -910,6 +911,46 @@ public class TelegramBotRestApi implements TelegramBotApi {
 			throw new TelegramBotApiException(res.description);
 
 		return res.result;
+	}
+
+	@Override
+	public Boolean answerInlineQuery(String inline_query_id, List<InlineQueryResult> results, Integer cache_time,
+			Boolean is_personal, String next_offset) throws TelegramBotApiException {
+
+		if (inline_query_id == null || results == null || results.size() == 0)
+			throw new InvalidParameterException("(sendVoice) Null value is not allowed for fields: inline_query_id, results");
+
+		MultiValueMap<String, Object> body = new LinkedMultiValueMap<String, Object>();
+
+		body.add("inline_query_id", inline_query_id);
+		body.add("results", results);
+
+		if (cache_time != null)
+			body.add("cache_time", cache_time);
+
+		if (is_personal != null)
+			body.add("is_personal", is_personal);
+
+		if (next_offset != null)
+			body.add("next_offset", next_offset);
+
+		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
+
+		Response<Boolean> res = null;
+
+		try {
+			res = rest.exchange(api_uri_template.expand("answerInlineQuery"), HttpMethod.POST, entity,
+					new ParameterizedTypeReference<Response<Boolean>>() {
+					}).getBody();
+		} catch (RestClientException e) {
+			throw new TelegramBotApiException(e);
+		}
+
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
+
 	}
 
 }
