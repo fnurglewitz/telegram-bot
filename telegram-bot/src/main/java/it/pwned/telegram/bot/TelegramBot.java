@@ -18,6 +18,8 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import it.pwned.telegram.bot.api.TelegramBotApi;
+import it.pwned.telegram.bot.api.type.InlineQueryResult;
+import it.pwned.telegram.bot.api.type.InlineQueryResultPhoto;
 import it.pwned.telegram.bot.api.type.Message;
 import it.pwned.telegram.bot.api.type.TelegramBotApiException;
 import it.pwned.telegram.bot.api.type.Update;
@@ -172,6 +174,43 @@ public final class TelegramBot {
 
 						if (u.update_id > last_update)
 							last_update = u.update_id;
+						
+						// TODO: Create injectable handler, this shit is just for test
+						if(u.inline_query != null) {
+							
+							List<InlineQueryResult> lst = new LinkedList<InlineQueryResult>();
+							
+							lst.add(new InlineQueryResultPhoto(
+									"photo1",
+									"http://www.olneymiddle.milton-keynes.sch.uk/Year6/wp-content/uploads/2014/02/number-6-md-Copy.png",
+									null,null,
+									"http://www.olneymiddle.milton-keynes.sch.uk/Year6/wp-content/uploads/2014/02/number-6-md-Copy.png",
+									null,null,null,null,null,null
+									));
+
+							lst.add(new InlineQueryResultPhoto(
+									"photo2",
+									"http://www.olneymiddle.milton-keynes.sch.uk/Year6/wp-content/uploads/2014/02/number-6-md-Copy.png",
+									null,null,
+									"http://www.olneymiddle.milton-keynes.sch.uk/Year6/wp-content/uploads/2014/02/number-6-md-Copy.png",
+									null,null,null,null,null,null
+									));
+							
+							lst.add(new InlineQueryResultPhoto(
+									"photo3",
+									"http://www.olneymiddle.milton-keynes.sch.uk/Year6/wp-content/uploads/2014/02/number-6-md-Copy.png",
+									null,null,
+									"http://www.olneymiddle.milton-keynes.sch.uk/Year6/wp-content/uploads/2014/02/number-6-md-Copy.png",
+									null,null,null,null,null,null
+									));
+							
+							try {
+								api.answerInlineQuery(u.inline_query.id, lst, null, null, null);
+							} catch (TelegramBotApiException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
 
 						if (u.message != null) {
 
