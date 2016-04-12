@@ -4,29 +4,25 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import it.pwned.telegram.bot.UpdateHandler;
 import it.pwned.telegram.bot.api.TelegramBotApi;
 import it.pwned.telegram.bot.api.type.InlineQueryResult;
 import it.pwned.telegram.bot.api.type.InlineQueryResultPhoto;
 import it.pwned.telegram.bot.api.type.Message;
 import it.pwned.telegram.bot.api.type.TelegramBotApiException;
 import it.pwned.telegram.bot.api.type.Update;
+import it.pwned.telegram.bot.handler.UpdateHandler;
+import it.pwned.telegram.samplebot.handler.AoE2Handler;
 import it.pwned.telegram.samplebot.handler.GreeterHandler;
 import it.pwned.telegram.samplebot.handler.ImgurHandler;
 
 @Configuration
 public class HandlerConfig {
-
-	@Bean(name = "tgUpdateHandlers")
-	public ThreadGroup tgHandlers() {
-		return new ThreadGroup("tgUpdateHandlers");
-	}
 
 	@Bean
 	@Order(value = 2)
@@ -36,37 +32,21 @@ public class HandlerConfig {
 
 	@Bean
 	@Order(value = 3)
-	public UpdateHandler imgur(TelegramBotApi api, ThreadPoolTaskExecutor executor,
-			@Qualifier("tgUpdateHandlers") ThreadGroup tg) {
+	public UpdateHandler imgur(TelegramBotApi api, ThreadPoolTaskExecutor executor) {
 		LinkedBlockingQueue<Message> message_queue = new LinkedBlockingQueue<Message>();
 		ImgurHandler handler = new ImgurHandler(api, message_queue, executor);
-		new Thread(tg, handler).start();
 		return handler;
 	}
 
 	@Bean
 	@Order(value = 1)
-	public UpdateHandler aoe2(TelegramBotApi api, ThreadPoolTaskExecutor executor) {
-
-		return new UpdateHandler() {
-
-			@Override
-			public boolean submit(Update u) {
-				if (u.message.text != null && u.message.text.equals("30"))
-					executor.submit(() -> {
-						try {
-							api.sendMessage(u.message.chat.id, "wololo!", null, null, u.message.message_id, null);
-						} catch (Exception e) {
-						}
-					});
-				return false;
-			}
-
-		};
+	public UpdateHandler aoe2(TelegramBotApi api, ThreadPoolTaskExecutor executor, @Value("${aoe2.taunts}") String taunts_path) {
+		LinkedBlockingQueue<Message> message_queue = new LinkedBlockingQueue<Message>();
+		return new AoE2Handler(api, message_queue, executor, taunts_path);
 
 	}
 	
-	@Bean
+	@Bean(name="inline_handler")
 	public UpdateHandler inlineHandler(TelegramBotApi api, ThreadPoolTaskExecutor executor) {
 	
 		return new UpdateHandler() {
@@ -106,6 +86,16 @@ public class HandlerConfig {
 					e.printStackTrace();
 				}
 				return false;
+			}
+
+			@Override
+			public boolean requiresThread() {
+				return false;
+			}
+
+			@Override
+			public Runnable getRunnable() {
+				return null;
 			}
 			
 		};

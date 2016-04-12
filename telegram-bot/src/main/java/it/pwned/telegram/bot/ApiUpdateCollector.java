@@ -33,6 +33,7 @@ public class ApiUpdateCollector implements UpdateCollector, Runnable {
 			try {
 				updates = api.getUpdates(last_update + 1, null, 60);
 			} catch (TelegramBotApiException ae) {
+				updates = null;
 			}
 
 			if (updates != null && updates.length > 0) {

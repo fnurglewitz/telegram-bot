@@ -2,10 +2,10 @@ package it.pwned.telegram.samplebot.handler;
 
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import it.pwned.telegram.bot.UpdateHandler;
 import it.pwned.telegram.bot.api.TelegramBotApi;
 import it.pwned.telegram.bot.api.type.Message;
 import it.pwned.telegram.bot.api.type.Update;
+import it.pwned.telegram.bot.handler.UpdateHandler;
 
 public class GreeterHandler implements UpdateHandler {
 
@@ -45,6 +45,16 @@ public class GreeterHandler implements UpdateHandler {
 		}
 
 		return true;
+	}
+
+	@Override
+	public boolean requiresThread() {
+		return false;
+	}
+
+	@Override
+	public Runnable getRunnable() {
+		return null;
 	}
 
 }

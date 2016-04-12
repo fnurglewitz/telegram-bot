@@ -30,13 +30,13 @@ import org.springframework.web.util.UriTemplate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import it.pwned.telegram.bot.UpdateHandler;
 import it.pwned.telegram.bot.api.TelegramBotApi;
 import it.pwned.telegram.bot.api.type.ChatAction;
 import it.pwned.telegram.bot.api.type.Message;
 import it.pwned.telegram.bot.api.type.SendAction;
 import it.pwned.telegram.bot.api.type.TelegramBotApiException;
 import it.pwned.telegram.bot.api.type.Update;
+import it.pwned.telegram.bot.handler.UpdateHandler;
 import it.pwned.telegram.samplebot.handler.ImgurHandler.ImgurApi.GalleryImage;
 import it.pwned.telegram.samplebot.handler.ImgurHandler.ImgurApi.ImgurResponse;
 
@@ -363,6 +363,16 @@ public class ImgurHandler implements UpdateHandler, Runnable {
 				go_on = false;
 			}
 		}
+	}
+
+	@Override
+	public boolean requiresThread() {
+		return true;
+	}
+
+	@Override
+	public Runnable getRunnable() {
+		return this;
 	}
 
 }

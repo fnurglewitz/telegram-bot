@@ -1,4 +1,4 @@
-package it.pwned.telegram.bot;
+package it.pwned.telegram.bot.handler;
 
 import it.pwned.telegram.bot.api.type.Update;
 
@@ -9,5 +9,9 @@ public interface UpdateHandler {
 	 * @return if true the Update will be forwarded to other handlers
 	 */
 	public boolean submit(Update u);
+	
+	public boolean requiresThread();
+	
+	public Runnable getRunnable();
 
 }

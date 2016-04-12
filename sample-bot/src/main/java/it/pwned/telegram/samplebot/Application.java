@@ -6,6 +6,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,10 +19,12 @@ import it.pwned.telegram.bot.StandardUpdateDispatcher;
 import it.pwned.telegram.bot.TelegramBot;
 import it.pwned.telegram.bot.UpdateCollector;
 import it.pwned.telegram.bot.UpdateDispatcher;
-import it.pwned.telegram.bot.UpdateHandler;
 import it.pwned.telegram.bot.api.TelegramBotApi;
 import it.pwned.telegram.bot.api.TelegramBotRestApi;
 import it.pwned.telegram.bot.api.type.Update;
+import it.pwned.telegram.bot.handler.StandardUpdateHandlerManager;
+import it.pwned.telegram.bot.handler.UpdateHandler;
+import it.pwned.telegram.bot.handler.UpdateHandlerManager;
 import it.pwned.telegram.samplebot.config.HandlerConfig;
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
@@ -50,16 +53,21 @@ public class Application {
 	}
 
 	@Bean
-	UpdateCollector updateCollector(TelegramBotApi api) {
+	public UpdateCollector updateCollector(TelegramBotApi api) {
 		LinkedBlockingQueue<Update> update_queue = new LinkedBlockingQueue<Update>();
 		ApiUpdateCollector collector = new ApiUpdateCollector(api, update_queue);
 		new Thread(collector).start();
 		return collector;
 	}
+	
+	@Bean
+	public UpdateHandlerManager uhManager(List<UpdateHandler> handlers, @Qualifier(value="inline_handler") UpdateHandler inline_handler) {
+		return new StandardUpdateHandlerManager(handlers,inline_handler);
+	}
 
 	@Bean
-	UpdateDispatcher updateDispatcher(List<UpdateHandler> handlers) {
-		return new StandardUpdateDispatcher(handlers, null);
+	public UpdateDispatcher updateDispatcher(UpdateHandlerManager manager) {
+		return new StandardUpdateDispatcher(manager);
 	}
 
 	@Bean
