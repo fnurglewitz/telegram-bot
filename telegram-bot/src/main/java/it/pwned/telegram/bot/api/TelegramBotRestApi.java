@@ -33,13 +33,13 @@ import it.pwned.telegram.bot.api.debug.LoggingRequestInterceptor;
 import it.pwned.telegram.bot.api.type.ChatAction;
 import it.pwned.telegram.bot.api.type.DummyKeyboard;
 import it.pwned.telegram.bot.api.type.File;
-import it.pwned.telegram.bot.api.type.InlineQueryResult;
 import it.pwned.telegram.bot.api.type.Message;
 import it.pwned.telegram.bot.api.type.Response;
 import it.pwned.telegram.bot.api.type.TelegramBotApiException;
 import it.pwned.telegram.bot.api.type.Update;
 import it.pwned.telegram.bot.api.type.User;
 import it.pwned.telegram.bot.api.type.UserProfilePhotos;
+import it.pwned.telegram.bot.api.type.inline.InlineQueryResult;
 
 public class TelegramBotRestApi implements TelegramBotApi {
 

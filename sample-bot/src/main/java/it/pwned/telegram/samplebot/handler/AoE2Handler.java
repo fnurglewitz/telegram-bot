@@ -36,14 +36,14 @@ public class AoE2Handler implements UpdateHandler, Runnable {
 	@Override
 	public boolean submit(Update u) {
 		boolean result = true;
-		if (catafrutti.equals(u.message.chat.id)) {
+		if (catafrutti.equals(u.message.chat.id) || "private".equals(u.message.chat.type)) {
 			try {
 				this.message_queue.put(u.message);
 			} catch (InterruptedException e) {
 				// shit happens
 			}
 
-			if (u.message.new_chat_participant != null)
+			if (u.message.new_chat_member != null)
 				result = false;
 		}
 		return result;
@@ -198,7 +198,7 @@ public class AoE2Handler implements UpdateHandler, Runnable {
 
 		executor.submit(() -> {
 
-			if (m.new_chat_participant != null) {
+			if (m.new_chat_member != null) {
 				try {
 					api.sendVoice(m.chat.id, new FileSystemResource(getTauntPathByNumberAndCulture(8)), null, m.message_id, null);
 				} catch (TelegramBotApiException e) {

@@ -11,11 +11,11 @@ import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import it.pwned.telegram.bot.api.TelegramBotApi;
-import it.pwned.telegram.bot.api.type.InlineQueryResult;
-import it.pwned.telegram.bot.api.type.InlineQueryResultPhoto;
 import it.pwned.telegram.bot.api.type.Message;
 import it.pwned.telegram.bot.api.type.TelegramBotApiException;
 import it.pwned.telegram.bot.api.type.Update;
+import it.pwned.telegram.bot.api.type.inline.InlineQueryResult;
+import it.pwned.telegram.bot.api.type.inline.InlineQueryResultPhoto;
 import it.pwned.telegram.bot.handler.UpdateHandler;
 import it.pwned.telegram.samplebot.handler.AoE2Handler;
 import it.pwned.telegram.samplebot.handler.GreeterHandler;

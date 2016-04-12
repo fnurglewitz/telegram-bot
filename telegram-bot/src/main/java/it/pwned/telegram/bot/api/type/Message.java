@@ -16,6 +16,7 @@ public class Message {
 	public final Integer forward_date;
 	public final Message reply_to_message;
 	public final String text;
+	public final MessageEntity[] entities;
 	public final Audio audio;
 	public final Document document;
 	public final PhotoSize[] photo;
@@ -25,8 +26,9 @@ public class Message {
 	public final String caption;
 	public final Contact contact;
 	public final Location location;
-	public final User new_chat_participant;
-	public final User left_chat_participant;
+	public final Venue venue;
+	public final User new_chat_member;
+	public final User left_chat_member;
 	public final String new_chat_title;
 	public final PhotoSize[] new_chat_photo;
 	public final Boolean delete_chat_photo;
@@ -35,6 +37,7 @@ public class Message {
 	public final Boolean channel_chat_created;
 	public final Integer migrate_to_chat_id;
 	public final Integer migrate_from_chat_id;
+	public final Message pinned_message;
 
 	// utility fields
 	@JsonIgnore
@@ -52,23 +55,22 @@ public class Message {
 			@JsonProperty("date") Integer date, @JsonProperty("chat") Chat chat,
 			@JsonProperty("forward_from") User forward_from, @JsonProperty("forward_date") Integer forward_date,
 			@JsonProperty("reply_to_message") Message reply_to_message, @JsonProperty("text") String text,
-			@JsonProperty("audio") Audio audio, @JsonProperty("document") Document document,
-			@JsonProperty("photo") PhotoSize[] photo, @JsonProperty("sticker") Sticker sticker,
-			@JsonProperty("video") Video video, @JsonProperty("voice") Voice voice,
+			@JsonProperty("entities") MessageEntity[] entities, @JsonProperty("audio") Audio audio,
+			@JsonProperty("document") Document document, @JsonProperty("photo") PhotoSize[] photo,
+			@JsonProperty("sticker") Sticker sticker, @JsonProperty("video") Video video, @JsonProperty("voice") Voice voice,
 			@JsonProperty("caption") String caption, @JsonProperty("contact") Contact contact,
-			@JsonProperty("location") Location location,
-			@JsonProperty("new_chat_participant") User new_chat_participant,
-			@JsonProperty("left_chat_participant") User left_chat_participant,
-			@JsonProperty("new_chat_title") String new_chat_title,
-			@JsonProperty("new_chat_photo") PhotoSize[] new_chat_photo,
+			@JsonProperty("location") Location location, @JsonProperty("venue") Venue venue,
+			@JsonProperty("new_chat_member") User new_chat_member, @JsonProperty("left_chat_member") User left_chat_member,
+			@JsonProperty("new_chat_title") String new_chat_title, @JsonProperty("new_chat_photo") PhotoSize[] new_chat_photo,
 			@JsonProperty("delete_chat_photo") Boolean delete_chat_photo,
 			@JsonProperty("group_chat_created") Boolean group_chat_created,
 			@JsonProperty("supergroup_chat_created") Boolean supergroup_chat_created,
 			@JsonProperty("channel_chat_created") Boolean channel_chat_created,
 			@JsonProperty("migrate_to_chat_id") Integer migrate_to_chat_id,
-			@JsonProperty("migrate_from_chat_id") Integer migrate_from_chat_id
-			
-			) {
+			@JsonProperty("migrate_from_chat_id") Integer migrate_from_chat_id,
+			@JsonProperty("pinned_message") Message pinned_message
+
+	) {
 		this.message_id = message_id;
 		this.from = from;
 		this.date = date;
@@ -77,6 +79,7 @@ public class Message {
 		this.forward_date = forward_date;
 		this.reply_to_message = reply_to_message;
 		this.text = text;
+		this.entities = entities;
 		this.audio = audio;
 		this.document = document;
 		this.photo = photo;
@@ -86,8 +89,9 @@ public class Message {
 		this.caption = caption;
 		this.contact = contact;
 		this.location = location;
-		this.new_chat_participant = new_chat_participant;
-		this.left_chat_participant = left_chat_participant;
+		this.venue = venue;
+		this.new_chat_member = new_chat_member;
+		this.left_chat_member = left_chat_member;
 		this.new_chat_title = new_chat_title;
 		this.new_chat_photo = new_chat_photo;
 		this.delete_chat_photo = delete_chat_photo;
@@ -96,6 +100,7 @@ public class Message {
 		this.channel_chat_created = channel_chat_created;
 		this.migrate_to_chat_id = migrate_to_chat_id;
 		this.migrate_from_chat_id = migrate_from_chat_id;
+		this.pinned_message = pinned_message;
 
 		// utility fields
 		this.is_command = (text != null && text.charAt(0) == '/');
@@ -105,11 +110,11 @@ public class Message {
 			if (cmd_and_params[0].indexOf('@') > 0) {
 				String[] cmd_and_botname = cmd_and_params[0].split("@");
 
-				this.command = cmd_and_botname[0];
-				this.command_recipient = cmd_and_botname[1];
+				this.command = cmd_and_botname[0].trim();
+				this.command_recipient = cmd_and_botname[1].trim();
 			} else {
 				this.command_recipient = null;
-				this.command = cmd_and_params[0];
+				this.command = cmd_and_params[0].trim();
 
 			}
 
