@@ -20,6 +20,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
@@ -29,18 +30,17 @@ import org.springframework.web.util.UriTemplate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import it.pwned.telegram.bot.MessageHandler;
-import it.pwned.telegram.bot.TelegramBot;
+import it.pwned.telegram.bot.UpdateHandler;
+import it.pwned.telegram.bot.api.TelegramBotApi;
 import it.pwned.telegram.bot.api.type.ChatAction;
 import it.pwned.telegram.bot.api.type.Message;
 import it.pwned.telegram.bot.api.type.SendAction;
 import it.pwned.telegram.bot.api.type.TelegramBotApiException;
-import it.pwned.telegram.bot.command.BotCommand;
+import it.pwned.telegram.bot.api.type.Update;
 import it.pwned.telegram.samplebot.handler.ImgurHandler.ImgurApi.GalleryImage;
 import it.pwned.telegram.samplebot.handler.ImgurHandler.ImgurApi.ImgurResponse;
 
-@BotCommand(command = "/imgur", description = "Prints avaible imgur commands")
-public class ImgurHandler extends MessageHandler {
+public class ImgurHandler implements UpdateHandler, Runnable {
 
 	static class ImgurApi {
 
@@ -238,13 +238,17 @@ public class ImgurHandler extends MessageHandler {
 
 	private static final Logger log = LoggerFactory.getLogger(ImgurHandler.class);
 	private ImgurApi api;
+	private final TelegramBotApi t_api;
 	private final Random rand;
 	private final Map<String, String[]> subreddits;
 	private String avaible_cmds;
+	private final ThreadPoolTaskExecutor executor;
+	private final BlockingQueue<Message> message_queue;
 
-	public ImgurHandler(TelegramBot bot, BlockingQueue<Message> message_queue) {
-		super(bot, message_queue);
-
+	public ImgurHandler(TelegramBotApi api, BlockingQueue<Message> message_queue, ThreadPoolTaskExecutor executor) {
+		this.t_api = api;
+		this.executor = executor;
+		this.message_queue = message_queue;
 		this.subreddits = new HashMap<String, String[]>();
 		this.rand = new Random();
 	}
@@ -265,7 +269,6 @@ public class ImgurHandler extends MessageHandler {
 				String[] splitted = line.split(",");
 				sb.append(String.format("/%s : %s\n", splitted[0], splitted[1]));
 				subreddits.put(String.format("/%s", splitted[0]), Arrays.copyOfRange(splitted, 2, splitted.length));
-				bot.registerCommand(String.format("/%s", splitted[0]), splitted[1], this);
 			}
 		} catch (IOException e) {
 			e.printStackTrace(); // shit happens
@@ -276,24 +279,33 @@ public class ImgurHandler extends MessageHandler {
 		log.info(this.avaible_cmds);
 	}
 
-	@Override
-	protected boolean processMessage(Message m) {
-
-		if (m.is_command && "/imgur".equals(m.text)) {
+	public boolean submit(Update u) {
+		if (u.message.is_command && ("/imgur".equals(u.message.text) || subreddits.containsKey(u.message.command)))
 			try {
-				bot.api.sendMessage(m.chat.id, this.avaible_cmds, null, null, null, null);
+				this.message_queue.put(u.message);
+			} catch (InterruptedException e) {
+				// shit happens
+			}
+		return true;
+	}
+
+	private void processMessage(Message m) {
+
+		if ("/imgur".equals(m.text)) {
+			try {
+				t_api.sendMessage(m.chat.id, this.avaible_cmds, null, null, null, null);
 			} catch (TelegramBotApiException e) {
 			}
 		} else {
 
 			final String[] array_ref = subreddits.get(m.command);
 
-			bot.submitToExecutor(() -> {
+			executor.submit(() -> {
 				String subreddit = array_ref[new Random().nextInt(array_ref.length)];
 
 				try {
 
-					bot.api.sendChatAction(m.chat.id, ChatAction.upload_photo);
+					t_api.sendChatAction(m.chat.id, ChatAction.upload_photo);
 
 					try {
 						int retry = 5;
@@ -313,18 +325,18 @@ public class ImgurHandler extends MessageHandler {
 
 							switch (sa) {
 							case Photo:
-								bot.api.sendPhoto(m.chat.id, new UrlResource(rand_img.link), rand_img.title, null, null);
+								t_api.sendPhoto(m.chat.id, new UrlResource(rand_img.link), rand_img.title, null, null);
 								break;
 							default:
-								bot.api.sendDocument(m.chat.id, new UrlResource(rand_img.link), null, null);
+								t_api.sendDocument(m.chat.id, new UrlResource(rand_img.link), null, null);
 							}
 
 						} else
-							bot.api.sendMessage(m.chat.id, "Error while fetching the image.", null, null, null, null);
+							t_api.sendMessage(m.chat.id, "Error while fetching the image.", null, null, null, null);
 
 					} catch (Exception e) {
 						log.error("Error while fetching the image.", e);
-						bot.api.sendMessage(m.chat.id, "Error while fetching the image.", null, null, null, null);
+						t_api.sendMessage(m.chat.id, "Error while fetching the image.", null, null, null, null);
 					}
 
 				} catch (TelegramBotApiException ae) {
@@ -334,8 +346,23 @@ public class ImgurHandler extends MessageHandler {
 			});
 
 		}
+	}
 
-		return true;
+	@Override
+	public void run() {
+		boolean go_on = true;
+		while (go_on || !message_queue.isEmpty()) {
+			try {
+
+				processMessage(message_queue.take());
+
+				if (Thread.currentThread().isInterrupted())
+					throw new InterruptedException();
+
+			} catch (InterruptedException e) {
+				go_on = false;
+			}
+		}
 	}
 
 }

@@ -1,6 +1,7 @@
 package it.pwned.telegram.samplebot;
 
-import javax.sql.DataSource;
+import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,14 +11,18 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import it.pwned.telegram.bot.ApiUpdateCollector;
+import it.pwned.telegram.bot.StandardUpdateDispatcher;
 import it.pwned.telegram.bot.TelegramBot;
+import it.pwned.telegram.bot.UpdateCollector;
+import it.pwned.telegram.bot.UpdateDispatcher;
+import it.pwned.telegram.bot.UpdateHandler;
 import it.pwned.telegram.bot.api.TelegramBotApi;
 import it.pwned.telegram.bot.api.TelegramBotRestApi;
+import it.pwned.telegram.bot.api.type.Update;
 import it.pwned.telegram.samplebot.config.HandlerConfig;
-
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
 
@@ -45,14 +50,22 @@ public class Application {
 	}
 
 	@Bean
-	public JdbcTemplate jdbcTemplate(DataSource ds) {
-		JdbcTemplate jdbc = new JdbcTemplate(ds);
-		return jdbc;
+	UpdateCollector updateCollector(TelegramBotApi api) {
+		LinkedBlockingQueue<Update> update_queue = new LinkedBlockingQueue<Update>();
+		ApiUpdateCollector collector = new ApiUpdateCollector(api, update_queue);
+		new Thread(collector).start();
+		return collector;
 	}
 
 	@Bean
-	public TelegramBot telegramBot(TelegramBotApi api) throws Exception {
-		return new TelegramBot(api);
+	UpdateDispatcher updateDispatcher(List<UpdateHandler> handlers) {
+		return new StandardUpdateDispatcher(handlers, null);
+	}
+
+	@Bean
+	public TelegramBot telegramBot(TelegramBotApi api, UpdateCollector collector, UpdateDispatcher dispatcher)
+			throws Exception {
+		return new TelegramBot(api, collector, dispatcher);
 	}
 
 	public static void main(String args[]) throws BeansException, Exception {
@@ -72,7 +85,7 @@ public class Application {
 		bot.run();
 
 		ctx.close();
-		
+
 		log.info("Bye");
 	}
 

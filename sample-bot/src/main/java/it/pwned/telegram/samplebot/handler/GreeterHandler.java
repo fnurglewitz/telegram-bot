@@ -1,39 +1,43 @@
 package it.pwned.telegram.samplebot.handler;
 
-import java.util.concurrent.BlockingQueue;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import org.springframework.core.annotation.Order;
-
-import it.pwned.telegram.bot.MessageHandler;
-import it.pwned.telegram.bot.TelegramBot;
+import it.pwned.telegram.bot.UpdateHandler;
+import it.pwned.telegram.bot.api.TelegramBotApi;
 import it.pwned.telegram.bot.api.type.Message;
+import it.pwned.telegram.bot.api.type.Update;
 
-@Order(value=1)
-public class GreeterHandler extends MessageHandler {
+public class GreeterHandler implements UpdateHandler {
 
-	public GreeterHandler(TelegramBot bot, BlockingQueue<Message> message_queue) {
-		super(bot, message_queue);
+	private final TelegramBotApi api;
+	private final ThreadPoolTaskExecutor executor;
+
+	public GreeterHandler(TelegramBotApi api, ThreadPoolTaskExecutor executor) {
+		this.api = api;
+		this.executor = executor;
 	}
 
-	@Override
-	protected boolean processMessage(Message m) {
+	public boolean submit(Update u) {
+
+		Message m = u.message;
+
+		if (m == null || (m.new_chat_participant == null && m.left_chat_participant == null))
+			return true;
 
 		if (m.new_chat_participant != null) {
 
-			bot.submitToExecutor(() -> {
+			executor.submit(() -> {
 				try {
-					bot.api.sendMessage(m.chat.id, String.format("Welcome, %s!", m.new_chat_participant.first_name), null, null,
+					api.sendMessage(m.chat.id, String.format("Welcome, %s!", m.new_chat_participant.first_name), null, null,
 							m.message_id, null);
 				} catch (Exception e) {
 				}
 			});
-		}
+		} else {
 
-		if (m.left_chat_participant != null) {
-
-			bot.submitToExecutor(() -> {
+			executor.submit(() -> {
 				try {
-					bot.api.sendMessage(m.chat.id, String.format("Goodbye, %s!", m.left_chat_participant.first_name), null, null,
+					api.sendMessage(m.chat.id, String.format("Goodbye, %s!", m.left_chat_participant.first_name), null, null,
 							m.message_id, null);
 				} catch (Exception e) {
 				}

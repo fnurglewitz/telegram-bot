@@ -1,54 +1,115 @@
 package it.pwned.telegram.samplebot.config;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.core.annotation.Order;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import it.pwned.telegram.bot.MessageHandler;
-import it.pwned.telegram.bot.TelegramBot;
+import it.pwned.telegram.bot.UpdateHandler;
+import it.pwned.telegram.bot.api.TelegramBotApi;
+import it.pwned.telegram.bot.api.type.InlineQueryResult;
+import it.pwned.telegram.bot.api.type.InlineQueryResultPhoto;
 import it.pwned.telegram.bot.api.type.Message;
+import it.pwned.telegram.bot.api.type.TelegramBotApiException;
+import it.pwned.telegram.bot.api.type.Update;
 import it.pwned.telegram.samplebot.handler.GreeterHandler;
-import it.pwned.telegram.samplebot.handler.HelpHandler;
 import it.pwned.telegram.samplebot.handler.ImgurHandler;
-import it.pwned.telegram.samplebot.handler.PGLoggerHandler;
-import it.pwned.telegram.samplebot.handler.WeatherHandler;
 
 @Configuration
 public class HandlerConfig {
-	
+
+	@Bean(name = "tgUpdateHandlers")
+	public ThreadGroup tgHandlers() {
+		return new ThreadGroup("tgUpdateHandlers");
+	}
+
 	@Bean
-	public MessageHandler pgLogger(TelegramBot bot, ObjectMapper mapper, JdbcTemplate jdbc, @Value("${pg-logger.save-files:#{false}}") Boolean save_files) {
+	@Order(value = 2)
+	public UpdateHandler greeter(TelegramBotApi api, ThreadPoolTaskExecutor executor) {
+		return new GreeterHandler(api, executor);
+	}
+
+	@Bean
+	@Order(value = 3)
+	public UpdateHandler imgur(TelegramBotApi api, ThreadPoolTaskExecutor executor,
+			@Qualifier("tgUpdateHandlers") ThreadGroup tg) {
 		LinkedBlockingQueue<Message> message_queue = new LinkedBlockingQueue<Message>();
-		return new PGLoggerHandler(bot,message_queue,mapper,jdbc,save_files);
+		ImgurHandler handler = new ImgurHandler(api, message_queue, executor);
+		new Thread(tg, handler).start();
+		return handler;
+	}
+
+	@Bean
+	@Order(value = 1)
+	public UpdateHandler aoe2(TelegramBotApi api, ThreadPoolTaskExecutor executor) {
+
+		return new UpdateHandler() {
+
+			@Override
+			public boolean submit(Update u) {
+				if (u.message.text != null && u.message.text.equals("30"))
+					executor.submit(() -> {
+						try {
+							api.sendMessage(u.message.chat.id, "wololo!", null, null, u.message.message_id, null);
+						} catch (Exception e) {
+						}
+					});
+				return false;
+			}
+
+		};
+
 	}
 	
 	@Bean
-	public MessageHandler greeter(TelegramBot bot) {
-		LinkedBlockingQueue<Message> message_queue = new LinkedBlockingQueue<Message>();
-		return new GreeterHandler(bot, message_queue);
-	}
+	public UpdateHandler inlineHandler(TelegramBotApi api, ThreadPoolTaskExecutor executor) {
 	
-	@Bean
-	public MessageHandler imgur(TelegramBot bot) {
-		LinkedBlockingQueue<Message> message_queue = new LinkedBlockingQueue<Message>();
-		return new ImgurHandler(bot, message_queue);		
+		return new UpdateHandler() {
+
+			@Override
+			public boolean submit(Update u) {
+				List<InlineQueryResult> lst = new LinkedList<InlineQueryResult>();
+				
+				lst.add(new InlineQueryResultPhoto(
+						"photo1",
+						"http://www.olneymiddle.milton-keynes.sch.uk/Year6/wp-content/uploads/2014/02/number-6-md-Copy.png",
+						null,null,
+						"http://www.olneymiddle.milton-keynes.sch.uk/Year6/wp-content/uploads/2014/02/number-6-md-Copy.png",
+						null,null,null,null,null,null
+						));
+
+				lst.add(new InlineQueryResultPhoto(
+						"photo2",
+						"http://www.olneymiddle.milton-keynes.sch.uk/Year6/wp-content/uploads/2014/02/number-6-md-Copy.png",
+						null,null,
+						"http://www.olneymiddle.milton-keynes.sch.uk/Year6/wp-content/uploads/2014/02/number-6-md-Copy.png",
+						null,null,null,null,null,null
+						));
+				
+				lst.add(new InlineQueryResultPhoto(
+						"photo3",
+						"http://www.olneymiddle.milton-keynes.sch.uk/Year6/wp-content/uploads/2014/02/number-6-md-Copy.png",
+						null,null,
+						"http://www.olneymiddle.milton-keynes.sch.uk/Year6/wp-content/uploads/2014/02/number-6-md-Copy.png",
+						null,null,null,null,null,null
+						));
+				
+				try {
+					api.answerInlineQuery(u.inline_query.id, lst, null, null, null);
+				} catch (TelegramBotApiException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				return false;
+			}
+			
+		};
+		
 	}
-	
-	@Bean
-	public MessageHandler weather(TelegramBot bot, @Value("${openweather.api-key}") String api_key) {
-		LinkedBlockingQueue<Message> message_queue = new LinkedBlockingQueue<Message>();
-		return new WeatherHandler(bot, message_queue);		
-	}
-	
-	@Bean
-	public MessageHandler help(TelegramBot bot) {
-		LinkedBlockingQueue<Message> message_queue = new LinkedBlockingQueue<Message>();
-		return new HelpHandler(bot, message_queue);		
-	}
-	
+
 }
