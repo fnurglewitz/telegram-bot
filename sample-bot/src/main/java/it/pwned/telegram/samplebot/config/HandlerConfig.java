@@ -53,39 +53,7 @@ public class HandlerConfig {
 
 			@Override
 			public boolean submit(Update u) {
-				List<InlineQueryResult> lst = new LinkedList<InlineQueryResult>();
-				
-				lst.add(new InlineQueryResultPhoto(
-						"photo1",
-						"http://www.olneymiddle.milton-keynes.sch.uk/Year6/wp-content/uploads/2014/02/number-6-md-Copy.png",
-						null,null,
-						"http://www.olneymiddle.milton-keynes.sch.uk/Year6/wp-content/uploads/2014/02/number-6-md-Copy.png",
-						null,null,null,null,null,null
-						));
-
-				lst.add(new InlineQueryResultPhoto(
-						"photo2",
-						"http://www.olneymiddle.milton-keynes.sch.uk/Year6/wp-content/uploads/2014/02/number-6-md-Copy.png",
-						null,null,
-						"http://www.olneymiddle.milton-keynes.sch.uk/Year6/wp-content/uploads/2014/02/number-6-md-Copy.png",
-						null,null,null,null,null,null
-						));
-				
-				lst.add(new InlineQueryResultPhoto(
-						"photo3",
-						"http://www.olneymiddle.milton-keynes.sch.uk/Year6/wp-content/uploads/2014/02/number-6-md-Copy.png",
-						null,null,
-						"http://www.olneymiddle.milton-keynes.sch.uk/Year6/wp-content/uploads/2014/02/number-6-md-Copy.png",
-						null,null,null,null,null,null
-						));
-				
-				try {
-					api.answerInlineQuery(u.inline_query.id, lst, null, null, null);
-				} catch (TelegramBotApiException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				return false;
+				return true;
 			}
 
 			@Override
