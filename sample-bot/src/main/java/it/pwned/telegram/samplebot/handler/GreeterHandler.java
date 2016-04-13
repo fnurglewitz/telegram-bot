@@ -29,7 +29,7 @@ public class GreeterHandler implements UpdateHandler {
 			executor.submit(() -> {
 				try {
 					api.sendMessage(m.chat.id, String.format("Welcome, %s!", m.new_chat_member.first_name), null, null,
-							m.message_id, null);
+							null, m.message_id, null);
 				} catch (Exception e) {
 				}
 			});
@@ -38,7 +38,7 @@ public class GreeterHandler implements UpdateHandler {
 			executor.submit(() -> {
 				try {
 					api.sendMessage(m.chat.id, String.format("Goodbye, %s!", m.left_chat_member.first_name), null, null,
-							m.message_id, null);
+							null, m.message_id, null);
 				} catch (Exception e) {
 				}
 			});

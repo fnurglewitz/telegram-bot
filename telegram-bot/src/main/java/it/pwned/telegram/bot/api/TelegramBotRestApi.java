@@ -35,6 +35,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pwned.telegram.bot.api.debug.LoggingRequestInterceptor;
 import it.pwned.telegram.bot.api.type.ChatAction;
 import it.pwned.telegram.bot.api.type.DummyKeyboard;
+import it.pwned.telegram.bot.api.type.InlineKeyboardMarkup;
 import it.pwned.telegram.bot.api.type.TelegramFile;
 import it.pwned.telegram.bot.api.type.Message;
 import it.pwned.telegram.bot.api.type.Response;
@@ -47,7 +48,7 @@ import it.pwned.telegram.bot.api.type.inline.InlineQueryResult;
 public class TelegramBotRestApi implements TelegramBotApi {
 
 	private final ObjectMapper mapper;
-	
+
 	private RestTemplate rest;
 	private final UriTemplate api_uri_template;
 	private final UriTemplate file_uri_template;
@@ -55,7 +56,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 
 	public TelegramBotRestApi(String token, ObjectMapper mapper) {
 		this.mapper = mapper;
-		
+
 		this.rest = new RestTemplate();
 		this.api_uri_template = new UriTemplate("https://api.telegram.org/bot" + token + "/{method}");
 		this.file_uri_template = new UriTemplate("https://api.telegram.org/file/bot" + token + "/{file_path}");
@@ -87,7 +88,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		rest.setRequestFactory(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
 
 	}
-	
+
 	private String serializeToJsonString(Object obj) {
 		try {
 			return mapper.writeValueAsString(obj);
@@ -148,7 +149,8 @@ public class TelegramBotRestApi implements TelegramBotApi {
 
 	@Override
 	public Message sendMessage(long chat_id, String text, String parse_mode, Boolean disable_web_page_preview,
-			Integer reply_to_message_id, DummyKeyboard reply_markup) throws TelegramBotApiException {
+			Boolean disable_notification, Integer reply_to_message_id, DummyKeyboard reply_markup)
+					throws TelegramBotApiException {
 
 		if (text == null)
 			throw new InvalidParameterException("(sendMessage) Null value is not allowed for field: text");
@@ -163,6 +165,9 @@ public class TelegramBotRestApi implements TelegramBotApi {
 
 		if (disable_web_page_preview != null)
 			body.add("disable_web_page_preview", disable_web_page_preview);
+
+		if (disable_notification != null)
+			body.add("disable_notification", disable_notification);
 
 		if (reply_to_message_id != null)
 			body.add("reply_to_message_id", reply_to_message_id);
@@ -189,12 +194,17 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Message forwardMessage(long chat_id, long from_chat_id, int message_id) throws TelegramBotApiException {
+	public Message forwardMessage(long chat_id, long from_chat_id, Boolean disable_notification, int message_id)
+			throws TelegramBotApiException {
 
 		MultiValueMap<String, Object> body = new LinkedMultiValueMap<String, Object>();
 
 		body.add("chat_id", chat_id);
 		body.add("from_chat_id", from_chat_id);
+
+		if (disable_notification != null)
+			body.add("disable_notification", disable_notification);
+
 		body.add("message_id", message_id);
 
 		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
@@ -301,8 +311,8 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Message sendPhoto(long chat_id, Resource photo, String caption, Integer reply_to_message_id,
-			DummyKeyboard reply_markup) throws TelegramBotApiException {
+	public Message sendPhoto(long chat_id, Resource photo, String caption, Boolean disable_notification,
+			Integer reply_to_message_id, DummyKeyboard reply_markup) throws TelegramBotApiException {
 		if (photo == null)
 			throw new InvalidParameterException("(sendPhoto) Null value is not allowed for field: photo");
 
@@ -313,6 +323,9 @@ public class TelegramBotRestApi implements TelegramBotApi {
 
 		if (caption != null)
 			body.add("caption", caption);
+
+		if (disable_notification != null)
+			body.add("disable_notification", disable_notification);
 
 		if (reply_to_message_id != null)
 			body.add("reply_to_message_id", reply_to_message_id);
@@ -340,7 +353,8 @@ public class TelegramBotRestApi implements TelegramBotApi {
 
 	@Override
 	public Message sendAudio(long chat_id, Resource audio, Integer duration, String performer, String title,
-			Integer reply_to_message_id, DummyKeyboard reply_markup) throws TelegramBotApiException {
+			Boolean disable_notification, Integer reply_to_message_id, DummyKeyboard reply_markup)
+					throws TelegramBotApiException {
 		if (audio == null)
 			throw new InvalidParameterException("(sendAudio) Null value is not allowed for field: audio");
 
@@ -357,6 +371,9 @@ public class TelegramBotRestApi implements TelegramBotApi {
 
 		if (title != null)
 			body.add("title", title);
+
+		if (disable_notification != null)
+			body.add("disable_notification", disable_notification);
 
 		if (reply_to_message_id != null)
 			body.add("reply_to_message_id", reply_to_message_id);
@@ -383,8 +400,8 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Message sendDocument(long chat_id, Resource document, Integer reply_to_message_id, DummyKeyboard reply_markup)
-			throws TelegramBotApiException {
+	public Message sendDocument(long chat_id, Resource document, String caption, Boolean disable_notification,
+			Integer reply_to_message_id, DummyKeyboard reply_markup) throws TelegramBotApiException {
 		if (document == null)
 			throw new InvalidParameterException("(sendDocument) Null value is not allowed for field: document");
 
@@ -392,6 +409,12 @@ public class TelegramBotRestApi implements TelegramBotApi {
 
 		body.add("chat_id", chat_id);
 		body.add("document", document);
+
+		if (caption != null)
+			body.add("caption", caption);
+
+		if (disable_notification != null)
+			body.add("disable_notification", disable_notification);
 
 		if (reply_to_message_id != null)
 			body.add("reply_to_message_id", reply_to_message_id);
@@ -418,8 +441,8 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Message sendSticker(long chat_id, Resource sticker, Integer reply_to_message_id, DummyKeyboard reply_markup)
-			throws TelegramBotApiException {
+	public Message sendSticker(long chat_id, Resource sticker, Boolean disable_notification, Integer reply_to_message_id,
+			DummyKeyboard reply_markup) throws TelegramBotApiException {
 		if (sticker == null)
 			throw new InvalidParameterException("(sendSticker) Null value is not allowed for field: sticker");
 
@@ -427,6 +450,9 @@ public class TelegramBotRestApi implements TelegramBotApi {
 
 		body.add("chat_id", chat_id);
 		body.add("sticker", sticker);
+
+		if (disable_notification != null)
+			body.add("disable_notification", disable_notification);
 
 		if (reply_to_message_id != null)
 			body.add("reply_to_message_id", reply_to_message_id);
@@ -453,8 +479,9 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Message sendVideo(long chat_id, Resource video, Integer duration, String caption, Integer reply_to_message_id,
-			DummyKeyboard reply_markup) throws TelegramBotApiException {
+	public Message sendVideo(long chat_id, Resource video, Integer duration, Integer width, Integer height,
+			String caption, Boolean disable_notification, Integer reply_to_message_id, DummyKeyboard reply_markup)
+					throws TelegramBotApiException {
 		if (video == null)
 			throw new InvalidParameterException("(sendVideo) Null value is not allowed for field: video");
 
@@ -466,8 +493,17 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		if (duration != null)
 			body.add("duration", duration);
 
+		if (width != null)
+			body.add("width", width);
+
+		if (height != null)
+			body.add("height", height);
+
 		if (caption != null)
 			body.add("caption", caption);
+
+		if (disable_notification != null)
+			body.add("disable_notification", disable_notification);
 
 		if (reply_to_message_id != null)
 			body.add("reply_to_message_id", reply_to_message_id);
@@ -494,8 +530,8 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Message sendVoice(long chat_id, Resource voice, Integer duration, Integer reply_to_message_id,
-			DummyKeyboard reply_markup) throws TelegramBotApiException {
+	public Message sendVoice(long chat_id, Resource voice, Integer duration, Boolean disable_notification,
+			Integer reply_to_message_id, DummyKeyboard reply_markup) throws TelegramBotApiException {
 		if (voice == null)
 			throw new InvalidParameterException("(sendVoice) Null value is not allowed for field: voice");
 
@@ -504,8 +540,11 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		body.add("chat_id", chat_id);
 		body.add("voice", voice);
 
-		if (reply_to_message_id != null)
+		if (duration != null)
 			body.add("duration", duration);
+
+		if (disable_notification != null)
+			body.add("disable_notification", disable_notification);
 
 		if (reply_to_message_id != null)
 			body.add("reply_to_message_id", reply_to_message_id);
@@ -572,7 +611,8 @@ public class TelegramBotRestApi implements TelegramBotApi {
 
 	@Override
 	public Message sendMessage(String chat_id, String text, String parse_mode, Boolean disable_web_page_preview,
-			Integer reply_to_message_id, DummyKeyboard reply_markup) throws TelegramBotApiException {
+			Boolean disable_notification, Integer reply_to_message_id, DummyKeyboard reply_markup)
+					throws TelegramBotApiException {
 
 		if (chat_id == null || text == null)
 			throw new InvalidParameterException("(sendMessage) Null value is not allowed for fields: chat_id, text");
@@ -587,6 +627,9 @@ public class TelegramBotRestApi implements TelegramBotApi {
 
 		if (disable_web_page_preview != null)
 			body.add("disable_web_page_preview", disable_web_page_preview);
+
+		if (disable_notification != null)
+			body.add("disable_notification", disable_notification);
 
 		if (reply_to_message_id != null)
 			body.add("reply_to_message_id", reply_to_message_id);
@@ -613,7 +656,8 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Message forwardMessage(String chat_id, String from_chat_id, int message_id) throws TelegramBotApiException {
+	public Message forwardMessage(String chat_id, String from_chat_id, Boolean disable_notification, int message_id)
+			throws TelegramBotApiException {
 		if (chat_id == null || from_chat_id == null)
 			throw new InvalidParameterException(
 					"(forwardMessage) Null value is not allowed for fields: chat_id, from_chat_id");
@@ -622,6 +666,10 @@ public class TelegramBotRestApi implements TelegramBotApi {
 
 		body.add("chat_id", chat_id);
 		body.add("from_chat_id", from_chat_id);
+
+		if (disable_notification != null)
+			body.add("disable_notification", disable_notification);
+
 		body.add("message_id", message_id);
 
 		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
@@ -698,8 +746,8 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Message sendPhoto(String chat_id, Resource photo, String caption, Integer reply_to_message_id,
-			DummyKeyboard reply_markup) throws TelegramBotApiException {
+	public Message sendPhoto(String chat_id, Resource photo, String caption, Boolean disable_notification,
+			Integer reply_to_message_id, DummyKeyboard reply_markup) throws TelegramBotApiException {
 		if (chat_id == null || photo == null)
 			throw new InvalidParameterException("(sendPhoto) Null value is not allowed for fields: chat_id, photo");
 
@@ -710,6 +758,9 @@ public class TelegramBotRestApi implements TelegramBotApi {
 
 		if (caption != null)
 			body.add("caption", caption);
+
+		if (disable_notification != null)
+			body.add("disable_notification", disable_notification);
 
 		if (reply_to_message_id != null)
 			body.add("reply_to_message_id", reply_to_message_id);
@@ -737,7 +788,8 @@ public class TelegramBotRestApi implements TelegramBotApi {
 
 	@Override
 	public Message sendAudio(String chat_id, Resource audio, Integer duration, String performer, String title,
-			Integer reply_to_message_id, DummyKeyboard reply_markup) throws TelegramBotApiException {
+			Boolean disable_notification, Integer reply_to_message_id, DummyKeyboard reply_markup)
+					throws TelegramBotApiException {
 		if (chat_id == null || audio == null)
 			throw new InvalidParameterException("(sendAudio) Null value is not allowed for fields: chat_id, audio");
 
@@ -754,6 +806,9 @@ public class TelegramBotRestApi implements TelegramBotApi {
 
 		if (title != null)
 			body.add("title", title);
+
+		if (disable_notification != null)
+			body.add("disable_notification", disable_notification);
 
 		if (reply_to_message_id != null)
 			body.add("reply_to_message_id", reply_to_message_id);
@@ -780,8 +835,8 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Message sendDocument(String chat_id, Resource document, Integer reply_to_message_id,
-			DummyKeyboard reply_markup) throws TelegramBotApiException {
+	public Message sendDocument(String chat_id, Resource document, String caption, Boolean disable_notification,
+			Integer reply_to_message_id, DummyKeyboard reply_markup) throws TelegramBotApiException {
 		if (chat_id == null || document == null)
 			throw new InvalidParameterException("(sendDocument) Null value is not allowed for fields: chat_id, document");
 
@@ -789,6 +844,12 @@ public class TelegramBotRestApi implements TelegramBotApi {
 
 		body.add("chat_id", chat_id);
 		body.add("document", document);
+
+		if (caption != null)
+			body.add("caption", caption);
+
+		if (disable_notification != null)
+			body.add("disable_notification", disable_notification);
 
 		if (reply_to_message_id != null)
 			body.add("reply_to_message_id", reply_to_message_id);
@@ -815,8 +876,8 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Message sendSticker(String chat_id, Resource sticker, Integer reply_to_message_id, DummyKeyboard reply_markup)
-			throws TelegramBotApiException {
+	public Message sendSticker(String chat_id, Resource sticker, Boolean disable_notification,
+			Integer reply_to_message_id, DummyKeyboard reply_markup) throws TelegramBotApiException {
 		if (chat_id == null || sticker == null)
 			throw new InvalidParameterException("(sendSticker) Null value is not allowed for fields: chat_id, sticker");
 
@@ -824,6 +885,9 @@ public class TelegramBotRestApi implements TelegramBotApi {
 
 		body.add("chat_id", chat_id);
 		body.add("sticker", sticker);
+
+		if (disable_notification != null)
+			body.add("disable_notification", disable_notification);
 
 		if (reply_to_message_id != null)
 			body.add("reply_to_message_id", reply_to_message_id);
@@ -850,8 +914,9 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Message sendVideo(String chat_id, Resource video, Integer duration, String caption,
-			Integer reply_to_message_id, DummyKeyboard reply_markup) throws TelegramBotApiException {
+	public Message sendVideo(String chat_id, Resource video, Integer duration, Integer width, Integer height,
+			String caption, Boolean disable_notification, Integer reply_to_message_id, DummyKeyboard reply_markup)
+					throws TelegramBotApiException {
 		if (chat_id == null || video == null)
 			throw new InvalidParameterException("(sendVideo) Null value is not allowed for fields: chat_id, video");
 
@@ -863,8 +928,17 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		if (duration != null)
 			body.add("duration", duration);
 
+		if (width != null)
+			body.add("width", width);
+
+		if (height != null)
+			body.add("height", height);
+
 		if (caption != null)
 			body.add("caption", caption);
+
+		if (disable_notification != null)
+			body.add("disable_notification", disable_notification);
 
 		if (reply_to_message_id != null)
 			body.add("reply_to_message_id", reply_to_message_id);
@@ -891,8 +965,8 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Message sendVoice(String chat_id, Resource voice, Integer duration, Integer reply_to_message_id,
-			DummyKeyboard reply_markup) throws TelegramBotApiException {
+	public Message sendVoice(String chat_id, Resource voice, Integer duration, Boolean disable_notification,
+			Integer reply_to_message_id, DummyKeyboard reply_markup) throws TelegramBotApiException {
 		if (chat_id == null || voice == null)
 			throw new InvalidParameterException("(sendVoice) Null value is not allowed for fields: chat_id, voice");
 
@@ -901,8 +975,11 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		body.add("chat_id", chat_id);
 		body.add("voice", voice);
 
-		if (reply_to_message_id != null)
+		if (duration != null)
 			body.add("duration", duration);
+
+		if (disable_notification != null)
+			body.add("disable_notification", disable_notification);
 
 		if (reply_to_message_id != null)
 			body.add("reply_to_message_id", reply_to_message_id);
@@ -966,6 +1043,262 @@ public class TelegramBotRestApi implements TelegramBotApi {
 
 		return res.result;
 
+	}
+
+	@Override
+	public Message sendVenue(long chat_id, float latitude, float longitude, String title, String address,
+			String foursquare_id, Boolean disable_notification, Integer reply_to_message_id, DummyKeyboard reply_markup)
+					throws TelegramBotApiException {
+
+		if (title == null || address == null)
+			throw new InvalidParameterException("(sendVenue) Null value is not allowed for fields: title, address");
+
+		MultiValueMap<String, Object> body = new LinkedMultiValueMap<String, Object>();
+
+		body.add("chat_id", chat_id);
+		body.add("latitude", latitude);
+		body.add("longitude", longitude);
+		body.add("title", title);
+		body.add("address", address);
+
+		if (foursquare_id != null)
+			body.add("foursquare_id", foursquare_id);
+
+		if (disable_notification != null)
+			body.add("disable_notification", disable_notification);
+
+		if (reply_to_message_id != null)
+			body.add("reply_to_message_id", reply_to_message_id);
+
+		if (reply_markup != null)
+			body.add("reply_markup", serializeToJsonString(reply_markup));
+
+		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
+
+		Response<Message> res = null;
+
+		try {
+			res = rest.exchange(api_uri_template.expand("sendVenue"), HttpMethod.POST, entity,
+					new ParameterizedTypeReference<Response<Message>>() {
+					}).getBody();
+		} catch (RestClientException e) {
+			throw new TelegramBotApiException(e);
+		}
+
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
+	}
+
+	@Override
+	public Message sendVenue(String chat_id, float latitude, float longitude, String title, String address,
+			String foursquare_id, Boolean disable_notification, Integer reply_to_message_id, DummyKeyboard reply_markup)
+					throws TelegramBotApiException {
+
+		if (chat_id == null || title == null || address == null)
+			throw new InvalidParameterException("(sendVenue) Null value is not allowed for fields: chat_id, title, address");
+
+		MultiValueMap<String, Object> body = new LinkedMultiValueMap<String, Object>();
+
+		body.add("chat_id", chat_id);
+		body.add("latitude", latitude);
+		body.add("longitude", longitude);
+		body.add("title", title);
+		body.add("address", address);
+
+		if (foursquare_id != null)
+			body.add("foursquare_id", foursquare_id);
+
+		if (disable_notification != null)
+			body.add("disable_notification", disable_notification);
+
+		if (reply_to_message_id != null)
+			body.add("reply_to_message_id", reply_to_message_id);
+
+		if (reply_markup != null)
+			body.add("reply_markup", serializeToJsonString(reply_markup));
+
+		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
+
+		Response<Message> res = null;
+
+		try {
+			res = rest.exchange(api_uri_template.expand("sendVenue"), HttpMethod.POST, entity,
+					new ParameterizedTypeReference<Response<Message>>() {
+					}).getBody();
+		} catch (RestClientException e) {
+			throw new TelegramBotApiException(e);
+		}
+
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
+	}
+
+	@Override
+	public Message sendContact(long chat_id, String phone_number, String first_name, String last_name,
+			Boolean disable_notification, Integer reply_to_message_id, DummyKeyboard reply_markup)
+					throws TelegramBotApiException {
+
+		if (phone_number == null || first_name == null)
+			throw new InvalidParameterException(
+					"(sendContact) Null value is not allowed for fields: phone_number, first_name");
+
+		MultiValueMap<String, Object> body = new LinkedMultiValueMap<String, Object>();
+
+		body.add("chat_id", chat_id);
+		body.add("phone_number", phone_number);
+		body.add("first_name", first_name);
+
+		if (last_name != null)
+			body.add("last_name", last_name);
+
+		if (disable_notification != null)
+			body.add("disable_notification", disable_notification);
+
+		if (reply_to_message_id != null)
+			body.add("reply_to_message_id", reply_to_message_id);
+
+		if (reply_markup != null)
+			body.add("reply_markup", serializeToJsonString(reply_markup));
+
+		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
+
+		Response<Message> res = null;
+
+		try {
+			res = rest.exchange(api_uri_template.expand("sendContact"), HttpMethod.POST, entity,
+					new ParameterizedTypeReference<Response<Message>>() {
+					}).getBody();
+		} catch (RestClientException e) {
+			throw new TelegramBotApiException(e);
+		}
+
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
+	}
+
+	@Override
+	public Message sendContact(String chat_id, String phone_number, String first_name, String last_name,
+			Boolean disable_notification, Integer reply_to_message_id, DummyKeyboard reply_markup)
+					throws TelegramBotApiException {
+
+		if (chat_id == null || phone_number == null || first_name == null)
+			throw new InvalidParameterException(
+					"(sendContact) Null value is not allowed for fields: chat_id, phone_number, first_name");
+
+		MultiValueMap<String, Object> body = new LinkedMultiValueMap<String, Object>();
+
+		body.add("chat_id", chat_id);
+		body.add("phone_number", phone_number);
+		body.add("first_name", first_name);
+
+		if (last_name != null)
+			body.add("last_name", last_name);
+
+		if (disable_notification != null)
+			body.add("disable_notification", disable_notification);
+
+		if (reply_to_message_id != null)
+			body.add("reply_to_message_id", reply_to_message_id);
+
+		if (reply_markup != null)
+			body.add("reply_markup", serializeToJsonString(reply_markup));
+
+		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
+
+		Response<Message> res = null;
+
+		try {
+			res = rest.exchange(api_uri_template.expand("sendContact"), HttpMethod.POST, entity,
+					new ParameterizedTypeReference<Response<Message>>() {
+					}).getBody();
+		} catch (RestClientException e) {
+			throw new TelegramBotApiException(e);
+		}
+
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
+	}
+
+	@Override
+	public Boolean kickChatMember(long chat_id, int user_id) throws TelegramBotApiException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean kickChatMember(String chat_id, int user_id) throws TelegramBotApiException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean unbanChatMember(long chat_id, int user_id) throws TelegramBotApiException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean unbanChatMember(String chat_id, int user_id) throws TelegramBotApiException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean answerCallbackQuery(String callback_query_id, String text, Boolean show_alert) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Message editMessageText(Long chat_id, Integer message_id, String inline_message_id, String text,
+			String parse_mode, Boolean disable_web_page_preview, InlineKeyboardMarkup reply_markup)
+					throws TelegramBotApiException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Message editMessageText(String chat_id, Integer message_id, String inline_message_id, String text,
+			String parse_mode, Boolean disable_web_page_preview, InlineKeyboardMarkup reply_markup)
+					throws TelegramBotApiException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Message editMessageCaption(Long chat_id, Integer message_id, String inline_message_id, String caption,
+			InlineKeyboardMarkup reply_markup) throws TelegramBotApiException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Message editMessageCaption(String chat_id, Integer message_id, String inline_message_id, String caption,
+			InlineKeyboardMarkup reply_markup) throws TelegramBotApiException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Message editMessageReplyMarkup(Long chat_id, Integer message_id, String inline_message_id,
+			InlineKeyboardMarkup reply_markup) throws TelegramBotApiException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Message editMessageReplyMarkup(String chat_id, Integer message_id, String inline_message_id,
+			InlineKeyboardMarkup reply_markup) throws TelegramBotApiException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

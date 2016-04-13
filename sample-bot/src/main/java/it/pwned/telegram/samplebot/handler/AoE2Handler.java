@@ -200,7 +200,7 @@ public class AoE2Handler implements UpdateHandler, Runnable {
 
 			if (m.new_chat_member != null) {
 				try {
-					api.sendVoice(m.chat.id, new FileSystemResource(getTauntPathByNumberAndCulture(8)), null, m.message_id, null);
+					api.sendVoice(m.chat.id, new FileSystemResource(getTauntPathByNumberAndCulture(8)), null, null, m.message_id, null);
 				} catch (TelegramBotApiException e) {
 				}
 			} else if (m.text != null) {
@@ -215,7 +215,7 @@ public class AoE2Handler implements UpdateHandler, Runnable {
 
 					try {
 						api.sendVoice(m.chat.id, new FileSystemResource(getTauntPathByNumberAndCulture(taunt, culture)), null, null,
-								null);
+								null, null);
 					} catch (TelegramBotApiException e) {
 					}
 				}

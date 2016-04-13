@@ -293,7 +293,7 @@ public class ImgurHandler implements UpdateHandler, Runnable {
 
 		if ("/imgur".equals(m.text)) {
 			try {
-				t_api.sendMessage(m.chat.id, this.avaible_cmds, null, null, null, null);
+				t_api.sendMessage(m.chat.id, this.avaible_cmds, null, null, null, null, null);
 			} catch (TelegramBotApiException e) {
 			}
 		} else {
@@ -325,18 +325,18 @@ public class ImgurHandler implements UpdateHandler, Runnable {
 
 							switch (sa) {
 							case Photo:
-								t_api.sendPhoto(m.chat.id, new UrlResource(rand_img.link), rand_img.title, null, null);
+								t_api.sendPhoto(m.chat.id, new UrlResource(rand_img.link), rand_img.title, null, null, null);
 								break;
 							default:
-								t_api.sendDocument(m.chat.id, new UrlResource(rand_img.link), null, null);
+								t_api.sendDocument(m.chat.id, new UrlResource(rand_img.link), null, null, null, null);
 							}
 
 						} else
-							t_api.sendMessage(m.chat.id, "Error while fetching the image.", null, null, null, null);
+							t_api.sendMessage(m.chat.id, "Error while fetching the image.", null, null, null, null, null);
 
 					} catch (Exception e) {
 						log.error("Error while fetching the image.", e);
-						t_api.sendMessage(m.chat.id, "Error while fetching the image.", null, null, null, null);
+						t_api.sendMessage(m.chat.id, "Error while fetching the image.", null, null, null, null, null);
 					}
 
 				} catch (TelegramBotApiException ae) {
