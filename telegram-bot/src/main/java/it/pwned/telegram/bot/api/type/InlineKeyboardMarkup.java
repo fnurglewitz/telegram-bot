@@ -1,25 +1,14 @@
 package it.pwned.telegram.bot.api.type;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class InlineKeyboardMarkup implements DummyKeyboard {
+@JsonInclude(Include.NON_NULL)
+public class InlineKeyboardMarkup extends DummyKeyboard {
 	public final InlineKeyboardButton[][] inline_keyboard;
 
 	public InlineKeyboardMarkup(@JsonProperty("inline_keyboard") InlineKeyboardButton[][] inline_keyboard) {
 		this.inline_keyboard = inline_keyboard;
-	}
-
-	@Override
-	public String toJsonString() {
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.setSerializationInclusion(Include.NON_NULL);
-		try {
-			return mapper.writeValueAsString(this);
-		} catch (JsonProcessingException ex) {
-			return null;
-		}
 	}
 }

@@ -1,7 +1,5 @@
 package it.pwned.telegram.samplebot.config;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -12,10 +10,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import it.pwned.telegram.bot.api.TelegramBotApi;
 import it.pwned.telegram.bot.api.type.Message;
-import it.pwned.telegram.bot.api.type.TelegramBotApiException;
 import it.pwned.telegram.bot.api.type.Update;
-import it.pwned.telegram.bot.api.type.inline.InlineQueryResult;
-import it.pwned.telegram.bot.api.type.inline.InlineQueryResultPhoto;
 import it.pwned.telegram.bot.handler.UpdateHandler;
 import it.pwned.telegram.samplebot.handler.AoE2Handler;
 import it.pwned.telegram.samplebot.handler.GreeterHandler;

@@ -14,6 +14,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import it.pwned.telegram.bot.ApiUpdateCollector;
 import it.pwned.telegram.bot.StandardUpdateDispatcher;
 import it.pwned.telegram.bot.TelegramBot;
@@ -48,8 +50,8 @@ public class Application {
 	}
 
 	@Bean
-	public TelegramBotApi telegramBotApi(@Value("${bot.token}") String token) {
-		return new TelegramBotRestApi(token);
+	public TelegramBotApi telegramBotApi(@Value("${bot.token}") String token, ObjectMapper mapper) {
+		return new TelegramBotRestApi(token,mapper);
 	}
 
 	@Bean

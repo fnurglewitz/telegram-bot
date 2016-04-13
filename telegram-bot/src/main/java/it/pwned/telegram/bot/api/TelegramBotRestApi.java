@@ -29,6 +29,9 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriTemplate;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import it.pwned.telegram.bot.api.debug.LoggingRequestInterceptor;
 import it.pwned.telegram.bot.api.type.ChatAction;
 import it.pwned.telegram.bot.api.type.DummyKeyboard;
@@ -43,12 +46,16 @@ import it.pwned.telegram.bot.api.type.inline.InlineQueryResult;
 
 public class TelegramBotRestApi implements TelegramBotApi {
 
+	private final ObjectMapper mapper;
+	
 	private RestTemplate rest;
 	private final UriTemplate api_uri_template;
 	private final UriTemplate file_uri_template;
 	private final HttpHeaders multipart_headers;
 
-	public TelegramBotRestApi(String token) {
+	public TelegramBotRestApi(String token, ObjectMapper mapper) {
+		this.mapper = mapper;
+		
 		this.rest = new RestTemplate();
 		this.api_uri_template = new UriTemplate("https://api.telegram.org/bot" + token + "/{method}");
 		this.file_uri_template = new UriTemplate("https://api.telegram.org/file/bot" + token + "/{file_path}");
@@ -79,6 +86,14 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		rest.setInterceptors(ris);
 		rest.setRequestFactory(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
 
+	}
+	
+	private String serializeToJsonString(Object obj) {
+		try {
+			return mapper.writeValueAsString(obj);
+		} catch (JsonProcessingException e) {
+			return null;
+		}
 	}
 
 	@Override
@@ -153,7 +168,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 			body.add("reply_to_message_id", reply_to_message_id);
 
 		if (reply_markup != null)
-			body.add("reply_markup", reply_markup.toJsonString());
+			body.add("reply_markup", serializeToJsonString(reply_markup));
 
 		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
 
@@ -214,7 +229,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 			body.add("reply_to_message_id", reply_to_message_id);
 
 		if (reply_markup != null)
-			body.add("reply_markup", reply_markup.toJsonString());
+			body.add("reply_markup", serializeToJsonString(reply_markup));
 
 		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
 
@@ -303,7 +318,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 			body.add("reply_to_message_id", reply_to_message_id);
 
 		if (reply_markup != null)
-			body.add("reply_markup", reply_markup.toJsonString());
+			body.add("reply_markup", serializeToJsonString(reply_markup));
 
 		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
 
@@ -347,7 +362,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 			body.add("reply_to_message_id", reply_to_message_id);
 
 		if (reply_markup != null)
-			body.add("reply_markup", reply_markup.toJsonString());
+			body.add("reply_markup", serializeToJsonString(reply_markup));
 
 		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
 
@@ -382,7 +397,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 			body.add("reply_to_message_id", reply_to_message_id);
 
 		if (reply_markup != null)
-			body.add("reply_markup", reply_markup.toJsonString());
+			body.add("reply_markup", serializeToJsonString(reply_markup));
 
 		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
 
@@ -417,7 +432,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 			body.add("reply_to_message_id", reply_to_message_id);
 
 		if (reply_markup != null)
-			body.add("reply_markup", reply_markup.toJsonString());
+			body.add("reply_markup", serializeToJsonString(reply_markup));
 
 		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
 
@@ -458,7 +473,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 			body.add("reply_to_message_id", reply_to_message_id);
 
 		if (reply_markup != null)
-			body.add("reply_markup", reply_markup.toJsonString());
+			body.add("reply_markup", serializeToJsonString(reply_markup));
 
 		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
 
@@ -496,7 +511,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 			body.add("reply_to_message_id", reply_to_message_id);
 
 		if (reply_markup != null)
-			body.add("reply_markup", reply_markup.toJsonString());
+			body.add("reply_markup", serializeToJsonString(reply_markup));
 
 		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
 
@@ -577,7 +592,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 			body.add("reply_to_message_id", reply_to_message_id);
 
 		if (reply_markup != null)
-			body.add("reply_markup", reply_markup.toJsonString());
+			body.add("reply_markup", serializeToJsonString(reply_markup));
 
 		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
 
@@ -643,7 +658,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 			body.add("reply_to_message_id", reply_to_message_id);
 
 		if (reply_markup != null)
-			body.add("reply_markup", reply_markup.toJsonString());
+			body.add("reply_markup", serializeToJsonString(reply_markup));
 
 		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
 
@@ -700,7 +715,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 			body.add("reply_to_message_id", reply_to_message_id);
 
 		if (reply_markup != null)
-			body.add("reply_markup", reply_markup.toJsonString());
+			body.add("reply_markup", serializeToJsonString(reply_markup));
 
 		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
 
@@ -744,7 +759,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 			body.add("reply_to_message_id", reply_to_message_id);
 
 		if (reply_markup != null)
-			body.add("reply_markup", reply_markup.toJsonString());
+			body.add("reply_markup", serializeToJsonString(reply_markup));
 
 		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
 
@@ -779,7 +794,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 			body.add("reply_to_message_id", reply_to_message_id);
 
 		if (reply_markup != null)
-			body.add("reply_markup", reply_markup.toJsonString());
+			body.add("reply_markup", serializeToJsonString(reply_markup));
 
 		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
 
@@ -814,7 +829,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 			body.add("reply_to_message_id", reply_to_message_id);
 
 		if (reply_markup != null)
-			body.add("reply_markup", reply_markup.toJsonString());
+			body.add("reply_markup", serializeToJsonString(reply_markup));
 
 		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
 
@@ -855,7 +870,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 			body.add("reply_to_message_id", reply_to_message_id);
 
 		if (reply_markup != null)
-			body.add("reply_markup", reply_markup.toJsonString());
+			body.add("reply_markup", serializeToJsonString(reply_markup));
 
 		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
 
@@ -893,7 +908,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 			body.add("reply_to_message_id", reply_to_message_id);
 
 		if (reply_markup != null)
-			body.add("reply_markup", reply_markup.toJsonString());
+			body.add("reply_markup", serializeToJsonString(reply_markup));
 
 		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
 

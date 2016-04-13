@@ -50,7 +50,7 @@ public class AoE2Handler implements UpdateHandler, Runnable {
 	}
 
 	private String getTauntPathByNumberAndCulture(int taunt) {
-		return getTauntPathByNumberAndCulture(taunt, "it");
+		return getTauntPathByNumberAndCulture(taunt, "en");
 	}
 
 	private String getTauntPathByNumberAndCulture(int taunt, String culture) {
@@ -58,7 +58,7 @@ public class AoE2Handler implements UpdateHandler, Runnable {
 		String taunt_string;
 
 		if (culture == null || "".equals(culture))
-			culture = "it";
+			culture = "en";
 
 		switch (taunt) {
 		case 1:
