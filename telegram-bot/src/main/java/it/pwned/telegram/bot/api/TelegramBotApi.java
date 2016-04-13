@@ -6,7 +6,7 @@ import org.springframework.core.io.Resource;
 
 import it.pwned.telegram.bot.api.type.ChatAction;
 import it.pwned.telegram.bot.api.type.DummyKeyboard;
-import it.pwned.telegram.bot.api.type.File;
+import it.pwned.telegram.bot.api.type.TelegramFile;
 import it.pwned.telegram.bot.api.type.Message;
 import it.pwned.telegram.bot.api.type.TelegramBotApiException;
 import it.pwned.telegram.bot.api.type.Update;
@@ -95,9 +95,9 @@ public interface TelegramBotApi {
 	Message sendVoice(String chat_id, Resource voice, Integer duration, Integer reply_to_message_id,
 			DummyKeyboard reply_markup) throws TelegramBotApiException;
 
-	File getFile(String file_id) throws TelegramBotApiException;
+	TelegramFile getFile(String file_id) throws TelegramBotApiException;
 
-	Resource getResourceFromTelegramFile(File file) throws TelegramBotApiException;
+	Resource getResourceFromTelegramFile(TelegramFile file) throws TelegramBotApiException;
 
 	Boolean answerInlineQuery(String inline_query_id, List<InlineQueryResult> results, Integer cache_time,
 			Boolean is_personal, String next_offset) throws TelegramBotApiException;

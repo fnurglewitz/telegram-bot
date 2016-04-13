@@ -32,7 +32,7 @@ import org.springframework.web.util.UriTemplate;
 import it.pwned.telegram.bot.api.debug.LoggingRequestInterceptor;
 import it.pwned.telegram.bot.api.type.ChatAction;
 import it.pwned.telegram.bot.api.type.DummyKeyboard;
-import it.pwned.telegram.bot.api.type.File;
+import it.pwned.telegram.bot.api.type.TelegramFile;
 import it.pwned.telegram.bot.api.type.Message;
 import it.pwned.telegram.bot.api.type.Response;
 import it.pwned.telegram.bot.api.type.TelegramBotApiException;
@@ -517,7 +517,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public File getFile(String file_id) throws TelegramBotApiException {
+	public TelegramFile getFile(String file_id) throws TelegramBotApiException {
 		if (file_id == null)
 			throw new InvalidParameterException("(getFile) Null value is not allowed for field: file_id");
 
@@ -527,11 +527,11 @@ public class TelegramBotRestApi implements TelegramBotApi {
 
 		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
 
-		Response<File> res = null;
+		Response<TelegramFile> res = null;
 
 		try {
 			res = rest.exchange(api_uri_template.expand("getFile"), HttpMethod.POST, entity,
-					new ParameterizedTypeReference<Response<File>>() {
+					new ParameterizedTypeReference<Response<TelegramFile>>() {
 					}).getBody();
 		} catch (RestClientException e) {
 			throw new TelegramBotApiException(e);
@@ -544,7 +544,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Resource getResourceFromTelegramFile(File file) {
+	public Resource getResourceFromTelegramFile(TelegramFile file) {
 		if (file == null)
 			throw new InvalidParameterException("(getResourceFromTelegramFile) Null value is not allowed for field: file");
 

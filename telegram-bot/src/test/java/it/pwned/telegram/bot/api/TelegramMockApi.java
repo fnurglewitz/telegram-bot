@@ -8,7 +8,7 @@ import org.springframework.core.io.Resource;
 
 import it.pwned.telegram.bot.api.type.ChatAction;
 import it.pwned.telegram.bot.api.type.DummyKeyboard;
-import it.pwned.telegram.bot.api.type.File;
+import it.pwned.telegram.bot.api.type.TelegramFile;
 import it.pwned.telegram.bot.api.type.Message;
 import it.pwned.telegram.bot.api.type.TelegramBotApiException;
 import it.pwned.telegram.bot.api.type.Update;
@@ -201,13 +201,13 @@ public class TelegramMockApi implements TelegramBotApi {
 	}
 
 	@Override
-	public File getFile(String file_id) throws TelegramBotApiException {
+	public TelegramFile getFile(String file_id) throws TelegramBotApiException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Resource getResourceFromTelegramFile(File file) throws TelegramBotApiException {
+	public Resource getResourceFromTelegramFile(TelegramFile file) throws TelegramBotApiException {
 		// TODO Auto-generated method stub
 		return null;
 	}
