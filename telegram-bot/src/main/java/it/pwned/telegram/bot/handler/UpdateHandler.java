@@ -13,5 +13,8 @@ public interface UpdateHandler {
 	public boolean requiresThread();
 	
 	public Runnable getRunnable();
+	
+	public void loadState();
+	public void saveState();
 
 }

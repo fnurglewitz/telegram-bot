@@ -375,4 +375,12 @@ public class ImgurHandler implements UpdateHandler, Runnable {
 		return this;
 	}
 
+	@Override
+	public void loadState() {		
+	}
+
+	@Override
+	public void saveState() {		
+	}
+
 }

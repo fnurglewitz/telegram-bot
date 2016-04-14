@@ -73,9 +73,9 @@ public class Application {
 	}
 
 	@Bean
-	public TelegramBot telegramBot(TelegramBotApi api, UpdateCollector collector, UpdateDispatcher dispatcher)
+	public TelegramBot telegramBot(TelegramBotApi api, UpdateCollector collector, UpdateDispatcher dispatcher, UpdateHandlerManager manager)
 			throws Exception {
-		return new TelegramBot(api, collector, dispatcher);
+		return new TelegramBot(api, collector, dispatcher, manager);
 	}
 
 	public static void main(String args[]) throws BeansException, Exception {

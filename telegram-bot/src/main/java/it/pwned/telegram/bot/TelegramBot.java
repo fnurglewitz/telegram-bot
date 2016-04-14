@@ -7,6 +7,7 @@ import it.pwned.telegram.bot.api.TelegramBotApi;
 import it.pwned.telegram.bot.api.type.TelegramBotApiException;
 import it.pwned.telegram.bot.api.type.Update;
 import it.pwned.telegram.bot.api.type.User;
+import it.pwned.telegram.bot.handler.UpdateHandlerManager;
 
 public final class TelegramBot {
 
@@ -15,17 +16,19 @@ public final class TelegramBot {
 	public final Integer id;
 	public final String username;
 
-	// public final TelegramBotApi api;
-	public final UpdateCollector collector;
-	public final UpdateDispatcher dispatcher;
+	private final TelegramBotApi api;
+	private final UpdateCollector collector;
+	private final UpdateDispatcher dispatcher;
+	private final UpdateHandlerManager manager;
 
 	private volatile boolean go_on = true;
 
-	public TelegramBot(TelegramBotApi api, UpdateCollector collector, UpdateDispatcher dispatcher)
-			throws TelegramBotApiException {
-		// this.api = api;
+	public TelegramBot(TelegramBotApi api, UpdateCollector collector, UpdateDispatcher dispatcher,
+			UpdateHandlerManager manager) throws TelegramBotApiException {
+		this.api = api;
 		this.collector = collector;
 		this.dispatcher = dispatcher;
+		this.manager = manager;
 
 		// api test
 		User me = api.getMe();
@@ -45,6 +48,8 @@ public final class TelegramBot {
 
 	public void run() throws InterruptedException {
 
+		manager.init();
+
 		while (go_on) {
 
 			Update u = collector.next();
@@ -53,6 +58,8 @@ public final class TelegramBot {
 				dispatcher.dispatch(u);
 
 		}
+
+		manager.shutdown();
 
 	}
 

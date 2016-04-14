@@ -1229,76 +1229,382 @@ public class TelegramBotRestApi implements TelegramBotApi {
 
 	@Override
 	public Boolean kickChatMember(long chat_id, int user_id) throws TelegramBotApiException {
-		// TODO Auto-generated method stub
-		return null;
+
+		MultiValueMap<String, Object> body = new LinkedMultiValueMap<String, Object>();
+
+		body.add("chat_id", chat_id);
+		body.add("user_id", user_id);
+
+		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
+
+		Boolean res = null;
+
+		try {
+			res = rest.exchange(api_uri_template.expand("kickChatMember"), HttpMethod.POST, entity,
+					new ParameterizedTypeReference<Boolean>() {
+					}).getBody();
+		} catch (RestClientException e) {
+			throw new TelegramBotApiException(e);
+		}
+
+		return res;
 	}
 
 	@Override
 	public Boolean kickChatMember(String chat_id, int user_id) throws TelegramBotApiException {
-		// TODO Auto-generated method stub
-		return null;
+
+		if (chat_id == null)
+			throw new InvalidParameterException("(kickChatMember) Null value is not allowed for field: chat_id");
+
+		MultiValueMap<String, Object> body = new LinkedMultiValueMap<String, Object>();
+
+		body.add("chat_id", chat_id);
+		body.add("user_id", user_id);
+
+		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
+
+		Boolean res = null;
+
+		try {
+			res = rest.exchange(api_uri_template.expand("kickChatMember"), HttpMethod.POST, entity,
+					new ParameterizedTypeReference<Boolean>() {
+					}).getBody();
+		} catch (RestClientException e) {
+			throw new TelegramBotApiException(e);
+		}
+
+		return res;
 	}
 
 	@Override
 	public Boolean unbanChatMember(long chat_id, int user_id) throws TelegramBotApiException {
-		// TODO Auto-generated method stub
-		return null;
+
+		MultiValueMap<String, Object> body = new LinkedMultiValueMap<String, Object>();
+
+		body.add("chat_id", chat_id);
+		body.add("user_id", user_id);
+
+		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
+
+		Boolean res = null;
+
+		try {
+			res = rest.exchange(api_uri_template.expand("unbanChatMember"), HttpMethod.POST, entity,
+					new ParameterizedTypeReference<Boolean>() {
+					}).getBody();
+		} catch (RestClientException e) {
+			throw new TelegramBotApiException(e);
+		}
+
+		return res;
+
 	}
 
 	@Override
 	public Boolean unbanChatMember(String chat_id, int user_id) throws TelegramBotApiException {
-		// TODO Auto-generated method stub
-		return null;
+
+		if (chat_id == null)
+			throw new InvalidParameterException("(unbanChatMember) Null value is not allowed for field: chat_id");
+
+		MultiValueMap<String, Object> body = new LinkedMultiValueMap<String, Object>();
+
+		body.add("chat_id", chat_id);
+		body.add("user_id", user_id);
+
+		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
+
+		Boolean res = null;
+
+		try {
+			res = rest.exchange(api_uri_template.expand("unbanChatMember"), HttpMethod.POST, entity,
+					new ParameterizedTypeReference<Boolean>() {
+					}).getBody();
+		} catch (RestClientException e) {
+			throw new TelegramBotApiException(e);
+		}
+
+		return res;
 	}
 
 	@Override
-	public Boolean answerCallbackQuery(String callback_query_id, String text, Boolean show_alert) {
-		// TODO Auto-generated method stub
-		return null;
+	public Boolean answerCallbackQuery(String callback_query_id, String text, Boolean show_alert)
+			throws TelegramBotApiException {
+
+		if (callback_query_id == null)
+			throw new InvalidParameterException(
+					"(answerCallbackQuery) Null value is not allowed for field: callback_query_id");
+
+		MultiValueMap<String, Object> body = new LinkedMultiValueMap<String, Object>();
+
+		body.add("callback_query_id", callback_query_id);
+		body.add("text", text);
+		body.add("show_alert", show_alert);
+
+		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
+
+		Boolean res = null;
+
+		try {
+			res = rest.exchange(api_uri_template.expand("answerCallbackQuery"), HttpMethod.POST, entity,
+					new ParameterizedTypeReference<Boolean>() {
+					}).getBody();
+		} catch (RestClientException e) {
+			throw new TelegramBotApiException(e);
+		}
+
+		return res;
 	}
 
 	@Override
 	public Message editMessageText(Long chat_id, Integer message_id, String inline_message_id, String text,
 			String parse_mode, Boolean disable_web_page_preview, InlineKeyboardMarkup reply_markup)
 					throws TelegramBotApiException {
-		// TODO Auto-generated method stub
-		return null;
+
+		if (text == null)
+			throw new InvalidParameterException("(editMessageText) Null value is not allowed for field: text");
+
+		if (inline_message_id == null && (chat_id == null || message_id == null))
+			throw new InvalidParameterException("(editMessageText) chat_id+message_id or inline_message_id are mandatory");
+
+		MultiValueMap<String, Object> body = new LinkedMultiValueMap<String, Object>();
+
+		if (chat_id != null)
+			body.add("chat_id", chat_id);
+		if (message_id != null)
+			body.add("message_id", message_id);
+		if (inline_message_id != null)
+			body.add("inline_message_id", inline_message_id);
+
+		body.add("text", text);
+
+		if (parse_mode != null)
+			body.add("parse_mode", parse_mode);
+
+		if (disable_web_page_preview != null)
+			body.add("disable_web_page_preview", disable_web_page_preview);
+
+		if (reply_markup != null)
+			body.add("reply_markup", serializeToJsonString(reply_markup));
+
+		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
+
+		Response<Message> res = null;
+
+		try {
+			res = rest.exchange(api_uri_template.expand("editMessageText"), HttpMethod.POST, entity,
+					new ParameterizedTypeReference<Response<Message>>() {
+					}).getBody();
+		} catch (RestClientException e) {
+			throw new TelegramBotApiException(e);
+		}
+
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
 	}
 
 	@Override
 	public Message editMessageText(String chat_id, Integer message_id, String inline_message_id, String text,
 			String parse_mode, Boolean disable_web_page_preview, InlineKeyboardMarkup reply_markup)
 					throws TelegramBotApiException {
-		// TODO Auto-generated method stub
-		return null;
+
+		if (text == null)
+			throw new InvalidParameterException("(editMessageText) Null value is not allowed for field: text");
+
+		if (inline_message_id == null && (chat_id == null || message_id == null))
+			throw new InvalidParameterException("(editMessageText) chat_id+message_id or inline_message_id are mandatory");
+
+		MultiValueMap<String, Object> body = new LinkedMultiValueMap<String, Object>();
+
+		if (chat_id != null)
+			body.add("chat_id", chat_id);
+		if (message_id != null)
+			body.add("message_id", message_id);
+		if (inline_message_id != null)
+			body.add("inline_message_id", inline_message_id);
+
+		body.add("text", text);
+
+		if (parse_mode != null)
+			body.add("parse_mode", parse_mode);
+
+		if (disable_web_page_preview != null)
+			body.add("disable_web_page_preview", disable_web_page_preview);
+
+		if (reply_markup != null)
+			body.add("reply_markup", serializeToJsonString(reply_markup));
+
+		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
+
+		Response<Message> res = null;
+
+		try {
+			res = rest.exchange(api_uri_template.expand("editMessageText"), HttpMethod.POST, entity,
+					new ParameterizedTypeReference<Response<Message>>() {
+					}).getBody();
+		} catch (RestClientException e) {
+			throw new TelegramBotApiException(e);
+		}
+
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
 	}
 
 	@Override
 	public Message editMessageCaption(Long chat_id, Integer message_id, String inline_message_id, String caption,
 			InlineKeyboardMarkup reply_markup) throws TelegramBotApiException {
-		// TODO Auto-generated method stub
-		return null;
+
+		if (inline_message_id == null && (chat_id == null || message_id == null))
+			throw new InvalidParameterException("(editMessageText) chat_id+message_id or inline_message_id are mandatory");
+
+		MultiValueMap<String, Object> body = new LinkedMultiValueMap<String, Object>();
+
+		if (chat_id != null)
+			body.add("chat_id", chat_id);
+		if (message_id != null)
+			body.add("message_id", message_id);
+		if (inline_message_id != null)
+			body.add("inline_message_id", inline_message_id);
+
+		if (caption != null)
+			body.add("caption", caption);
+
+		if (reply_markup != null)
+			body.add("reply_markup", serializeToJsonString(reply_markup));
+
+		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
+
+		Response<Message> res = null;
+
+		try {
+			res = rest.exchange(api_uri_template.expand("editMessageCaption"), HttpMethod.POST, entity,
+					new ParameterizedTypeReference<Response<Message>>() {
+					}).getBody();
+		} catch (RestClientException e) {
+			throw new TelegramBotApiException(e);
+		}
+
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
 	}
 
 	@Override
 	public Message editMessageCaption(String chat_id, Integer message_id, String inline_message_id, String caption,
 			InlineKeyboardMarkup reply_markup) throws TelegramBotApiException {
-		// TODO Auto-generated method stub
-		return null;
+
+		if (inline_message_id == null && (chat_id == null || message_id == null))
+			throw new InvalidParameterException("(editMessageText) chat_id+message_id or inline_message_id are mandatory");
+
+		MultiValueMap<String, Object> body = new LinkedMultiValueMap<String, Object>();
+
+		if (chat_id != null)
+			body.add("chat_id", chat_id);
+		if (message_id != null)
+			body.add("message_id", message_id);
+		if (inline_message_id != null)
+			body.add("inline_message_id", inline_message_id);
+
+		if (caption != null)
+			body.add("caption", caption);
+
+		if (reply_markup != null)
+			body.add("reply_markup", serializeToJsonString(reply_markup));
+
+		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
+
+		Response<Message> res = null;
+
+		try {
+			res = rest.exchange(api_uri_template.expand("editMessageCaption"), HttpMethod.POST, entity,
+					new ParameterizedTypeReference<Response<Message>>() {
+					}).getBody();
+		} catch (RestClientException e) {
+			throw new TelegramBotApiException(e);
+		}
+
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
 	}
 
 	@Override
 	public Message editMessageReplyMarkup(Long chat_id, Integer message_id, String inline_message_id,
 			InlineKeyboardMarkup reply_markup) throws TelegramBotApiException {
-		// TODO Auto-generated method stub
-		return null;
+
+		if (inline_message_id == null && (chat_id == null || message_id == null))
+			throw new InvalidParameterException("(editMessageText) chat_id+message_id or inline_message_id are mandatory");
+
+		MultiValueMap<String, Object> body = new LinkedMultiValueMap<String, Object>();
+
+		if (chat_id != null)
+			body.add("chat_id", chat_id);
+		if (message_id != null)
+			body.add("message_id", message_id);
+		if (inline_message_id != null)
+			body.add("inline_message_id", inline_message_id);
+
+		if (reply_markup != null)
+			body.add("reply_markup", serializeToJsonString(reply_markup));
+
+		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
+
+		Response<Message> res = null;
+
+		try {
+			res = rest.exchange(api_uri_template.expand("editMessageReplyMarkup"), HttpMethod.POST, entity,
+					new ParameterizedTypeReference<Response<Message>>() {
+					}).getBody();
+		} catch (RestClientException e) {
+			throw new TelegramBotApiException(e);
+		}
+
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
 	}
 
 	@Override
 	public Message editMessageReplyMarkup(String chat_id, Integer message_id, String inline_message_id,
 			InlineKeyboardMarkup reply_markup) throws TelegramBotApiException {
-		// TODO Auto-generated method stub
-		return null;
+
+		if (inline_message_id == null && (chat_id == null || message_id == null))
+			throw new InvalidParameterException("(editMessageText) chat_id+message_id or inline_message_id are mandatory");
+
+		MultiValueMap<String, Object> body = new LinkedMultiValueMap<String, Object>();
+
+		if (chat_id != null)
+			body.add("chat_id", chat_id);
+		if (message_id != null)
+			body.add("message_id", message_id);
+		if (inline_message_id != null)
+			body.add("inline_message_id", inline_message_id);
+
+		if (reply_markup != null)
+			body.add("reply_markup", serializeToJsonString(reply_markup));
+
+		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
+
+		Response<Message> res = null;
+
+		try {
+			res = rest.exchange(api_uri_template.expand("editMessageReplyMarkup"), HttpMethod.POST, entity,
+					new ParameterizedTypeReference<Response<Message>>() {
+					}).getBody();
+		} catch (RestClientException e) {
+			throw new TelegramBotApiException(e);
+		}
+
+		if (!res.ok)
+			throw new TelegramBotApiException(res.description);
+
+		return res.result;
 	}
 
 }

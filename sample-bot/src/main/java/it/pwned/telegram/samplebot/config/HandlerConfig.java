@@ -60,6 +60,14 @@ public class HandlerConfig {
 			public Runnable getRunnable() {
 				return null;
 			}
+
+			@Override
+			public void loadState() {
+			}
+
+			@Override
+			public void saveState() {
+			}
 			
 		};
 		

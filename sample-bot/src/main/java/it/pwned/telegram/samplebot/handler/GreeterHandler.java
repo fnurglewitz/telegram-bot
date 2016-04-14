@@ -57,4 +57,12 @@ public class GreeterHandler implements UpdateHandler {
 		return null;
 	}
 
+	@Override
+	public void loadState() {		
+	}
+
+	@Override
+	public void saveState() {		
+	}
+
 }

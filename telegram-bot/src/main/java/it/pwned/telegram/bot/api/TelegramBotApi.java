@@ -135,7 +135,7 @@ public interface TelegramBotApi {
 
 	Boolean unbanChatMember(String chat_id, int user_id) throws TelegramBotApiException;
 
-	Boolean answerCallbackQuery(String callback_query_id, String text, Boolean show_alert);
+	Boolean answerCallbackQuery(String callback_query_id, String text, Boolean show_alert) throws TelegramBotApiException;
 
 	Message editMessageText(Long chat_id, Integer message_id, String inline_message_id, String text, String parse_mode,
 			Boolean disable_web_page_preview, InlineKeyboardMarkup reply_markup) throws TelegramBotApiException;
