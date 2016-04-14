@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import it.pwned.telegram.bot.api.TelegramBotApi;
@@ -35,15 +36,16 @@ public class HandlerConfig {
 
 	@Bean
 	@Order(value = 1)
-	public UpdateHandler aoe2(TelegramBotApi api, ThreadPoolTaskExecutor executor, @Value("${aoe2.taunts}") String taunts_path) {
+	public UpdateHandler aoe2(TelegramBotApi api, ThreadPoolTaskExecutor executor,
+			@Value("${aoe2.taunts}") String taunts_path, JdbcTemplate jdbc) {
 		LinkedBlockingQueue<Message> message_queue = new LinkedBlockingQueue<Message>();
-		return new AoE2Handler(api, message_queue, executor, taunts_path);
+		return new AoE2Handler(api, message_queue, executor, taunts_path, jdbc);
 
 	}
-	
-	@Bean(name="inline_handler")
+
+	@Bean(name = "inline_handler")
 	public UpdateHandler inlineHandler(TelegramBotApi api, ThreadPoolTaskExecutor executor) {
-	
+
 		return new UpdateHandler() {
 
 			@Override
@@ -68,9 +70,9 @@ public class HandlerConfig {
 			@Override
 			public void saveState() {
 			}
-			
+
 		};
-		
+
 	}
 
 }

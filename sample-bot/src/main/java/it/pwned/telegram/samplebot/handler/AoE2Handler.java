@@ -5,6 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import it.pwned.telegram.bot.api.TelegramBotApi;
@@ -21,15 +22,17 @@ public class AoE2Handler implements UpdateHandler, Runnable {
 	private final ThreadPoolTaskExecutor executor;
 	private final BlockingQueue<Message> message_queue;
 	private final String taunts_path;
+	private final JdbcTemplate jdbc;
 
 	private static final Pattern pattern = Pattern.compile("^([0-9]+)((?:@)?([a-z]{2}))?$");
 
 	public AoE2Handler(TelegramBotApi api, BlockingQueue<Message> message_queue, ThreadPoolTaskExecutor executor,
-			String taunts_path) {
+			String taunts_path, JdbcTemplate jdbc) {
 		this.api = api;
 		this.executor = executor;
 		this.message_queue = message_queue;
 		this.taunts_path = taunts_path;
+		this.jdbc=jdbc;
 
 	}
 
@@ -213,6 +216,9 @@ public class AoE2Handler implements UpdateHandler, Runnable {
 					String culture = matcher.group(2);
 					if (culture != null)
 						culture = culture.substring(1);
+					else {
+						// fetch culture from h2sql
+					}
 
 					try {
 						api.sendVoice(m.chat.id, new FileSystemResource(getTauntPathByNumberAndCulture(taunt, culture)), null, null,
@@ -255,6 +261,7 @@ public class AoE2Handler implements UpdateHandler, Runnable {
 
 	@Override
 	public void loadState() {
+		jdbc.execute("create table prova ( id int )");
 	}
 
 	@Override
