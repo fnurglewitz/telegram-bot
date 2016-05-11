@@ -6,6 +6,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
@@ -36,6 +38,11 @@ import it.pwned.telegram.bot.api.type.Message;
 import it.pwned.telegram.bot.api.type.SendAction;
 import it.pwned.telegram.bot.api.type.TelegramBotApiException;
 import it.pwned.telegram.bot.api.type.Update;
+import it.pwned.telegram.bot.api.type.inline.InlineQueryResult;
+import it.pwned.telegram.bot.api.type.inline.InlineQueryResultDocument;
+import it.pwned.telegram.bot.api.type.inline.InlineQueryResultGif;
+import it.pwned.telegram.bot.api.type.inline.InlineQueryResultPhoto;
+import it.pwned.telegram.bot.api.type.inline.InputTextMessageContent;
 import it.pwned.telegram.bot.handler.UpdateHandler;
 import it.pwned.telegram.samplebot.handler.ImgurHandler.ImgurApi.GalleryImage;
 import it.pwned.telegram.samplebot.handler.ImgurHandler.ImgurApi.ImgurResponse;
@@ -241,14 +248,13 @@ public class ImgurHandler implements UpdateHandler, Runnable {
 	private final TelegramBotApi t_api;
 	private final Random rand;
 	private final Map<String, String[]> subreddits;
-	private String avaible_cmds;
 	private final ThreadPoolTaskExecutor executor;
-	private final BlockingQueue<Message> message_queue;
+	private final BlockingQueue<Update> update_queue;
 
-	public ImgurHandler(TelegramBotApi api, BlockingQueue<Message> message_queue, ThreadPoolTaskExecutor executor) {
+	public ImgurHandler(TelegramBotApi api, BlockingQueue<Update> update_queue, ThreadPoolTaskExecutor executor) {
 		this.t_api = api;
 		this.executor = executor;
-		this.message_queue = message_queue;
+		this.update_queue = update_queue;
 		this.subreddits = new HashMap<String, String[]>();
 		this.rand = new Random();
 	}
@@ -262,85 +268,92 @@ public class ImgurHandler implements UpdateHandler, Runnable {
 	public void setCommands(@Value("${imgur.commands-file}") String file) {
 		log.info(String.format("Loading imgur commands from file: %s", file));
 
-		StringBuilder sb = new StringBuilder("Avaible imgur commands:\n");
-
 		try (Stream<String> lines = Files.lines(Paths.get(file))) {
 			for (String line : (Iterable<String>) lines::iterator) {
 				String[] splitted = line.split(",");
-				sb.append(String.format("/%s : %s\n", splitted[0], splitted[1]));
-				subreddits.put(String.format("/%s", splitted[0]), Arrays.copyOfRange(splitted, 2, splitted.length));
+				subreddits.put(splitted[0], Arrays.copyOfRange(splitted, 2, splitted.length));
 			}
 		} catch (IOException e) {
 			e.printStackTrace(); // shit happens
 		}
 
-		this.avaible_cmds = sb.toString();
-
-		log.info(this.avaible_cmds);
 	}
 
 	public boolean submit(Update u) {
-		if (u.message.is_command && ("/imgur".equals(u.message.text) || subreddits.containsKey(u.message.command)))
+		if (u.inline_query != null || u.chosen_inline_result != null)
 			try {
-				this.message_queue.put(u.message);
+				this.update_queue.put(u);
 			} catch (InterruptedException e) {
 				// shit happens
 			}
 		return true;
 	}
 
-	private void processMessage(Message m) {
+	private boolean checkPermissions(long user_id, String query) {
 
-		if ("/imgur".equals(m.text)) {
-			try {
-				t_api.sendMessage(m.chat.id, this.avaible_cmds, null, null, null, null, null);
-			} catch (TelegramBotApiException e) {
-			}
-		} else {
+		boolean result = true;
 
-			final String[] array_ref = subreddits.get(m.command);
+		return result;
+	}
 
-			executor.submit(() -> {
-				String subreddit = array_ref[new Random().nextInt(array_ref.length)];
+	private List<InlineQueryResult> getResults(String[] subreddits) {
+		List<InlineQueryResult> result = new LinkedList<InlineQueryResult>();
 
-				try {
+		String subreddit = subreddits[new Random().nextInt(subreddits.length)];
 
-					t_api.sendChatAction(m.chat.id, ChatAction.upload_photo);
+		try {
+			int retry = 5;
+			ImgurResponse gi = null;
+			do {
+				gi = api.getSubredditPhotosByPage(subreddit, rand.nextInt(101), "time", "all");
+				if (gi != null && gi.success && gi.data.length > 0)
+					retry = -1;
+				else
+					retry--;
+			} while (retry >= 0);
 
-					try {
-						int retry = 5;
-						ImgurResponse gi = null;
-						do {
-							gi = api.getSubredditPhotosByPage(subreddit, rand.nextInt(101), "time", "all");
-							if (gi != null && gi.success && gi.data.length > 0)
-								retry = -1;
-							else
-								retry--;
-						} while (retry >= 0);
+			if (gi != null && gi.success && gi.data.length > 0) {
+				for (int i = 0; i < 10; i++) {
+					GalleryImage img = gi.data[rand.nextInt(gi.data.length)];
 
-						if (gi != null && gi.success && gi.data.length > 0) {
-							GalleryImage rand_img = gi.data[rand.nextInt(gi.data.length)];
-
-							SendAction sa = SendAction.getSendActionFromMimeType(rand_img.type);
-
-							switch (sa) {
-							case Photo:
-								t_api.sendPhoto(m.chat.id, new UrlResource(rand_img.link), rand_img.title, null, null, null);
-								break;
-							default:
-								t_api.sendDocument(m.chat.id, new UrlResource(rand_img.link), null, null, null, null);
-							}
-
-						} else
-							t_api.sendMessage(m.chat.id, "Error while fetching the image.", null, null, null, null, null);
-
-					} catch (Exception e) {
-						log.error("Error while fetching the image.", e);
-						t_api.sendMessage(m.chat.id, "Error while fetching the image.", null, null, null, null, null);
+					switch (SendAction.getSendActionFromMimeType(img.type)) {
+					case Photo:
+						result.add(new InlineQueryResultPhoto(Integer.toString(i), img.link, null, null, img.link, img.title,
+								img.description, img.title, null, null));
+						break;
+					case Gif:
+						result.add(new InlineQueryResultGif(Integer.toString(i), img.link, null, null, img.link, img.title,
+								img.title, null, null));
+						break;
 					}
 
-				} catch (TelegramBotApiException ae) {
+				}
+			}
+		} catch (Exception e) {
+			log.error("", e);
+		}
 
+		return result;
+	}
+
+	private void processUpdate(Update u) {
+
+		if (!checkPermissions(u.inline_query.from.id, u.inline_query.query))
+			return;
+
+		final String[] array_ref = subreddits.get(u.inline_query.query);
+
+		if (array_ref != null && array_ref.length > 0) {
+
+			executor.submit(() -> {
+				try {
+
+					List<InlineQueryResult> results = getResults(array_ref);
+
+					t_api.answerInlineQuery(u.inline_query.id, results, 60, null, null, null, null);
+
+				} catch (Exception e) {
+					log.error("Error while fetching the image.", e);
 				}
 
 			});
@@ -351,10 +364,10 @@ public class ImgurHandler implements UpdateHandler, Runnable {
 	@Override
 	public void run() {
 		boolean go_on = true;
-		while (go_on || !message_queue.isEmpty()) {
+		while (go_on || !update_queue.isEmpty()) {
 			try {
 
-				processMessage(message_queue.take());
+				processUpdate(update_queue.take());
 
 				if (Thread.currentThread().isInterrupted())
 					throw new InterruptedException();
@@ -376,11 +389,11 @@ public class ImgurHandler implements UpdateHandler, Runnable {
 	}
 
 	@Override
-	public void loadState() {		
+	public void loadState() {
 	}
 
 	@Override
-	public void saveState() {		
+	public void saveState() {
 	}
 
 }

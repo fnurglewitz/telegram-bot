@@ -1,7 +1,7 @@
 package it.pwned.telegram.bot.api.type;
 
 public enum SendAction {
-	Photo(0), Audio(1), Document(2), Sticker(3), Video(4), Voice(5);
+	Photo(0), Audio(1), Document(2), Sticker(3), Video(4), Voice(5), Gif(6);
 
 	private final int value;
 
@@ -33,6 +33,9 @@ public enum SendAction {
 		case "audio/ogg":
 			return SendAction.Voice; // TODO : bug for sure, audio/ogg too generic, the file's codec must be OPUS
 
+		case "image/gif":
+			return SendAction.Gif;
+			
 		default:
 			return SendAction.Document;
 

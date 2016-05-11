@@ -22,7 +22,7 @@ public class StandardUpdateHandlerManager implements UpdateHandlerManager {
 		this.handlers = handlers;
 		this.inline_handler = inline_handler;
 
-		this.handlers.remove(inline_handler);
+		//this.handlers.remove(inline_handler);
 
 		this.handler_threads = new ConcurrentHashMap<UpdateHandler, Thread>();
 

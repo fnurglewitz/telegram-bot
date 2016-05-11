@@ -1,4 +1,4 @@
-package it.pwned.telegram.bot;
+package it.pwned.telegram.bot.dispatcher;
 
 import it.pwned.telegram.bot.api.type.Update;
 

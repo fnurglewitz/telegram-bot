@@ -26,53 +26,20 @@ public class HandlerConfig {
 		return new GreeterHandler(api, executor);
 	}
 
-	@Bean
+	@Bean(name = "inline_handler")
 	@Order(value = 3)
 	public UpdateHandler imgur(TelegramBotApi api, ThreadPoolTaskExecutor executor) {
-		LinkedBlockingQueue<Message> message_queue = new LinkedBlockingQueue<Message>();
-		ImgurHandler handler = new ImgurHandler(api, message_queue, executor);
+		LinkedBlockingQueue<Update> update_queue = new LinkedBlockingQueue<Update>();
+		ImgurHandler handler = new ImgurHandler(api, update_queue, executor);
 		return handler;
 	}
 
-	@Bean
 	@Order(value = 1)
 	public UpdateHandler aoe2(TelegramBotApi api, ThreadPoolTaskExecutor executor,
 			@Value("${aoe2.taunts}") String taunts_path, JdbcTemplate jdbc) {
-		LinkedBlockingQueue<Message> message_queue = new LinkedBlockingQueue<Message>();
-		return new AoE2Handler(api, message_queue, executor, taunts_path, jdbc);
+		LinkedBlockingQueue<Update> update_queue = new LinkedBlockingQueue<Update>();
+		return new AoE2Handler(api, update_queue, executor, taunts_path, jdbc);
 
 	}
-
-	@Bean(name = "inline_handler")
-	public UpdateHandler inlineHandler(TelegramBotApi api, ThreadPoolTaskExecutor executor) {
-
-		return new UpdateHandler() {
-
-			@Override
-			public boolean submit(Update u) {
-				return true;
-			}
-
-			@Override
-			public boolean requiresThread() {
-				return false;
-			}
-
-			@Override
-			public Runnable getRunnable() {
-				return null;
-			}
-
-			@Override
-			public void loadState() {
-			}
-
-			@Override
-			public void saveState() {
-			}
-
-		};
-
-	}
-
+	
 }

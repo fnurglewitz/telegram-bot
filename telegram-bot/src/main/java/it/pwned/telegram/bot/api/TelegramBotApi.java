@@ -125,7 +125,7 @@ public interface TelegramBotApi {
 	Resource getResourceFromTelegramFile(TelegramFile file) throws TelegramBotApiException;
 
 	Boolean answerInlineQuery(String inline_query_id, List<InlineQueryResult> results, Integer cache_time,
-			Boolean is_personal, String next_offset) throws TelegramBotApiException;
+			Boolean is_personal, String next_offset, String switch_pm_text, String switch_pm_parameter) throws TelegramBotApiException;
 
 	Boolean kickChatMember(long chat_id, int user_id) throws TelegramBotApiException;
 

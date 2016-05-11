@@ -7,6 +7,8 @@ import it.pwned.telegram.bot.api.TelegramBotApi;
 import it.pwned.telegram.bot.api.type.TelegramBotApiException;
 import it.pwned.telegram.bot.api.type.Update;
 import it.pwned.telegram.bot.api.type.User;
+import it.pwned.telegram.bot.collector.UpdateCollector;
+import it.pwned.telegram.bot.dispatcher.UpdateDispatcher;
 import it.pwned.telegram.bot.handler.UpdateHandlerManager;
 
 public final class TelegramBot {

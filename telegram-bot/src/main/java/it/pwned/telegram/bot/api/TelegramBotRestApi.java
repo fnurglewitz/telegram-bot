@@ -1,5 +1,6 @@
 package it.pwned.telegram.bot.api;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.charset.Charset;
 import java.security.InvalidParameterException;
@@ -25,6 +26,7 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriTemplate;
@@ -1007,7 +1009,8 @@ public class TelegramBotRestApi implements TelegramBotApi {
 
 	@Override
 	public Boolean answerInlineQuery(String inline_query_id, List<InlineQueryResult> results, Integer cache_time,
-			Boolean is_personal, String next_offset) throws TelegramBotApiException {
+			Boolean is_personal, String next_offset, String switch_pm_text, String switch_pm_parameter)
+					throws TelegramBotApiException {
 
 		if (inline_query_id == null || results == null || results.size() == 0)
 			throw new InvalidParameterException("(sendVoice) Null value is not allowed for fields: inline_query_id, results");
@@ -1026,6 +1029,12 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		if (next_offset != null)
 			body.add("next_offset", next_offset);
 
+		if (switch_pm_text != null)
+			body.add("switch_pm_text", switch_pm_text);
+
+		if (switch_pm_parameter != null)
+			body.add("switch_pm_parameter", switch_pm_parameter);
+
 		HttpEntity<?> entity = new HttpEntity<Object>(body, multipart_headers);
 
 		Response<Boolean> res = null;
@@ -1034,6 +1043,12 @@ public class TelegramBotRestApi implements TelegramBotApi {
 			res = rest.exchange(api_uri_template.expand("answerInlineQuery"), HttpMethod.POST, entity,
 					new ParameterizedTypeReference<Response<Boolean>>() {
 					}).getBody();
+		} catch (HttpStatusCodeException he) {
+			try {
+				res = mapper.readValue(he.getResponseBodyAsString(), Response.class);
+			} catch (IOException e) {
+				throw new TelegramBotApiException(he);
+			}
 		} catch (RestClientException e) {
 			throw new TelegramBotApiException(e);
 		}

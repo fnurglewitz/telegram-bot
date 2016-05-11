@@ -1,4 +1,4 @@
-package it.pwned.telegram.bot;
+package it.pwned.telegram.bot.collector;
 
 import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;

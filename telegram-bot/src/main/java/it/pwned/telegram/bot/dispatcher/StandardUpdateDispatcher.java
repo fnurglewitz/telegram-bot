@@ -1,4 +1,4 @@
-package it.pwned.telegram.bot;
+package it.pwned.telegram.bot.dispatcher;
 
 import java.util.List;
 

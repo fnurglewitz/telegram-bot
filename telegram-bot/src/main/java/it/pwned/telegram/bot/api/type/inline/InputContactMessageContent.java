@@ -1,7 +1,10 @@
 package it.pwned.telegram.bot.api.type.inline;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+@JsonInclude(Include.NON_NULL)
 public class InputContactMessageContent extends InputMessageContent {
 
 	public final String phone_number;

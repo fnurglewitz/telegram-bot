@@ -9,15 +9,17 @@ public final class Sticker {
 	public final Integer width;
 	public final Integer height;
 	public final PhotoSize thumb;
+	public final String emoji;
 	public final Integer file_size;
 
 	public Sticker(@JsonProperty("file_id") String file_id, @JsonProperty("width") Integer width,
 			@JsonProperty("height") Integer height, @JsonProperty("thumb") PhotoSize thumb,
-			@JsonProperty("file_size") Integer file_size) {
+			@JsonProperty("emoji") String emoji, @JsonProperty("file_size") Integer file_size) {
 		this.file_id = file_id;
 		this.width = width;
 		this.height = height;
 		this.thumb = thumb;
+		this.emoji = emoji;
 		this.file_size = file_size;
 	}
 }

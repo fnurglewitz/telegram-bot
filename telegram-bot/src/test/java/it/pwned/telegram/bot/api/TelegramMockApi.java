@@ -255,7 +255,8 @@ public class TelegramMockApi implements TelegramBotApi {
 
 	@Override
 	public Boolean answerInlineQuery(String inline_query_id, List<InlineQueryResult> results, Integer cache_time,
-			Boolean is_personal, String next_offset) throws TelegramBotApiException {
+			Boolean is_personal, String next_offset, String switch_pm_text, String switch_pm_parameter)
+					throws TelegramBotApiException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -333,6 +334,5 @@ public class TelegramMockApi implements TelegramBotApi {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 
 }

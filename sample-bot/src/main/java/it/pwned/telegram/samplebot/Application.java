@@ -16,14 +16,14 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import it.pwned.telegram.bot.ApiUpdateCollector;
-import it.pwned.telegram.bot.StandardUpdateDispatcher;
 import it.pwned.telegram.bot.TelegramBot;
-import it.pwned.telegram.bot.UpdateCollector;
-import it.pwned.telegram.bot.UpdateDispatcher;
 import it.pwned.telegram.bot.api.TelegramBotApi;
 import it.pwned.telegram.bot.api.TelegramBotRestApi;
 import it.pwned.telegram.bot.api.type.Update;
+import it.pwned.telegram.bot.collector.ApiUpdateCollector;
+import it.pwned.telegram.bot.collector.UpdateCollector;
+import it.pwned.telegram.bot.dispatcher.StandardUpdateDispatcher;
+import it.pwned.telegram.bot.dispatcher.UpdateDispatcher;
 import it.pwned.telegram.bot.handler.StandardUpdateHandlerManager;
 import it.pwned.telegram.bot.handler.UpdateHandler;
 import it.pwned.telegram.bot.handler.UpdateHandlerManager;

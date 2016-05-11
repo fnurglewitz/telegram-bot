@@ -13,6 +13,7 @@ public class Message {
 	public final Integer date;
 	public final Chat chat;
 	public final User forward_from;
+	public final Chat forward_from_chat;
 	public final Integer forward_date;
 	public final Message reply_to_message;
 	public final String text;
@@ -53,15 +54,16 @@ public class Message {
 
 	public Message(@JsonProperty("message_id") Integer message_id, @JsonProperty("from") User from,
 			@JsonProperty("date") Integer date, @JsonProperty("chat") Chat chat,
-			@JsonProperty("forward_from") User forward_from, @JsonProperty("forward_date") Integer forward_date,
-			@JsonProperty("reply_to_message") Message reply_to_message, @JsonProperty("text") String text,
-			@JsonProperty("entities") MessageEntity[] entities, @JsonProperty("audio") Audio audio,
-			@JsonProperty("document") Document document, @JsonProperty("photo") PhotoSize[] photo,
-			@JsonProperty("sticker") Sticker sticker, @JsonProperty("video") Video video, @JsonProperty("voice") Voice voice,
-			@JsonProperty("caption") String caption, @JsonProperty("contact") Contact contact,
-			@JsonProperty("location") Location location, @JsonProperty("venue") Venue venue,
-			@JsonProperty("new_chat_member") User new_chat_member, @JsonProperty("left_chat_member") User left_chat_member,
-			@JsonProperty("new_chat_title") String new_chat_title, @JsonProperty("new_chat_photo") PhotoSize[] new_chat_photo,
+			@JsonProperty("forward_from") User forward_from, @JsonProperty("forward_from_chat") Chat forward_from_chat,
+			@JsonProperty("forward_date") Integer forward_date, @JsonProperty("reply_to_message") Message reply_to_message,
+			@JsonProperty("text") String text, @JsonProperty("entities") MessageEntity[] entities,
+			@JsonProperty("audio") Audio audio, @JsonProperty("document") Document document,
+			@JsonProperty("photo") PhotoSize[] photo, @JsonProperty("sticker") Sticker sticker,
+			@JsonProperty("video") Video video, @JsonProperty("voice") Voice voice, @JsonProperty("caption") String caption,
+			@JsonProperty("contact") Contact contact, @JsonProperty("location") Location location,
+			@JsonProperty("venue") Venue venue, @JsonProperty("new_chat_member") User new_chat_member,
+			@JsonProperty("left_chat_member") User left_chat_member, @JsonProperty("new_chat_title") String new_chat_title,
+			@JsonProperty("new_chat_photo") PhotoSize[] new_chat_photo,
 			@JsonProperty("delete_chat_photo") Boolean delete_chat_photo,
 			@JsonProperty("group_chat_created") Boolean group_chat_created,
 			@JsonProperty("supergroup_chat_created") Boolean supergroup_chat_created,
@@ -76,6 +78,7 @@ public class Message {
 		this.date = date;
 		this.chat = chat;
 		this.forward_from = forward_from;
+		this.forward_from_chat = forward_from_chat;
 		this.forward_date = forward_date;
 		this.reply_to_message = reply_to_message;
 		this.text = text;

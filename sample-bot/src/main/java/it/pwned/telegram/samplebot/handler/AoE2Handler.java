@@ -1,10 +1,15 @@
 package it.pwned.telegram.samplebot.handler;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -12,6 +17,8 @@ import it.pwned.telegram.bot.api.TelegramBotApi;
 import it.pwned.telegram.bot.api.type.Message;
 import it.pwned.telegram.bot.api.type.TelegramBotApiException;
 import it.pwned.telegram.bot.api.type.Update;
+import it.pwned.telegram.bot.api.type.inline.InlineQueryResult;
+import it.pwned.telegram.bot.api.type.inline.InlineQueryResultVoice;
 import it.pwned.telegram.bot.handler.UpdateHandler;
 
 public class AoE2Handler implements UpdateHandler, Runnable {
@@ -20,33 +27,36 @@ public class AoE2Handler implements UpdateHandler, Runnable {
 
 	private final TelegramBotApi api;
 	private final ThreadPoolTaskExecutor executor;
-	private final BlockingQueue<Message> message_queue;
+	private final BlockingQueue<Update> message_queue;
 	private final String taunts_path;
+	private final Map<Integer, String> taunts;
 	private final JdbcTemplate jdbc;
 
 	private static final Pattern pattern = Pattern.compile("^([0-9]+)((?:@)?([a-z]{2}))?$");
 
-	public AoE2Handler(TelegramBotApi api, BlockingQueue<Message> message_queue, ThreadPoolTaskExecutor executor,
+	public AoE2Handler(TelegramBotApi api, BlockingQueue<Update> message_queue, ThreadPoolTaskExecutor executor,
 			String taunts_path, JdbcTemplate jdbc) {
 		this.api = api;
 		this.executor = executor;
 		this.message_queue = message_queue;
 		this.taunts_path = taunts_path;
-		this.jdbc=jdbc;
+		this.taunts = new ConcurrentHashMap<Integer, String>();
+		this.jdbc = jdbc;
 
 	}
 
 	@Override
 	public boolean submit(Update u) {
 		boolean result = true;
-		if (catafrutti.equals(u.message.chat.id) || "private".equals(u.message.chat.type)) {
+		if (catafrutti.equals(u.message.chat.id) || "private".equals(u.message.chat.type)
+				|| (u.message.text != null && u.message.text.startsWith("/aoe"))) {
 			try {
-				this.message_queue.put(u.message);
+				this.message_queue.put(u);
 			} catch (InterruptedException e) {
 				// shit happens
 			}
 
-			if (u.message.new_chat_member != null)
+			if (u.message != null && u.message.new_chat_member != null)
 				result = false;
 		}
 		return result;
@@ -58,158 +68,52 @@ public class AoE2Handler implements UpdateHandler, Runnable {
 
 	private String getTauntPathByNumberAndCulture(int taunt, String culture) {
 
-		String taunt_string;
+		String taunt_string = this.taunts.get(taunt);
+
+		if (taunt_string == null)
+			this.taunts.get(30); // wololo
 
 		if (culture == null || "".equals(culture))
 			culture = "en";
 
-		switch (taunt) {
-		case 1:
-			taunt_string = "01 yes.mp3";
-			break;
-		case 2:
-			taunt_string = "02 no.mp3";
-			break;
-		case 3:
-			taunt_string = "03 food, please.mp3";
-			break;
-		case 4:
-			taunt_string = "04 wood, please.mp3";
-			break;
-		case 5:
-			taunt_string = "05 gold, please.mp3";
-			break;
-		case 6:
-			taunt_string = "06 stone, please.mp3";
-			break;
-		case 7:
-			taunt_string = "07 ahh.mp3";
-			break;
-		case 8:
-			taunt_string = "08 all hail.mp3";
-			break;
-		case 9:
-			taunt_string = "09 oooh.mp3";
-			break;
-		case 10:
-			taunt_string = "10 back to age 1.mp3";
-			break;
-		case 11:
-			taunt_string = "11 herb laugh.mp3";
-			break;
-		case 12:
-			taunt_string = "12 being rushed.mp3";
-			break;
-		case 13:
-			taunt_string = "13 blame your isp.mp3";
-			break;
-		case 14:
-			taunt_string = "14 start the game.mp3";
-			break;
-		case 15:
-			taunt_string = "15 don't point that thing.mp3";
-			break;
-		case 16:
-			taunt_string = "16 enemy sighted.mp3";
-			break;
-		case 17:
-			taunt_string = "17 it is good.mp3";
-			break;
-		case 18:
-			taunt_string = "18 i need a monk.mp3";
-			break;
-		case 19:
-			taunt_string = "19 long time no siege.mp3";
-			break;
-		case 20:
-			taunt_string = "20 my granny.mp3";
-			break;
-		case 21:
-			taunt_string = "21 nice town i'll take it.mp3";
-			break;
-		case 22:
-			taunt_string = "22 quit touchin.mp3";
-			break;
-		case 23:
-			taunt_string = "23 raiding party.mp3";
-			break;
-		case 24:
-			taunt_string = "24 dadgum.mp3";
-			break;
-		case 25:
-			taunt_string = "25 smite me.mp3";
-			break;
-		case 26:
-			taunt_string = "26 the wonder.mp3";
-			break;
-		case 27:
-			taunt_string = "27 you play 2 hours.mp3";
-			break;
-		case 28:
-			taunt_string = "28 you should see the other guy.mp3";
-			break;
-		case 29:
-			taunt_string = "29 roggan.mp3";
-			break;
-		case 30:
-			taunt_string = "30 wololo.mp3";
-			break;
-		case 31:
-			taunt_string = "31 attack an enemy now.mp3";
-			break;
-		case 32:
-			taunt_string = "32 cease creating extra villagers.mp3";
-			break;
-		case 33:
-			taunt_string = "33 create extra villagers.mp3";
-			break;
-		case 34:
-			taunt_string = "34 build a navy.mp3";
-			break;
-		case 35:
-			taunt_string = "35 stop building a navy.mp3";
-			break;
-		case 36:
-			taunt_string = "36 wait for my signal to attack.mp3";
-			break;
-		case 37:
-			taunt_string = "37 build a wonder.mp3";
-			break;
-		case 38:
-			taunt_string = "38 give me your extra resources.mp3";
-			break;
-		case 39:
-			taunt_string = "39 ally.mp3";
-			break;
-		case 40:
-			taunt_string = "40 enemy.mp3";
-			break;
-		case 41:
-			taunt_string = "41 neutral.mp3";
-			break;
-		case 42:
-			taunt_string = "42 what age are you in.mp3";
-			break;
-		default:
-			taunt_string = "30 wololo.mp3";
-		}
 		return String.format("%s/%s/%s", taunts_path, culture, taunt_string);
 
 	}
 
-	private void processMessage(Message m) {
+	private void processUpdate(Update u) {
+
+		Message m = u.message;
 
 		executor.submit(() -> {
 
-			if (m.new_chat_member != null) {
+			if (m != null && m.is_command) {
+
+				if (m.command_parameters.length == 2 && m.command_parameters[0].equals("lang")) {
+					String culture = m.command_parameters[1];
+
+					if (culture != null && culture.length() == 2) {
+						jdbc.update("MERGE INTO AOE2.SETTINGS KEY(USER_ID) VALUES ( ?, ? );", new Object[] { m.from.id, culture });
+					}
+				}
+
+				return;
+			}
+
+			if (m != null && m.new_chat_member != null) {
 				try {
 					api.sendVoice(m.chat.id, new FileSystemResource(getTauntPathByNumberAndCulture(8)), null, null, m.message_id,
 							null);
 				} catch (TelegramBotApiException e) {
 				}
-			} else if (m.text != null) {
 
-				Matcher matcher = pattern.matcher(m.text);
+				return;
+			}
+
+			if ((m != null && m.text != null)) {
+
+				String query = m.text;
+
+				Matcher matcher = pattern.matcher(query);
 
 				if (matcher.find()) {
 					int taunt = Integer.parseInt(matcher.group(1));
@@ -218,18 +122,27 @@ public class AoE2Handler implements UpdateHandler, Runnable {
 						culture = culture.substring(1);
 					else {
 						// fetch culture from h2sql
+						try {
+							Integer user_id = m.from.id != null ? m.from.id : u.inline_query.from.id;
+
+							culture = jdbc.queryForObject("SELECT FAVORITE_LANG FROM AOE2.SETTINGS WHERE USER_ID = ?;", String.class,
+									user_id);
+						} catch (Exception e) {
+							culture = null;
+						}
 					}
 
+					String taunt_url = getTauntPathByNumberAndCulture(taunt, culture);
+
 					try {
-						api.sendVoice(m.chat.id, new FileSystemResource(getTauntPathByNumberAndCulture(taunt, culture)), null, null,
-								null, null);
+						api.sendVoice(m.chat.id, new FileSystemResource(taunt_url), null, null, null, null);
 					} catch (TelegramBotApiException e) {
 					}
+
 				}
 
 			}
 		});
-
 	}
 
 	@Override
@@ -248,7 +161,7 @@ public class AoE2Handler implements UpdateHandler, Runnable {
 		while (go_on || !message_queue.isEmpty()) {
 			try {
 
-				processMessage(message_queue.take());
+				processUpdate(message_queue.take());
 
 				if (Thread.currentThread().isInterrupted())
 					throw new InterruptedException();
@@ -261,7 +174,67 @@ public class AoE2Handler implements UpdateHandler, Runnable {
 
 	@Override
 	public void loadState() {
-		jdbc.execute("create table prova ( id int )");
+
+		this.taunts.put(1, "01 yes.mp3");
+		this.taunts.put(2, "02 no.mp3");
+		this.taunts.put(3, "03 food, please.mp3");
+		this.taunts.put(4, "04 wood, please.mp3");
+		this.taunts.put(5, "05 gold, please.mp3");
+		this.taunts.put(6, "06 stone, please.mp3");
+		this.taunts.put(7, "07 ahh.mp3");
+		this.taunts.put(8, "08 all hail.mp3");
+		this.taunts.put(9, "09 oooh.mp3");
+		this.taunts.put(10, "10 back to age 1.mp3");
+		this.taunts.put(11, "11 herb laugh.mp3");
+		this.taunts.put(12, "12 being rushed.mp3");
+		this.taunts.put(13, "13 blame your isp.mp3");
+		this.taunts.put(14, "14 start the game.mp3");
+		this.taunts.put(15, "15 don't point that thing.mp3");
+		this.taunts.put(16, "16 enemy sighted.mp3");
+		this.taunts.put(17, "17 it is good.mp3");
+		this.taunts.put(18, "18 i need a monk.mp3");
+		this.taunts.put(19, "19 long time no siege.mp3");
+		this.taunts.put(20, "20 my granny.mp3");
+		this.taunts.put(21, "21 nice town i'll take it.mp3");
+		this.taunts.put(22, "22 quit touchin.mp3");
+		this.taunts.put(23, "23 raiding party.mp3");
+		this.taunts.put(24, "24 dadgum.mp3");
+		this.taunts.put(25, "25 smite me.mp3");
+		this.taunts.put(26, "26 the wonder.mp3");
+		this.taunts.put(27, "27 you play 2 hours.mp3");
+		this.taunts.put(28, "28 you should see the other guy.mp3");
+		this.taunts.put(29, "29 roggan.mp3");
+		this.taunts.put(30, "30 wololo.mp3");
+		this.taunts.put(31, "31 attack an enemy now.mp3");
+		this.taunts.put(32, "32 cease creating extra villagers.mp3");
+		this.taunts.put(33, "33 create extra villagers.mp3");
+		this.taunts.put(34, "34 build a navy.mp3");
+		this.taunts.put(35, "35 stop building a navy.mp3");
+		this.taunts.put(36, "36 wait for my signal to attack.mp3");
+		this.taunts.put(37, "37 build a wonder.mp3");
+		this.taunts.put(38, "38 give me your extra resources.mp3");
+		this.taunts.put(39, "39 ally.mp3");
+		this.taunts.put(40, "40 enemy.mp3");
+		this.taunts.put(41, "41 neutral.mp3");
+		this.taunts.put(42, "42 what age are you in.mp3");
+
+		// flyway?
+		Integer schema_check = jdbc
+				.queryForObject("SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME='AOE2';", Integer.class);
+
+		if (schema_check == null || new Integer(0).compareTo(schema_check) == 0) {
+			jdbc.execute("CREATE SCHEMA AOE2;");
+			jdbc.execute("CREATE TABLE AOE2.SETTINGS ( USER_ID BIGINT PRIMARY KEY, FAVORITE_LANG VARCHAR(50));");
+		} else {
+			schema_check = jdbc.queryForObject(
+					"SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='AOE2' AND TABLE_NAME='SETTINGS';",
+					Integer.class);
+
+			if (schema_check == null || new Integer(0).compareTo(schema_check) == 0) {
+				jdbc.execute("CREATE TABLE AOE2.SETTINGS ( USER_ID BIGINT PRIMARY KEY, FAVORITE_LANG VARCHAR(50));");
+			}
+		}
+
 	}
 
 	@Override
