@@ -1,7 +1,5 @@
 package it.pwned.telegram.samplebot.handler;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -9,7 +7,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -17,8 +14,6 @@ import it.pwned.telegram.bot.api.TelegramBotApi;
 import it.pwned.telegram.bot.api.type.Message;
 import it.pwned.telegram.bot.api.type.TelegramBotApiException;
 import it.pwned.telegram.bot.api.type.Update;
-import it.pwned.telegram.bot.api.type.inline.InlineQueryResult;
-import it.pwned.telegram.bot.api.type.inline.InlineQueryResultVoice;
 import it.pwned.telegram.bot.handler.UpdateHandler;
 
 public class AoE2Handler implements UpdateHandler, Runnable {

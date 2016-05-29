@@ -34,6 +34,7 @@ public class HandlerConfig {
 		return handler;
 	}
 
+	@Bean
 	@Order(value = 1)
 	public UpdateHandler aoe2(TelegramBotApi api, ThreadPoolTaskExecutor executor,
 			@Value("${aoe2.taunts}") String taunts_path, JdbcTemplate jdbc) {
