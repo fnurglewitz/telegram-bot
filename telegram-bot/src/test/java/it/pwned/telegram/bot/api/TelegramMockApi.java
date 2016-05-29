@@ -6,7 +6,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.springframework.core.io.Resource;
 
+import it.pwned.telegram.bot.api.type.Chat;
 import it.pwned.telegram.bot.api.type.ChatAction;
+import it.pwned.telegram.bot.api.type.ChatMember;
 import it.pwned.telegram.bot.api.type.DummyKeyboard;
 import it.pwned.telegram.bot.api.type.InlineKeyboardMarkup;
 import it.pwned.telegram.bot.api.type.TelegramFile;
@@ -292,7 +294,7 @@ public class TelegramMockApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Message editMessageText(Long chat_id, Integer message_id, String inline_message_id, String text,
+	public Message editMessageText(long chat_id, Integer message_id, String inline_message_id, String text,
 			String parse_mode, Boolean disable_web_page_preview, InlineKeyboardMarkup reply_markup)
 					throws TelegramBotApiException {
 		// TODO Auto-generated method stub
@@ -308,7 +310,7 @@ public class TelegramMockApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Message editMessageCaption(Long chat_id, Integer message_id, String inline_message_id, String caption,
+	public Message editMessageCaption(long chat_id, Integer message_id, String inline_message_id, String caption,
 			InlineKeyboardMarkup reply_markup) throws TelegramBotApiException {
 		// TODO Auto-generated method stub
 		return null;
@@ -322,7 +324,7 @@ public class TelegramMockApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Message editMessageReplyMarkup(Long chat_id, Integer message_id, String inline_message_id,
+	public Message editMessageReplyMarkup(long chat_id, Integer message_id, String inline_message_id,
 			InlineKeyboardMarkup reply_markup) throws TelegramBotApiException {
 		// TODO Auto-generated method stub
 		return null;
@@ -333,6 +335,54 @@ public class TelegramMockApi implements TelegramBotApi {
 			InlineKeyboardMarkup reply_markup) throws TelegramBotApiException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public Chat getChat(long chat_id) throws TelegramBotApiException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Chat getChat(String chat_id) throws TelegramBotApiException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ChatMember[] getChatAdministrators(long chat_id) throws TelegramBotApiException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ChatMember[] getChatAdministrators(String chat_id) throws TelegramBotApiException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ChatMember getChatMember(long chat_id, int user_id) throws TelegramBotApiException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ChatMember getChatMember(String chat_id, int user_id) throws TelegramBotApiException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getChatMembersCount(long chat_id) throws TelegramBotApiException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getChatMembersCount(String chat_id) throws TelegramBotApiException {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

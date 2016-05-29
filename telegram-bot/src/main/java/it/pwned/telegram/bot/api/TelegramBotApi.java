@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.springframework.core.io.Resource;
 
+import it.pwned.telegram.bot.api.type.Chat;
 import it.pwned.telegram.bot.api.type.ChatAction;
+import it.pwned.telegram.bot.api.type.ChatMember;
 import it.pwned.telegram.bot.api.type.DummyKeyboard;
 import it.pwned.telegram.bot.api.type.InlineKeyboardMarkup;
 import it.pwned.telegram.bot.api.type.TelegramFile;
@@ -137,21 +139,39 @@ public interface TelegramBotApi {
 
 	Boolean answerCallbackQuery(String callback_query_id, String text, Boolean show_alert) throws TelegramBotApiException;
 
-	Message editMessageText(Long chat_id, Integer message_id, String inline_message_id, String text, String parse_mode,
+	Message editMessageText(long chat_id, Integer message_id, String inline_message_id, String text, String parse_mode,
 			Boolean disable_web_page_preview, InlineKeyboardMarkup reply_markup) throws TelegramBotApiException;
 
 	Message editMessageText(String chat_id, Integer message_id, String inline_message_id, String text, String parse_mode,
 			Boolean disable_web_page_preview, InlineKeyboardMarkup reply_markup) throws TelegramBotApiException;
 
-	Message editMessageCaption(Long chat_id, Integer message_id, String inline_message_id, String caption,
+	Message editMessageCaption(long chat_id, Integer message_id, String inline_message_id, String caption,
 			InlineKeyboardMarkup reply_markup) throws TelegramBotApiException;
 
 	Message editMessageCaption(String chat_id, Integer message_id, String inline_message_id, String caption,
 			InlineKeyboardMarkup reply_markup) throws TelegramBotApiException;
 
-	Message editMessageReplyMarkup(Long chat_id, Integer message_id, String inline_message_id,
+	Message editMessageReplyMarkup(long chat_id, Integer message_id, String inline_message_id,
 			InlineKeyboardMarkup reply_markup) throws TelegramBotApiException;
 
 	Message editMessageReplyMarkup(String chat_id, Integer message_id, String inline_message_id,
 			InlineKeyboardMarkup reply_markup) throws TelegramBotApiException;
+	
+	Chat getChat(long chat_id) throws TelegramBotApiException;
+	
+	Chat getChat(String chat_id) throws TelegramBotApiException;
+	
+	ChatMember[] getChatAdministrators(long chat_id) throws TelegramBotApiException;
+	
+	ChatMember[] getChatAdministrators(String chat_id) throws TelegramBotApiException;
+	
+	ChatMember getChatMember(long chat_id, int user_id) throws TelegramBotApiException;
+	
+	ChatMember getChatMember(String chat_id, int user_id) throws TelegramBotApiException;
+	
+	int getChatMembersCount(long chat_id) throws TelegramBotApiException;
+	
+	int getChatMembersCount(String chat_id) throws TelegramBotApiException;
+	
+	
 }

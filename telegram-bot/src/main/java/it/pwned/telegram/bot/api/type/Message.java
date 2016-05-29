@@ -16,6 +16,7 @@ public class Message {
 	public final Chat forward_from_chat;
 	public final Integer forward_date;
 	public final Message reply_to_message;
+	public final Integer edit_date;
 	public final String text;
 	public final MessageEntity[] entities;
 	public final Audio audio;
@@ -56,6 +57,7 @@ public class Message {
 			@JsonProperty("date") Integer date, @JsonProperty("chat") Chat chat,
 			@JsonProperty("forward_from") User forward_from, @JsonProperty("forward_from_chat") Chat forward_from_chat,
 			@JsonProperty("forward_date") Integer forward_date, @JsonProperty("reply_to_message") Message reply_to_message,
+			@JsonProperty("edit_date") Integer edit_date,
 			@JsonProperty("text") String text, @JsonProperty("entities") MessageEntity[] entities,
 			@JsonProperty("audio") Audio audio, @JsonProperty("document") Document document,
 			@JsonProperty("photo") PhotoSize[] photo, @JsonProperty("sticker") Sticker sticker,
@@ -81,6 +83,7 @@ public class Message {
 		this.forward_from_chat = forward_from_chat;
 		this.forward_date = forward_date;
 		this.reply_to_message = reply_to_message;
+		this.edit_date = edit_date;
 		this.text = text;
 		this.entities = entities;
 		this.audio = audio;

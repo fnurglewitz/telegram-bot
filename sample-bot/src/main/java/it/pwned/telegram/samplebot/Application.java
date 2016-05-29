@@ -84,7 +84,8 @@ public class Application {
 		ConfigurableApplicationContext ctx = app.run(args);
 
 		TelegramBot bot = ctx.getBean(TelegramBot.class);
-
+		//TelegramBotApi api = ctx.getBean(TelegramBotApi.class);
+		
 		Signal.handle(new Signal("INT"), new SignalHandler() {
 			@Override
 			public void handle(Signal s) {
