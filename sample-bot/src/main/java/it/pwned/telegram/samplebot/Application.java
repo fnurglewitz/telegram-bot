@@ -18,7 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.pwned.telegram.bot.TelegramBot;
 import it.pwned.telegram.bot.api.TelegramBotApi;
-import it.pwned.telegram.bot.api.TelegramBotRestApi;
+import it.pwned.telegram.bot.api.rest.TelegramBotRestApi;
 import it.pwned.telegram.bot.api.type.Update;
 import it.pwned.telegram.bot.collector.ApiUpdateCollector;
 import it.pwned.telegram.bot.collector.UpdateCollector;
@@ -51,7 +51,7 @@ public class Application {
 
 	@Bean
 	public TelegramBotApi telegramBotApi(@Value("${bot.token}") String token, ObjectMapper mapper) {
-		return new TelegramBotRestApi(token,mapper);
+		return new TelegramBotRestApi(token, mapper);
 	}
 
 	@Bean
@@ -61,10 +61,11 @@ public class Application {
 		new Thread(collector).start();
 		return collector;
 	}
-	
+
 	@Bean
-	public UpdateHandlerManager uhManager(List<UpdateHandler> handlers, @Qualifier(value="inline_handler") UpdateHandler inline_handler) {
-		return new StandardUpdateHandlerManager(handlers,inline_handler);
+	public UpdateHandlerManager uhManager(List<UpdateHandler> handlers,
+			@Qualifier(value = "inline_handler") UpdateHandler inline_handler) {
+		return new StandardUpdateHandlerManager(handlers, inline_handler);
 	}
 
 	@Bean
@@ -73,8 +74,8 @@ public class Application {
 	}
 
 	@Bean
-	public TelegramBot telegramBot(TelegramBotApi api, UpdateCollector collector, UpdateDispatcher dispatcher, UpdateHandlerManager manager)
-			throws Exception {
+	public TelegramBot telegramBot(TelegramBotApi api, UpdateCollector collector, UpdateDispatcher dispatcher,
+			UpdateHandlerManager manager) throws Exception {
 		return new TelegramBot(api, collector, dispatcher, manager);
 	}
 
@@ -84,8 +85,8 @@ public class Application {
 		ConfigurableApplicationContext ctx = app.run(args);
 
 		TelegramBot bot = ctx.getBean(TelegramBot.class);
-		//TelegramBotApi api = ctx.getBean(TelegramBotApi.class);
-		
+		// TelegramBotApi api = ctx.getBean(TelegramBotApi.class);
+
 		Signal.handle(new Signal("INT"), new SignalHandler() {
 			@Override
 			public void handle(Signal s) {
