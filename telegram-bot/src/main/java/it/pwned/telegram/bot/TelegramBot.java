@@ -15,8 +15,8 @@ public final class TelegramBot {
 
 	private static final Logger log = LoggerFactory.getLogger(TelegramBot.class);
 
-	public final Integer id;
-	public final String username;
+	public Integer id;
+	public String username;
 
 	private final TelegramBotApi api;
 	private final UpdateCollector collector;
@@ -26,19 +26,11 @@ public final class TelegramBot {
 	private volatile boolean go_on = true;
 
 	public TelegramBot(TelegramBotApi api, UpdateCollector collector, UpdateDispatcher dispatcher,
-			UpdateHandlerManager manager) throws TelegramBotApiException {
+			UpdateHandlerManager manager) {
 		this.api = api;
 		this.collector = collector;
 		this.dispatcher = dispatcher;
 		this.manager = manager;
-
-		// api test
-		User me = api.getMe();
-
-		this.id = me.id;
-		this.username = me.username;
-
-		log.info(String.format("Bot %s(%d) initialization successful", username, id));
 	}
 
 	public void shutdown() {
@@ -48,7 +40,14 @@ public final class TelegramBot {
 		}
 	}
 
-	public void run() throws InterruptedException {
+	public void run() throws InterruptedException, TelegramBotApiException {
+
+		User me = api.getMe();
+
+		this.id = me.id;
+		this.username = me.username;
+
+		log.info(String.format("Bot %s(%d) initialization successful", username, id));
 
 		manager.init();
 

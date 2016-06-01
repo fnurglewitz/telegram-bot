@@ -13,6 +13,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -28,6 +29,7 @@ import it.pwned.telegram.bot.handler.StandardUpdateHandlerManager;
 import it.pwned.telegram.bot.handler.UpdateHandler;
 import it.pwned.telegram.bot.handler.UpdateHandlerManager;
 import it.pwned.telegram.samplebot.config.HandlerConfig;
+import it.pwned.telegram.samplebot.config.RestConfig;
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
 
@@ -50,8 +52,8 @@ public class Application {
 	}
 
 	@Bean
-	public TelegramBotApi telegramBotApi(@Value("${bot.token}") String token, ObjectMapper mapper) {
-		return new TelegramBotRestApi(token, mapper);
+	public TelegramBotApi telegramBotApi(@Value("${bot.token}") String token, ObjectMapper mapper, RestTemplate rest) {
+		return new TelegramBotRestApi(token, mapper, rest);
 	}
 
 	@Bean
@@ -80,7 +82,7 @@ public class Application {
 	}
 
 	public static void main(String args[]) throws BeansException, Exception {
-		SpringApplication app = new SpringApplication(Application.class, HandlerConfig.class);
+		SpringApplication app = new SpringApplication(RestConfig.class, Application.class, HandlerConfig.class);
 		app.setWebEnvironment(false);
 		ConfigurableApplicationContext ctx = app.run(args);
 

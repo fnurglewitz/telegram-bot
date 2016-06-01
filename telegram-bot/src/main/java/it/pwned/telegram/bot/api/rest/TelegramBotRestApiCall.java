@@ -1,12 +1,8 @@
 package it.pwned.telegram.bot.api.rest;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.core.ParameterizedTypeReference;
@@ -14,15 +10,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.client.BufferingClientHttpRequestFactory;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
-import org.springframework.http.converter.ByteArrayHttpMessageConverter;
-import org.springframework.http.converter.FormHttpMessageConverter;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.ResourceHttpMessageConverter;
-import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -33,7 +20,6 @@ import org.springframework.web.util.UriTemplate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import it.pwned.telegram.bot.api.log.LoggingRequestInterceptor;
 import it.pwned.telegram.bot.api.type.Chat;
 import it.pwned.telegram.bot.api.type.ChatMember;
 import it.pwned.telegram.bot.api.type.Message;
@@ -46,46 +32,10 @@ import it.pwned.telegram.bot.api.type.UserProfilePhotos;
 
 public class TelegramBotRestApiCall<T> {
 
-	private static final HttpHeaders multipart_headers = initializeHttpHeaders();
+	private final RestTemplate rest;
+
 	@SuppressWarnings("rawtypes")
 	private static final Map<Class, ParameterizedTypeReference> type_refs = initializeParameterizedTypeReferences();
-	private static final RestTemplate rest = initializeRestTemplate();
-
-	private static HttpHeaders initializeHttpHeaders() {
-		HttpHeaders tmp = new HttpHeaders();
-		tmp.setContentType(MediaType.MULTIPART_FORM_DATA);
-		return tmp;
-	}
-
-	private static RestTemplate initializeRestTemplate() {
-		RestTemplate rest = new RestTemplate();
-
-		SimpleClientHttpRequestFactory rf = (SimpleClientHttpRequestFactory) rest.getRequestFactory();
-
-		rf.setConnectTimeout(10000);
-		rf.setReadTimeout(10000);
-
-		List<HttpMessageConverter<?>> lc = new LinkedList<HttpMessageConverter<?>>();
-		lc.add(new StringHttpMessageConverter(Charset.forName("UTF-8")));
-		lc.add(new ByteArrayHttpMessageConverter());
-		lc.add(new ResourceHttpMessageConverter());
-		lc.add(new MappingJackson2HttpMessageConverter());
-
-		for (HttpMessageConverter<?> c : rest.getMessageConverters()) {
-			if (c instanceof FormHttpMessageConverter) {
-				FormHttpMessageConverter fc = (FormHttpMessageConverter) c;
-				fc.setPartConverters(lc);
-			}
-		}
-
-		ClientHttpRequestInterceptor ri = new LoggingRequestInterceptor();
-		List<ClientHttpRequestInterceptor> ris = new ArrayList<ClientHttpRequestInterceptor>();
-		ris.add(ri);
-		rest.setInterceptors(ris);
-		rest.setRequestFactory(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
-
-		return rest;
-	}
 
 	@SuppressWarnings("rawtypes")
 	private static Map<Class, ParameterizedTypeReference> initializeParameterizedTypeReferences() {
@@ -138,14 +88,15 @@ public class TelegramBotRestApiCall<T> {
 	private final Class payload_type;
 
 	@SuppressWarnings("rawtypes")
-	private TelegramBotRestApiCall(String method, UriTemplate uri_template, ObjectMapper mapper, HttpMethod http_method,
-			HttpEntity<?> entity, Class payload_type) {
+	private TelegramBotRestApiCall(String method, UriTemplate uri_template, ObjectMapper mapper, RestTemplate rest,
+			HttpMethod http_method, HttpEntity<?> entity, Class payload_type) {
 		this.method = method;
 		this.uri_template = uri_template;
 		this.http_method = http_method;
 		this.mapper = mapper;
 		this.entity = entity;
 		this.payload_type = payload_type;
+		this.rest = rest;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -175,9 +126,11 @@ public class TelegramBotRestApiCall<T> {
 	public static class Builder<T> {
 
 		private final ObjectMapper mapper;
+		private final RestTemplate rest;
 		private final String method;
 		private final UriTemplate uri_template;
 		private final MultiValueMap<String, Object> body = new LinkedMultiValueMap<String, Object>();
+		private final HttpHeaders headers = new HttpHeaders();
 		@SuppressWarnings("rawtypes")
 		private final Class payload_type;
 
@@ -185,14 +138,14 @@ public class TelegramBotRestApiCall<T> {
 		private HttpEntity<?> entity;
 
 		@SuppressWarnings("rawtypes")
-		public Builder(String method, UriTemplate uri_template, ObjectMapper mapper, Class payload_type) {
+		public Builder(String method, UriTemplate uri_template, ObjectMapper mapper, RestTemplate rest,
+				Class payload_type) {
 			this.method = method;
 			this.uri_template = uri_template;
 			this.mapper = mapper;
+			this.rest = rest;
 			this.payload_type = payload_type;
-
 			this.http_method = HttpMethod.POST;
-			this.entity = new HttpEntity<Object>(body, multipart_headers);
 		}
 
 		public Builder<T> setParam(String name, Object param, boolean required, boolean serialize_to_json) {
@@ -217,14 +170,18 @@ public class TelegramBotRestApiCall<T> {
 			return this;
 		}
 
-		@SuppressWarnings("rawtypes")
-		public Builder<T> setHttpEntity(HttpEntity entity) {
-			this.entity = entity;
+		public Builder<T> setContentType(MediaType type) {
+			this.headers.setContentType(type);
 			return this;
 		}
 
 		public TelegramBotRestApiCall<T> build() {
-			return new TelegramBotRestApiCall<T>(method, uri_template, mapper, http_method, entity, payload_type);
+
+			if (this.body.size() > 0 || this.headers.size() > 0) {
+				this.entity = new HttpEntity<Object>(body, headers);
+			}
+
+			return new TelegramBotRestApiCall<T>(method, uri_template, mapper, rest, http_method, entity, payload_type);
 		}
 
 		private String serializeToJsonString(Object obj) {
