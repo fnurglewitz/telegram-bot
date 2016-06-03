@@ -8,6 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import it.pwned.telegram.bot.api.type.Update;
+
 //import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 public class StandardUpdateHandlerManager implements UpdateHandlerManager {
@@ -22,12 +24,8 @@ public class StandardUpdateHandlerManager implements UpdateHandlerManager {
 		this.handlers = handlers;
 		this.inline_handler = inline_handler;
 
-		//this.handlers.remove(inline_handler);
-
 		this.handler_threads = new ConcurrentHashMap<UpdateHandler, Thread>();
 
-		// it seems that spring already does this automatically, I should check on
-		// the doc
 		// Collections.sort(handlers, AnnotationAwareOrderComparator.INSTANCE);
 	}
 
@@ -46,19 +44,22 @@ public class StandardUpdateHandlerManager implements UpdateHandlerManager {
 		log.info("Shutting down handlers");
 
 		handler_threads.forEach((h, t) -> {
-			log.info(String.format("Sending interrupt signal to handler <%>",h.getClass().getSimpleName()));
+			log.info(String.format("Sending interrupt signal to handler <%>", h.getClass().getSimpleName()));
 			t.interrupt();
 		});
 
 		handler_threads.forEach((h, t) -> {
-			log.info(String.format("Join thread on handler <%>",h.getClass().getSimpleName()));
+			log.info(String.format("Join thread on handler <%>", h.getClass().getSimpleName()));
 			joinThreadAndIgnoreInterrupt(t);
 		});
 
 		handlers.forEach(h -> {
-			log.info(String.format("Saving state for handler <%>",h.getClass().getSimpleName()));
+			log.info(String.format("Saving state for handler <%>", h.getClass().getSimpleName()));
 			h.saveState();
 		});
+		
+		log.info(String.format("Saving state for handler <%>", inline_handler.getClass().getSimpleName()));
+		inline_handler.saveState();
 
 	}
 
@@ -77,6 +78,8 @@ public class StandardUpdateHandlerManager implements UpdateHandlerManager {
 				handler_threads.put(h, t);
 			}
 		});
+		
+		handlers.remove(inline_handler);
 
 	}
 
@@ -84,6 +87,19 @@ public class StandardUpdateHandlerManager implements UpdateHandlerManager {
 		// @formatter:off
 		try { t.join(); } catch (InterruptedException e) { }
 		// @formatter:on
+	}
+
+	@Override
+	public void dispatch(Update u) {
+		if (u.is_inline) {
+			if (inline_handler != null)
+				inline_handler.submit(u);
+		} else {
+			for (UpdateHandler h : handlers) {
+				if (!h.submit(u))
+					return;
+			}
+		}
 	}
 
 }

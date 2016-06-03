@@ -2,6 +2,8 @@ package it.pwned.telegram.bot.handler;
 
 import java.util.List;
 
+import it.pwned.telegram.bot.api.type.Update;
+
 public interface UpdateHandlerManager {
 
 	public List<UpdateHandler> getHandlers();
@@ -11,5 +13,7 @@ public interface UpdateHandlerManager {
 	public void init();
 	
 	public void shutdown();
+	
+	public void dispatch(Update u);
 	
 }

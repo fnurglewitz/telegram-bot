@@ -23,8 +23,6 @@ import it.pwned.telegram.bot.api.rest.TelegramBotRestApi;
 import it.pwned.telegram.bot.api.type.Update;
 import it.pwned.telegram.bot.collector.ApiUpdateCollector;
 import it.pwned.telegram.bot.collector.UpdateCollector;
-import it.pwned.telegram.bot.dispatcher.StandardUpdateDispatcher;
-import it.pwned.telegram.bot.dispatcher.UpdateDispatcher;
 import it.pwned.telegram.bot.handler.StandardUpdateHandlerManager;
 import it.pwned.telegram.bot.handler.UpdateHandler;
 import it.pwned.telegram.bot.handler.UpdateHandlerManager;
@@ -71,14 +69,9 @@ public class Application {
 	}
 
 	@Bean
-	public UpdateDispatcher updateDispatcher(UpdateHandlerManager manager) {
-		return new StandardUpdateDispatcher(manager);
-	}
-
-	@Bean
-	public TelegramBot telegramBot(TelegramBotApi api, UpdateCollector collector, UpdateDispatcher dispatcher,
-			UpdateHandlerManager manager) throws Exception {
-		return new TelegramBot(api, collector, dispatcher, manager);
+	public TelegramBot telegramBot(TelegramBotApi api, UpdateCollector collector, UpdateHandlerManager manager)
+			throws Exception {
+		return new TelegramBot(api, collector, manager);
 	}
 
 	public static void main(String args[]) throws BeansException, Exception {

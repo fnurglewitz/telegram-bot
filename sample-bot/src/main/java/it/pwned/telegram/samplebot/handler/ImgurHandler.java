@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -33,16 +32,11 @@ import org.springframework.web.util.UriTemplate;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import it.pwned.telegram.bot.api.TelegramBotApi;
-import it.pwned.telegram.bot.api.type.ChatAction;
-import it.pwned.telegram.bot.api.type.Message;
 import it.pwned.telegram.bot.api.type.SendAction;
-import it.pwned.telegram.bot.api.type.TelegramBotApiException;
 import it.pwned.telegram.bot.api.type.Update;
 import it.pwned.telegram.bot.api.type.inline.InlineQueryResult;
-import it.pwned.telegram.bot.api.type.inline.InlineQueryResultDocument;
 import it.pwned.telegram.bot.api.type.inline.InlineQueryResultGif;
 import it.pwned.telegram.bot.api.type.inline.InlineQueryResultPhoto;
-import it.pwned.telegram.bot.api.type.inline.InputTextMessageContent;
 import it.pwned.telegram.bot.handler.UpdateHandler;
 import it.pwned.telegram.samplebot.handler.ImgurHandler.ImgurApi.GalleryImage;
 import it.pwned.telegram.samplebot.handler.ImgurHandler.ImgurApi.ImgurResponse;
@@ -324,6 +318,8 @@ public class ImgurHandler implements UpdateHandler, Runnable {
 					case Gif:
 						result.add(new InlineQueryResultGif(Integer.toString(i), img.link, null, null, img.link, img.title,
 								img.title, null, null));
+						break;
+					default:
 						break;
 					}
 
