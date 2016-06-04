@@ -23,6 +23,7 @@ import it.pwned.telegram.bot.api.rest.TelegramBotRestApi;
 import it.pwned.telegram.bot.api.type.Update;
 import it.pwned.telegram.bot.collector.ApiUpdateCollector;
 import it.pwned.telegram.bot.collector.UpdateCollector;
+import it.pwned.telegram.bot.handler.InlineHandlerQualifier;
 import it.pwned.telegram.bot.handler.StandardUpdateHandlerManager;
 import it.pwned.telegram.bot.handler.UpdateHandler;
 import it.pwned.telegram.bot.handler.UpdateHandlerManager;
@@ -64,7 +65,7 @@ public class Application {
 
 	@Bean
 	public UpdateHandlerManager uhManager(List<UpdateHandler> handlers,
-			@Qualifier(value = "inline_handler") UpdateHandler inline_handler) {
+			@InlineHandlerQualifier UpdateHandler inline_handler) {
 		return new StandardUpdateHandlerManager(handlers, inline_handler);
 	}
 

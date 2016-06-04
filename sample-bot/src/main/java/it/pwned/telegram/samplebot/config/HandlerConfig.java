@@ -10,7 +10,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import it.pwned.telegram.bot.api.TelegramBotApi;
+import it.pwned.telegram.bot.api.type.Message;
+import it.pwned.telegram.bot.api.type.TelegramBotApiException;
 import it.pwned.telegram.bot.api.type.Update;
+import it.pwned.telegram.bot.handler.InlineHandler;
 import it.pwned.telegram.bot.handler.UpdateHandler;
 import it.pwned.telegram.samplebot.handler.AoE2Handler;
 import it.pwned.telegram.samplebot.handler.GreeterHandler;
@@ -25,8 +28,7 @@ public class HandlerConfig {
 		return new GreeterHandler(api, executor);
 	}
 
-	@Bean(name = "inline_handler")
-	@Order(value = 3)
+	@InlineHandler
 	public UpdateHandler imgur(TelegramBotApi api, ThreadPoolTaskExecutor executor) {
 		LinkedBlockingQueue<Update> update_queue = new LinkedBlockingQueue<Update>();
 		ImgurHandler handler = new ImgurHandler(api, update_queue, executor);
@@ -41,5 +43,46 @@ public class HandlerConfig {
 		return new AoE2Handler(api, update_queue, executor, taunts_path, jdbc);
 
 	}
-	
+
+	@Bean
+	@Order(value=4)
+	public UpdateHandler onTheFly(TelegramBotApi api) {
+		return  new UpdateHandler() {
+
+			@Override
+			public boolean submit(Update u) {
+				Message m = u.message;
+				if(m != null && m.text != null) {
+					
+					if(m.text.toLowerCase().contains("patriarcato")) {
+						try {
+							api.sendMessage(m.chat.id, "*GLORIA AL PATRIARCATO DI AQUILEIA*", "Markdown", true, false, m.message_id, null);
+						} catch (TelegramBotApiException e) {
+							// forna sabotaged us
+						}
+					}
+				}
+				return true;
+			}
+
+			@Override
+			public boolean requiresThread() {
+				return false;
+			}
+
+			@Override
+			public Runnable getRunnable() {
+				return null;
+			}
+
+			@Override
+			public void loadState() {
+			}
+
+			@Override
+			public void saveState() {
+			}
+			
+		};
+	}
 }
