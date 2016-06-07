@@ -108,17 +108,22 @@ public class TelegramBotRestApiCall<T> {
 			res = (Response<T>) rest.exchange(uri_template.expand(method), http_method, entity, type_refs.get(payload_type))
 					.getBody();
 		} catch (HttpStatusCodeException he) {
+			Integer statusCode = null;
+
 			try {
 				res = mapper.readValue(he.getResponseBodyAsString(), Response.class);
+				statusCode = he.getStatusCode() != null ? he.getStatusCode().value() : null;
 			} catch (IOException e) {
-				throw new TelegramBotApiException(he);
 			}
+
+			throw new TelegramBotApiException(he, statusCode);
+
 		} catch (RestClientException e) {
 			throw new TelegramBotApiException(e);
 		}
 
 		if (!res.ok)
-			throw new TelegramBotApiException(res.description);
+			throw new TelegramBotApiException(res.description, res.error_code);
 
 		return res.result;
 	}

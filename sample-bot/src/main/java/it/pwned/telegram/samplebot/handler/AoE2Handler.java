@@ -44,7 +44,7 @@ public class AoE2Handler implements UpdateHandler, Runnable {
 	public boolean submit(Update u) {
 		boolean result = true;
 		if (catafrutti.equals(u.message.chat.id) || "private".equals(u.message.chat.type)
-				|| (u.message.text != null && u.message.text.startsWith("/aoe"))) {
+				|| (u.message.is_command && u.message.command.equals("/aoe"))) {
 			try {
 				this.message_queue.put(u);
 			} catch (InterruptedException e) {

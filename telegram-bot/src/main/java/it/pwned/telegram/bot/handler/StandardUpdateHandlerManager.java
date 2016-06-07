@@ -30,16 +30,6 @@ public class StandardUpdateHandlerManager implements UpdateHandlerManager {
 	}
 
 	@Override
-	public List<UpdateHandler> getHandlers() {
-		return this.handlers;
-	}
-
-	@Override
-	public UpdateHandler getInlineHandler() {
-		return this.inline_handler;
-	}
-
-	@Override
 	public void shutdown() {
 		log.info("Shutting down handlers");
 

@@ -2,20 +2,26 @@ package it.pwned.telegram.bot.api.type;
 
 public class TelegramBotApiException extends Exception {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	private Integer errorCode;
 
-	public TelegramBotApiException() {
-	}
+	private static final long serialVersionUID = 1L;
 
 	public TelegramBotApiException(String message) {
 		super(message);
 	}
 
+	public TelegramBotApiException(String message, Integer errorCode) {
+		super(message);
+		this.errorCode = errorCode;
+	}
+
 	public TelegramBotApiException(Throwable cause) {
 		super(cause);
+	}
+
+	public TelegramBotApiException(Throwable cause, Integer errorCode) {
+		super(cause);
+		this.errorCode = errorCode;
 	}
 
 	public TelegramBotApiException(String message, Throwable cause) {
@@ -25,6 +31,10 @@ public class TelegramBotApiException extends Exception {
 	public TelegramBotApiException(String message, Throwable cause, boolean enableSuppression,
 			boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
+	}
+
+	public Integer getErrorCode() {
+		return errorCode;
 	}
 
 }
