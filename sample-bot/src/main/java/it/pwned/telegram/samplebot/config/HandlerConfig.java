@@ -31,7 +31,12 @@ public class HandlerConfig {
 	@InlineHandler
 	public UpdateHandler imgur(TelegramBotApi api, ThreadPoolTaskExecutor executor) {
 		LinkedBlockingQueue<Update> update_queue = new LinkedBlockingQueue<Update>();
-		ImgurHandler handler = new ImgurHandler(api, update_queue, executor);
+		ImgurHandler handler = new ImgurHandler(api, update_queue, executor) {
+			@Override
+			public String getName() {
+				return "ImgurHandlerName";
+			}
+		};
 		return handler;
 	}
 
@@ -45,18 +50,19 @@ public class HandlerConfig {
 	}
 
 	@Bean
-	@Order(value=4)
+	@Order(value = 4)
 	public UpdateHandler onTheFly(TelegramBotApi api) {
-		return  new UpdateHandler() {
+		return new UpdateHandler() {
 
 			@Override
 			public boolean submit(Update u) {
 				Message m = u.message;
-				if(m != null && m.text != null) {
-					
-					if(m.text.toLowerCase().contains("patriarcato")) {
+				if (m != null && m.text != null) {
+
+					if (m.text.toLowerCase().contains("patriarcato")) {
 						try {
-							api.sendMessage(m.chat.id, "*GLORIA AL PATRIARCATO DI AQUILEIA*", "Markdown", true, false, m.message_id, null);
+							api.sendMessage(m.chat.id, "*GLORIA AL PATRIARCATO DI AQUILEIA*", "Markdown", true, false, m.message_id,
+									null);
 						} catch (TelegramBotApiException e) {
 							// forna sabotaged us
 						}
@@ -82,7 +88,12 @@ public class HandlerConfig {
 			@Override
 			public void saveState() {
 			}
-			
+
+			@Override
+			public String getName() {
+				return "PatriarchyHandler";
+			}
+
 		};
 	}
 }

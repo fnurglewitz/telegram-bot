@@ -47,9 +47,11 @@ public final class TelegramBot {
 
 		manager.init();
 
-		while (go_on) {
+		Update u = null;
 
-			Update u = collector.next();
+		while (go_on || u != null) {
+
+			u = collector.next(go_on);
 
 			if (u != null)
 				manager.dispatch(u);

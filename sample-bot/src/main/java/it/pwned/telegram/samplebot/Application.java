@@ -55,10 +55,9 @@ public class Application {
 	}
 
 	@Bean
-	public UpdateCollector updateCollector(TelegramBotApi api) {
+	public UpdateCollector updateCollector(TelegramBotApi api, @Value("${bot.api.updates.timeout:60}") Integer timeout) {
 		LinkedBlockingQueue<Update> update_queue = new LinkedBlockingQueue<Update>();
-		ApiUpdateCollector collector = new ApiUpdateCollector(api, update_queue);
-		new Thread(collector).start();
+		ApiUpdateCollector collector = new ApiUpdateCollector(api, update_queue, timeout);
 		return collector;
 	}
 

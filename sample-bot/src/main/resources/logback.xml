@@ -15,7 +15,7 @@
     </encoder>
   </appender>
 
-  <logger name="it.pwned.telegram.bot.api.debug" level="DEBUG" additivity="false">
+  <logger name="it.pwned.telegram.bot.api.log" level="DEBUG" additivity="false">
     <appender-ref ref="REQLOG" />
   </logger>
 

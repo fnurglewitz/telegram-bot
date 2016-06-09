@@ -236,4 +236,9 @@ public class AoE2Handler implements UpdateHandler, Runnable {
 	public void saveState() {
 	}
 
+	@Override
+	public String getName() {
+		return "AoE2Handler";
+	}
+
 }

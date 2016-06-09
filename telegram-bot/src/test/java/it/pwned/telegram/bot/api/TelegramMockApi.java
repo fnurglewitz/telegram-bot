@@ -51,7 +51,7 @@ public class TelegramMockApi implements TelegramBotApi {
 	@Override
 	public User getMe() throws TelegramBotApiException {
 		addToQueue(new MockApiAction("getMe", null));
-		return new User(-1, "a", "b", "c");
+		return new User(-1, "FirstName", "LastName", "Username");
 	}
 
 	@Override

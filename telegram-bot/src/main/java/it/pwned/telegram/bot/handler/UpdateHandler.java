@@ -14,6 +14,8 @@ public interface UpdateHandler {
 	
 	public Runnable getRunnable();
 	
+	public String getName();
+	
 	public void loadState();
 	public void saveState();
 

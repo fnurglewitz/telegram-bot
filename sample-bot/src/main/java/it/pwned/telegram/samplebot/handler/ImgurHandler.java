@@ -392,4 +392,9 @@ public class ImgurHandler implements UpdateHandler, Runnable {
 	public void saveState() {
 	}
 
+	@Override
+	public String getName() {
+		return "ImgurHandler";
+	}
+
 }
