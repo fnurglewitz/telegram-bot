@@ -385,4 +385,16 @@ public class TelegramMockApi implements TelegramBotApi {
 		return 0;
 	}
 
+	@Override
+	public Boolean leaveChat(long chat_id) throws TelegramBotApiException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean leaveChat(String chat_id) throws TelegramBotApiException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

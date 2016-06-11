@@ -37,6 +37,7 @@ import it.pwned.telegram.bot.api.type.Update;
 import it.pwned.telegram.bot.api.type.inline.InlineQueryResult;
 import it.pwned.telegram.bot.api.type.inline.InlineQueryResultGif;
 import it.pwned.telegram.bot.api.type.inline.InlineQueryResultPhoto;
+import it.pwned.telegram.bot.api.type.inline.InputTextMessageContent;
 import it.pwned.telegram.bot.handler.UpdateHandler;
 import it.pwned.telegram.samplebot.handler.ImgurHandler.ImgurApi.GalleryImage;
 import it.pwned.telegram.samplebot.handler.ImgurHandler.ImgurApi.ImgurResponse;
@@ -264,6 +265,7 @@ public class ImgurHandler implements UpdateHandler, Runnable {
 
 		try (Stream<String> lines = Files.lines(Paths.get(file))) {
 			for (String line : (Iterable<String>) lines::iterator) {
+				if(line.charAt(0) == '#') continue;
 				String[] splitted = line.split(",");
 				subreddits.put(splitted[0], Arrays.copyOfRange(splitted, 2, splitted.length));
 			}
@@ -313,7 +315,7 @@ public class ImgurHandler implements UpdateHandler, Runnable {
 					switch (SendAction.getSendActionFromMimeType(img.type)) {
 					case Photo:
 						result.add(new InlineQueryResultPhoto(Integer.toString(i), img.link, null, null, img.link, img.title,
-								img.description, img.title, null, null));
+								img.description, img.title, null, new InputTextMessageContent("prova text", null, false)));
 						break;
 					case Gif:
 						result.add(new InlineQueryResultGif(Integer.toString(i), img.link, null, null, img.link, img.title,

@@ -70,7 +70,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	@Override
 	public Message sendMessage(long chat_id, String text, String parse_mode, Boolean disable_web_page_preview,
 			Boolean disable_notification, Integer reply_to_message_id, DummyKeyboard reply_markup)
-					throws TelegramBotApiException {
+			throws TelegramBotApiException {
 
 		return sendMessage(Long.toString(chat_id), text, parse_mode, disable_web_page_preview, disable_notification,
 				reply_to_message_id, reply_markup);
@@ -119,7 +119,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	@Override
 	public Message sendAudio(long chat_id, Resource audio, Integer duration, String performer, String title,
 			Boolean disable_notification, Integer reply_to_message_id, DummyKeyboard reply_markup)
-					throws TelegramBotApiException {
+			throws TelegramBotApiException {
 
 		return sendAudio(Long.toString(chat_id), audio, duration, performer, title, disable_notification,
 				reply_to_message_id, reply_markup);
@@ -143,7 +143,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	@Override
 	public Message sendVideo(long chat_id, Resource video, Integer duration, Integer width, Integer height,
 			String caption, Boolean disable_notification, Integer reply_to_message_id, DummyKeyboard reply_markup)
-					throws TelegramBotApiException {
+			throws TelegramBotApiException {
 
 		return sendVideo(Long.toString(chat_id), video, duration, width, height, caption, disable_notification,
 				reply_to_message_id, reply_markup);
@@ -184,7 +184,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	@Override
 	public Message sendMessage(String chat_id, String text, String parse_mode, Boolean disable_web_page_preview,
 			Boolean disable_notification, Integer reply_to_message_id, DummyKeyboard reply_markup)
-					throws TelegramBotApiException {
+			throws TelegramBotApiException {
 
 		TelegramBotRestApiCall.Builder<Message> builder = new TelegramBotRestApiCall.Builder<Message>("sendMessage",
 				api_uri_template, mapper, rest, Message.class);
@@ -261,7 +261,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	@Override
 	public Message sendAudio(String chat_id, Resource audio, Integer duration, String performer, String title,
 			Boolean disable_notification, Integer reply_to_message_id, DummyKeyboard reply_markup)
-					throws TelegramBotApiException {
+			throws TelegramBotApiException {
 
 		TelegramBotRestApiCall.Builder<Message> builder = new TelegramBotRestApiCall.Builder<Message>("sendAudio",
 				api_uri_template, mapper, rest, Message.class);
@@ -311,7 +311,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	@Override
 	public Message sendVideo(String chat_id, Resource video, Integer duration, Integer width, Integer height,
 			String caption, Boolean disable_notification, Integer reply_to_message_id, DummyKeyboard reply_markup)
-					throws TelegramBotApiException {
+			throws TelegramBotApiException {
 
 		TelegramBotRestApiCall.Builder<Message> builder = new TelegramBotRestApiCall.Builder<Message>("sendVideo",
 				api_uri_template, mapper, rest, Message.class);
@@ -347,7 +347,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	@Override
 	public Boolean answerInlineQuery(String inline_query_id, List<InlineQueryResult> results, Integer cache_time,
 			Boolean is_personal, String next_offset, String switch_pm_text, String switch_pm_parameter)
-					throws TelegramBotApiException {
+			throws TelegramBotApiException {
 
 		TelegramBotRestApiCall.Builder<Boolean> builder = new TelegramBotRestApiCall.Builder<Boolean>("answerInlineQuery",
 				api_uri_template, mapper, rest, Boolean.class);
@@ -364,7 +364,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	@Override
 	public Message sendVenue(long chat_id, float latitude, float longitude, String title, String address,
 			String foursquare_id, Boolean disable_notification, Integer reply_to_message_id, DummyKeyboard reply_markup)
-					throws TelegramBotApiException {
+			throws TelegramBotApiException {
 
 		return sendVenue(Long.toString(chat_id), latitude, longitude, title, address, foursquare_id, disable_notification,
 				reply_to_message_id, reply_markup);
@@ -373,7 +373,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	@Override
 	public Message sendVenue(String chat_id, float latitude, float longitude, String title, String address,
 			String foursquare_id, Boolean disable_notification, Integer reply_to_message_id, DummyKeyboard reply_markup)
-					throws TelegramBotApiException {
+			throws TelegramBotApiException {
 
 		TelegramBotRestApiCall.Builder<Message> builder = new TelegramBotRestApiCall.Builder<Message>("sendVenue",
 				api_uri_template, mapper, rest, Message.class);
@@ -392,7 +392,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	@Override
 	public Message sendContact(long chat_id, String phone_number, String first_name, String last_name,
 			Boolean disable_notification, Integer reply_to_message_id, DummyKeyboard reply_markup)
-					throws TelegramBotApiException {
+			throws TelegramBotApiException {
 
 		return sendContact(Long.toString(chat_id), phone_number, first_name, last_name, disable_notification,
 				reply_to_message_id, reply_markup);
@@ -401,7 +401,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	@Override
 	public Message sendContact(String chat_id, String phone_number, String first_name, String last_name,
 			Boolean disable_notification, Integer reply_to_message_id, DummyKeyboard reply_markup)
-					throws TelegramBotApiException {
+			throws TelegramBotApiException {
 
 		TelegramBotRestApiCall.Builder<Message> builder = new TelegramBotRestApiCall.Builder<Message>("sendContact",
 				api_uri_template, mapper, rest, Message.class);
@@ -467,7 +467,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	@Override
 	public Message editMessageText(long chat_id, Integer message_id, String inline_message_id, String text,
 			String parse_mode, Boolean disable_web_page_preview, InlineKeyboardMarkup reply_markup)
-					throws TelegramBotApiException {
+			throws TelegramBotApiException {
 
 		return editMessageText(Long.toString(chat_id), message_id, inline_message_id, text, parse_mode,
 				disable_web_page_preview, reply_markup);
@@ -476,7 +476,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	@Override
 	public Message editMessageText(String chat_id, Integer message_id, String inline_message_id, String text,
 			String parse_mode, Boolean disable_web_page_preview, InlineKeyboardMarkup reply_markup)
-					throws TelegramBotApiException {
+			throws TelegramBotApiException {
 
 		if (inline_message_id == null && (chat_id == null || message_id == null))
 			throw new InvalidParameterException("(editMessageText) chat_id+message_id or inline_message_id are mandatory");
@@ -603,8 +603,25 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	@Override
 	public int getChatMembersCount(String chat_id) throws TelegramBotApiException {
 
-		TelegramBotRestApiCall.Builder<Integer> builder = new TelegramBotRestApiCall.Builder<Integer>("getChatMember",
+		TelegramBotRestApiCall.Builder<Integer> builder = new TelegramBotRestApiCall.Builder<Integer>("getChatMembersCount",
 				api_uri_template, mapper, rest, Integer.class);
+
+		builder.setParam("chat_id", chat_id, true, false);
+
+		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
+		return builder.build().call();
+	}
+
+	@Override
+	public Boolean leaveChat(long chat_id) throws TelegramBotApiException {
+		return leaveChat(Long.toString(chat_id));
+	}
+
+	@Override
+	public Boolean leaveChat(String chat_id) throws TelegramBotApiException {
+
+		TelegramBotRestApiCall.Builder<Boolean> builder = new TelegramBotRestApiCall.Builder<Boolean>("leaveChat",
+				api_uri_template, mapper, rest, Boolean.class);
 
 		builder.setParam("chat_id", chat_id, true, false);
 

@@ -132,6 +132,10 @@ public interface TelegramBotApi {
 	Boolean kickChatMember(long chat_id, int user_id) throws TelegramBotApiException;
 
 	Boolean kickChatMember(String chat_id, int user_id) throws TelegramBotApiException;
+	
+	Boolean leaveChat(long chat_id) throws TelegramBotApiException;
+	
+	Boolean leaveChat(String chat_id) throws TelegramBotApiException;
 
 	Boolean unbanChatMember(long chat_id, int user_id) throws TelegramBotApiException;
 
