@@ -22,11 +22,13 @@ import it.pwned.telegram.samplebot.handler.ImgurHandler;
 @Configuration
 public class HandlerConfig {
 
+	/*
 	@Bean
 	@Order(value = 2)
 	public UpdateHandler greeter(TelegramBotApi api, ThreadPoolTaskExecutor executor) {
 		return new GreeterHandler(api, executor);
 	}
+	*/
 
 	@InlineHandler
 	public UpdateHandler imgur(TelegramBotApi api, ThreadPoolTaskExecutor executor) {
@@ -40,6 +42,7 @@ public class HandlerConfig {
 		return handler;
 	}
 
+	/*
 	@Bean
 	@Order(value = 1)
 	public UpdateHandler aoe2(TelegramBotApi api, ThreadPoolTaskExecutor executor,
@@ -48,6 +51,7 @@ public class HandlerConfig {
 		return new AoE2Handler(api, update_queue, executor, taunts_path, jdbc);
 
 	}
+	*/
 
 	@Bean
 	@Order(value = 4)
@@ -61,7 +65,7 @@ public class HandlerConfig {
 
 					if (m.text.toLowerCase().contains("patriarcato")) {
 						try {
-							api.sendMessage(m.chat.id, "*GLORIA AL PATRIARCATO DI AQUILEIA*", "Markdown", true, false, m.message_id,
+							api.sendMessage(m.chat.id, "*GLORIA AL PATRIARCATO DI AQUILEIA*", "Markdown", true, false, m.messageId,
 									null);
 						} catch (TelegramBotApiException e) {
 							// forna sabotaged us

@@ -44,14 +44,14 @@ public class AoE2Handler implements UpdateHandler, Runnable {
 	public boolean submit(Update u) {
 		boolean result = true;
 		if (catafrutti.equals(u.message.chat.id) || "private".equals(u.message.chat.type)
-				|| (u.message.is_command && u.message.command.equals("/aoe"))) {
+				|| (u.message.isCommand && u.message.command.equals("/aoe"))) {
 			try {
 				this.message_queue.put(u);
 			} catch (InterruptedException e) {
 				// shit happens
 			}
 
-			if (u.message != null && u.message.new_chat_member != null)
+			if (u.message != null && u.message.newChatMember != null)
 				result = false;
 		}
 		return result;
@@ -81,10 +81,10 @@ public class AoE2Handler implements UpdateHandler, Runnable {
 
 		executor.submit(() -> {
 
-			if (m != null && m.is_command) {
+			if (m != null && m.isCommand) {
 
-				if (m.command_parameters.length == 2 && m.command_parameters[0].equals("lang")) {
-					String culture = m.command_parameters[1];
+				if (m.commandParameters.length == 2 && m.commandParameters[0].equals("lang")) {
+					String culture = m.commandParameters[1];
 
 					if (culture != null && culture.length() == 2) {
 						jdbc.update("MERGE INTO AOE2.SETTINGS KEY(USER_ID) VALUES ( ?, ? );", new Object[] { m.from.id, culture });
@@ -94,9 +94,9 @@ public class AoE2Handler implements UpdateHandler, Runnable {
 				return;
 			}
 
-			if (m != null && m.new_chat_member != null) {
+			if (m != null && m.newChatMember != null) {
 				try {
-					api.sendVoice(m.chat.id, new FileSystemResource(getTauntPathByNumberAndCulture(8)), null, null, m.message_id,
+					api.sendVoice(m.chat.id, new FileSystemResource(getTauntPathByNumberAndCulture(8)), null, null, m.messageId,
 							null);
 				} catch (TelegramBotApiException e) {
 				}

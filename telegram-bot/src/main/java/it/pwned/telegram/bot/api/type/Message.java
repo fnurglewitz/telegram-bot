@@ -5,83 +5,421 @@ import java.util.Arrays;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * This class represents a message.
+ *
+ */
 public class Message {
 
-	public final Integer message_id;
+	private final static String JSON_FIELD_MESSAGE_ID = "message_id";
+	private final static String JSON_FIELD_FROM = "from";
+	private final static String JSON_FIELD_DATE = "date";
+	private final static String JSON_FIELD_CHAT = "chat";
+	private final static String JSON_FIELD_FORWARD_FROM = "forward_from";
+	private final static String JSON_FIELD_FORWARD_FROM_CHAT = "forward_from_chat";
+	private final static String JSON_FIELD_FORWARD_DATE = "forward_date";
+	private final static String JSON_FIELD_REPLY_TO_MESSAGE = "reply_to_message";
+	private final static String JSON_FIELD_EDIT_DATE = "edit_date";
+	private final static String JSON_FIELD_TEXT = "text";
+	private final static String JSON_FIELD_ENTITIES = "entities";
+	private final static String JSON_FIELD_AUDIO = "audio";
+	private final static String JSON_FIELD_DOCUMENT = "document";
+	private final static String JSON_FIELD_PHOTO = "photo";
+	private final static String JSON_FIELD_STICKER = "sticker";
+	private final static String JSON_FIELD_VIDEO = "video";
+	private final static String JSON_FIELD_VOICE = "voice";
+	private final static String JSON_FIELD_CAPTION = "caption";
+	private final static String JSON_FIELD_CONTACT = "contact";
+	private final static String JSON_FIELD_LOCATION = "location";
+	private final static String JSON_FIELD_VENUE = "venue";
+	private final static String JSON_FIELD_NEW_CHAT_MEMBER = "new_chat_member";
+	private final static String JSON_FIELD_LEFT_CHAT_MEMBER = "left_chat_member";
+	private final static String JSON_FIELD_NEW_CHAT_TITLE = "new_chat_title";
+	private final static String JSON_FIELD_NEW_CHAT_PHOTO = "new_chat_photo";
+	private final static String JSON_FIELD_DELETE_CHAT_PHOTO = "delete_chat_photo";
+	private final static String JSON_FIELD_GROUP_CHAT_CREATED = "group_chat_created";
+	private final static String JSON_FIELD_SUPERGROUP_CHAT_CREATED = "supergroup_chat_created";
+	private final static String JSON_FIELD_CHANNEL_CHAT_CREATED = "channel_chat_created";
+	private final static String JSON_FIELD_MIGRATE_TO_CHAT_ID = "migrate_to_chat_id";
+	private final static String JSON_FIELD_MIGRATE_FROM_CHAT_ID = "migrate_from_chat_id";
+	private final static String JSON_FIELD_PINNED_MESSAGE = "pinned_message";
+
+	/**
+	 * Unique message identifier
+	 */
+	@JsonProperty(JSON_FIELD_MESSAGE_ID)
+	public final Integer messageId;
+
+	/**
+	 * <em>Optional.</em> Sender, can be empty for messages sent to channels
+	 */
+	@JsonProperty(JSON_FIELD_FROM)
 	public final User from;
+
+	/**
+	 * Date the message was sent in Unix time
+	 */
+	@JsonProperty(JSON_FIELD_DATE)
 	public final Integer date;
+
+	/**
+	 * Conversation the message belongs to
+	 */
+	@JsonProperty(JSON_FIELD_CHAT)
 	public final Chat chat;
-	public final User forward_from;
-	public final Chat forward_from_chat;
-	public final Integer forward_date;
-	public final Message reply_to_message;
-	public final Integer edit_date;
+
+	/**
+	 * <em>Optional.</em> For forwarded messages, sender of the original message
+	 */
+	@JsonProperty(JSON_FIELD_FORWARD_FROM)
+	public final User forwardFrom;
+
+	/**
+	 * <em>Optional.</em> For messages forwarded from a channel, information
+	 * about the original channel
+	 */
+	@JsonProperty(JSON_FIELD_FORWARD_FROM_CHAT)
+	public final Chat forwardFromChat;
+
+	/**
+	 * <em>Optional.</em> For forwarded messages, date the original message was
+	 * sent in Unix time
+	 */
+	@JsonProperty(JSON_FIELD_FORWARD_DATE)
+	public final Integer forwardDate;
+
+	/**
+	 * <em>Optional.</em> For replies, the original message. Note that the
+	 * Message object in this field will not contain further reply_to_message
+	 * fields even if it itself is a reply.
+	 */
+	@JsonProperty(JSON_FIELD_REPLY_TO_MESSAGE)
+	public final Message replyToMessage;
+
+	/**
+	 * <em>Optional.</em> Date the message was last edited in Unix time
+	 */
+	@JsonProperty(JSON_FIELD_EDIT_DATE)
+	public final Integer editDate;
+
+	/**
+	 * <em>Optional.</em> For text messages, the actual UTF-8 text of the
+	 * message, 0-4096 characters.
+	 */
+	@JsonProperty(JSON_FIELD_TEXT)
 	public final String text;
+
+	/**
+	 * <em>Optional.</em> For text messages, special entities like usernames,
+	 * URLs, bot commands, etc. that appear in the text
+	 */
+	@JsonProperty(JSON_FIELD_ENTITIES)
 	public final MessageEntity[] entities;
+
+	/**
+	 * <em>Optional.</em> Message is an audio file, information about the file
+	 */
+	@JsonProperty(JSON_FIELD_AUDIO)
 	public final Audio audio;
+
+	/**
+	 * <em>Optional.</em> Message is a general file, information about the file
+	 */
+	@JsonProperty(JSON_FIELD_DOCUMENT)
 	public final Document document;
+
+	/**
+	 * <em>Optional.</em> Message is a photo, available sizes of the photo
+	 */
+	@JsonProperty(JSON_FIELD_PHOTO)
 	public final PhotoSize[] photo;
+
+	/**
+	 * <em>Optional.</em> Message is a sticker, information about the sticker
+	 */
+	@JsonProperty(JSON_FIELD_STICKER)
 	public final Sticker sticker;
+
+	/**
+	 * <em>Optional.</em> Message is a video, information about the video
+	 */
+	@JsonProperty(JSON_FIELD_VIDEO)
 	public final Video video;
+
+	/**
+	 * <em>Optional.</em> Message is a voice message, information about the file
+	 */
+	@JsonProperty(JSON_FIELD_VOICE)
 	public final Voice voice;
+
+	/**
+	 * <em>Optional.</em> Caption for the document, photo or video, 0-200
+	 * characters
+	 */
+	@JsonProperty(JSON_FIELD_CAPTION)
 	public final String caption;
+
+	/**
+	 * <em>Optional.</em> Message is a shared contact, information about the
+	 * contact
+	 */
+	@JsonProperty(JSON_FIELD_CONTACT)
 	public final Contact contact;
+
+	/**
+	 * <em>Optional.</em> Message is a shared location, information about the
+	 * location
+	 */
+	@JsonProperty(JSON_FIELD_LOCATION)
 	public final Location location;
+
+	/**
+	 * <em>Optional.</em> Message is a venue, information about the venue
+	 */
+	@JsonProperty(JSON_FIELD_VENUE)
 	public final Venue venue;
-	public final User new_chat_member;
-	public final User left_chat_member;
-	public final String new_chat_title;
-	public final PhotoSize[] new_chat_photo;
-	public final Boolean delete_chat_photo;
-	public final Boolean group_chat_created;
-	public final Boolean supergroup_chat_created;
-	public final Boolean channel_chat_created;
-	public final Integer migrate_to_chat_id;
-	public final Integer migrate_from_chat_id;
-	public final Message pinned_message;
+
+	/**
+	 * <em>Optional.</em> A new member was added to the group, information about
+	 * them (this member may be the bot itself)
+	 */
+	@JsonProperty(JSON_FIELD_NEW_CHAT_MEMBER)
+	public final User newChatMember;
+
+	/**
+	 * <em>Optional.</em> A member was removed from the group, information about
+	 * them (this member may be the bot itself)
+	 */
+	@JsonProperty(JSON_FIELD_LEFT_CHAT_MEMBER)
+	public final User leftChatMember;
+
+	/**
+	 * <em>Optional.</em> A chat title was changed to this value
+	 */
+	@JsonProperty(JSON_FIELD_NEW_CHAT_TITLE)
+	public final String newChatTitle;
+
+	/**
+	 * <em>Optional.</em> A chat photo was change to this value
+	 */
+	@JsonProperty(JSON_FIELD_NEW_CHAT_PHOTO)
+	public final PhotoSize[] newChatPhoto;
+
+	/**
+	 * <em>Optional.</em> Service message: the chat photo was deleted
+	 */
+	@JsonProperty(JSON_FIELD_DELETE_CHAT_PHOTO)
+	public final Boolean deleteChatPhoto;
+
+	/**
+	 * <em>Optional.</em> Service message: the group has been created
+	 */
+	@JsonProperty(JSON_FIELD_GROUP_CHAT_CREATED)
+	public final Boolean groupChatCreated;
+
+	/**
+	 * <em>Optional.</em> Service message: the supergroup has been created. This
+	 * field can‘t be received in a message coming through updates, because bot
+	 * can’t be a member of a supergroup when it is created. It can only be
+	 * found in reply_to_message if someone replies to a very first message in a
+	 * directly created supergroup.
+	 */
+	@JsonProperty(JSON_FIELD_SUPERGROUP_CHAT_CREATED)
+	public final Boolean supergroupChatCreated;
+
+	/**
+	 * <em>Optional.</em> Service message: the channel has been created. This
+	 * field can‘t be received in a message coming through updates, because bot
+	 * can’t be a member of a channel when it is created. It can only be found
+	 * in reply_to_message if someone replies to a very first message in a
+	 * channel.
+	 */
+	@JsonProperty(JSON_FIELD_CHANNEL_CHAT_CREATED)
+	public final Boolean channelChatCreated;
+
+	/**
+	 * <em>Optional.</em> The group has been migrated to a supergroup with the
+	 * specified identifier. This number may be greater than 32 bits and some
+	 * programming languages may have difficulty/silent defects in interpreting
+	 * it. But it smaller than 52 bits, so a signed 64 bit integer or
+	 * double-precision float type are safe for storing this identifier.
+	 */
+	@JsonProperty(JSON_FIELD_MIGRATE_TO_CHAT_ID)
+	public final Integer migrateToChatId;
+
+	/**
+	 * <em>Optional.</em> The supergroup has been migrated from a group with the
+	 * specified identifier. This number may be greater than 32 bits and some
+	 * programming languages may have difficulty/silent defects in interpreting
+	 * it. But it smaller than 52 bits, so a signed 64 bit integer or
+	 * double-precision float type are safe for storing this identifier.
+	 */
+	@JsonProperty(JSON_FIELD_MIGRATE_FROM_CHAT_ID)
+	public final Integer migratefromchatId;
+
+	/**
+	 * <em>Optional.</em> Specified message was pinned. Note that the Message
+	 * object in this field will not contain further reply_to_message fields
+	 * even if it is itself a reply.
+	 */
+	@JsonProperty(JSON_FIELD_PINNED_MESSAGE)
+	public final Message pinnedMessage;
 
 	// utility fields
 	@JsonIgnore
-	public final Boolean is_command;
+	public final Boolean isCommand;
 	@JsonIgnore
 	public final String command;
 	@JsonIgnore
-	public final String command_recipient;
+	public final String commandRecipient;
 	@JsonIgnore
-	public final String[] command_parameters;
+	public final String[] commandParameters;
 	@JsonIgnore
-	public final Boolean is_reply;
+	public final Boolean isReply;
 
-	public Message(@JsonProperty("message_id") Integer message_id, @JsonProperty("from") User from,
-			@JsonProperty("date") Integer date, @JsonProperty("chat") Chat chat,
-			@JsonProperty("forward_from") User forward_from, @JsonProperty("forward_from_chat") Chat forward_from_chat,
-			@JsonProperty("forward_date") Integer forward_date, @JsonProperty("reply_to_message") Message reply_to_message,
-			@JsonProperty("edit_date") Integer edit_date, @JsonProperty("text") String text,
-			@JsonProperty("entities") MessageEntity[] entities, @JsonProperty("audio") Audio audio,
-			@JsonProperty("document") Document document, @JsonProperty("photo") PhotoSize[] photo,
-			@JsonProperty("sticker") Sticker sticker, @JsonProperty("video") Video video, @JsonProperty("voice") Voice voice,
-			@JsonProperty("caption") String caption, @JsonProperty("contact") Contact contact,
-			@JsonProperty("location") Location location, @JsonProperty("venue") Venue venue,
-			@JsonProperty("new_chat_member") User new_chat_member, @JsonProperty("left_chat_member") User left_chat_member,
-			@JsonProperty("new_chat_title") String new_chat_title, @JsonProperty("new_chat_photo") PhotoSize[] new_chat_photo,
-			@JsonProperty("delete_chat_photo") Boolean delete_chat_photo,
-			@JsonProperty("group_chat_created") Boolean group_chat_created,
-			@JsonProperty("supergroup_chat_created") Boolean supergroup_chat_created,
-			@JsonProperty("channel_chat_created") Boolean channel_chat_created,
-			@JsonProperty("migrate_to_chat_id") Integer migrate_to_chat_id,
-			@JsonProperty("migrate_from_chat_id") Integer migrate_from_chat_id,
-			@JsonProperty("pinned_message") Message pinned_message
+	/**
+	 * 
+	 * @param messageId
+	 *            Unique message identifier
+	 * @param from
+	 *            <em>Optional.</em> Sender, can be empty for messages sent to
+	 *            channels
+	 * @param date
+	 *            Date the message was sent in Unix time
+	 * @param chat
+	 *            Conversation the message belongs to
+	 * @param forwardFrom
+	 *            <em>Optional.</em> For forwarded messages, sender of the
+	 *            original message
+	 * @param forwardFromChat
+	 *            <em>Optional.</em> For messages forwarded from a channel,
+	 *            information about the original channel
+	 * @param forwardDate
+	 *            <em>Optional.</em> For forwarded messages, date the original
+	 *            message was sent in Unix time
+	 * @param replyToMessage
+	 *            <em>Optional.</em> For replies, the original message. Note
+	 *            that the Message object in this field will not contain further
+	 *            replyToMessage fields even if it itself is a reply.
+	 * @param editDate
+	 *            <em>Optional.</em> Date the message was last edited in Unix
+	 *            time
+	 * @param text
+	 *            <em>Optional.</em> For text messages, the actual UTF-8 text of
+	 *            the message, 0-4096 characters.
+	 * @param entities
+	 *            <em>Optional.</em> For text messages, special entities like
+	 *            usernames, URLs, bot commands, etc. that appear in the text
+	 * @param audio
+	 *            <em>Optional.</em> Message is an audio file, information about
+	 *            the file
+	 * @param document
+	 *            <em>Optional.</em> Message is a general file, information
+	 *            about the file
+	 * @param photo
+	 *            <em>Optional.</em> Message is a photo, available sizes of the
+	 *            photo
+	 * @param sticker
+	 *            <em>Optional.</em> Message is a sticker, information about the
+	 *            sticker
+	 * @param video
+	 *            <em>Optional.</em> Message is a video, information about the
+	 *            video
+	 * @param voice
+	 *            <em>Optional.</em> Message is a voice message, information
+	 *            about the file
+	 * @param caption
+	 *            <em>Optional.</em> Caption for the document, photo or video,
+	 *            0-200 characters
+	 * @param contact
+	 *            <em>Optional.</em> Message is a shared contact, information
+	 *            about the contact
+	 * @param location
+	 *            <em>Optional.</em> Message is a shared location, information
+	 *            about the location
+	 * @param venue
+	 *            <em>Optional.</em> Message is a venue, information about the
+	 *            venue
+	 * @param newChatMember
+	 *            <em>Optional.</em> A new member was added to the group,
+	 *            information about them (this member may be the bot itself)
+	 * @param leftChatMember
+	 *            <em>Optional.</em> A member was removed from the group,
+	 *            information about them (this member may be the bot itself)
+	 * @param newChatTitle
+	 *            <em>Optional.</em> A chat title was changed to this value
+	 * @param newChatPhoto
+	 *            <em>Optional.</em> A chat photo was change to this value
+	 * @param deleteChatPhoto
+	 *            <em>Optional.</em> Service message: the chat photo was deleted
+	 * @param groupChatCreated
+	 *            <em>Optional.</em> Service message: the group has been created
+	 * @param supergroupChatCreated
+	 *            <em>Optional.</em> Service message: the supergroup has been
+	 *            created. This field can‘t be received in a message coming
+	 *            through updates, because bot can’t be a member of a supergroup
+	 *            when it is created. It can only be found in reply_to_message
+	 *            if someone replies to a very first message in a directly
+	 *            created supergroup.
+	 * @param channelChatCreated
+	 *            <em>Optional.</em> Service message: the channel has been
+	 *            created. This field can‘t be received in a message coming
+	 *            through updates, because bot can’t be a member of a channel
+	 *            when it is created. It can only be found in reply_to_message
+	 *            if someone replies to a very first message in a channel.
+	 * @param migrateToChatId
+	 *            <em>Optional.</em> The group has been migrated to a supergroup
+	 *            with the specified identifier. This number may be greater than
+	 *            32 bits and some programming languages may have
+	 *            difficulty/silent defects in interpreting it. But it smaller
+	 *            than 52 bits, so a signed 64 bit integer or double-precision
+	 *            float type are safe for storing this identifier.
+	 * @param migrateFromChatId
+	 *            <em>Optional.</em> The supergroup has been migrated from a
+	 *            group with the specified identifier. This number may be
+	 *            greater than 32 bits and some programming languages may have
+	 *            difficulty/silent defects in interpreting it. But it smaller
+	 *            than 52 bits, so a signed 64 bit integer or double-precision
+	 *            float type are safe for storing this identifier.
+	 * @param pinnedMessage
+	 *            <em>Optional.</em> Specified message was pinned. Note that the
+	 *            Message object in this field will not contain further
+	 *            reply_to_message fields even if it is itself a reply.
+	 */
+	public Message(@JsonProperty(JSON_FIELD_MESSAGE_ID) Integer messageId, @JsonProperty(JSON_FIELD_FROM) User from,
+			@JsonProperty(JSON_FIELD_DATE) Integer date, @JsonProperty(JSON_FIELD_CHAT) Chat chat,
+			@JsonProperty(JSON_FIELD_FORWARD_FROM) User forwardFrom,
+			@JsonProperty(JSON_FIELD_FORWARD_FROM_CHAT) Chat forwardFromChat,
+			@JsonProperty(JSON_FIELD_FORWARD_DATE) Integer forwardDate,
+			@JsonProperty(JSON_FIELD_REPLY_TO_MESSAGE) Message replyToMessage,
+			@JsonProperty(JSON_FIELD_EDIT_DATE) Integer editDate, @JsonProperty(JSON_FIELD_TEXT) String text,
+			@JsonProperty(JSON_FIELD_ENTITIES) MessageEntity[] entities, @JsonProperty(JSON_FIELD_AUDIO) Audio audio,
+			@JsonProperty(JSON_FIELD_DOCUMENT) Document document, @JsonProperty(JSON_FIELD_PHOTO) PhotoSize[] photo,
+			@JsonProperty(JSON_FIELD_STICKER) Sticker sticker, @JsonProperty(JSON_FIELD_VIDEO) Video video,
+			@JsonProperty(JSON_FIELD_VOICE) Voice voice, @JsonProperty(JSON_FIELD_CAPTION) String caption,
+			@JsonProperty(JSON_FIELD_CONTACT) Contact contact, @JsonProperty(JSON_FIELD_LOCATION) Location location,
+			@JsonProperty(JSON_FIELD_VENUE) Venue venue, @JsonProperty(JSON_FIELD_NEW_CHAT_MEMBER) User newChatMember,
+			@JsonProperty(JSON_FIELD_LEFT_CHAT_MEMBER) User leftChatMember,
+			@JsonProperty(JSON_FIELD_NEW_CHAT_TITLE) String newChatTitle,
+			@JsonProperty(JSON_FIELD_NEW_CHAT_PHOTO) PhotoSize[] newChatPhoto,
+			@JsonProperty(JSON_FIELD_DELETE_CHAT_PHOTO) Boolean deleteChatPhoto,
+			@JsonProperty(JSON_FIELD_GROUP_CHAT_CREATED) Boolean groupChatCreated,
+			@JsonProperty(JSON_FIELD_SUPERGROUP_CHAT_CREATED) Boolean supergroupChatCreated,
+			@JsonProperty(JSON_FIELD_CHANNEL_CHAT_CREATED) Boolean channelChatCreated,
+			@JsonProperty(JSON_FIELD_MIGRATE_TO_CHAT_ID) Integer migrateToChatId,
+			@JsonProperty(JSON_FIELD_MIGRATE_FROM_CHAT_ID) Integer migrateFromChatId,
+			@JsonProperty(JSON_FIELD_PINNED_MESSAGE) Message pinnedMessage
 
 	) {
-		this.message_id = message_id;
+		this.messageId = messageId;
 		this.from = from;
 		this.date = date;
 		this.chat = chat;
-		this.forward_from = forward_from;
-		this.forward_from_chat = forward_from_chat;
-		this.forward_date = forward_date;
-		this.reply_to_message = reply_to_message;
-		this.edit_date = edit_date;
+		this.forwardFrom = forwardFrom;
+		this.forwardFromChat = forwardFromChat;
+		this.forwardDate = forwardDate;
+		this.replyToMessage = replyToMessage;
+		this.editDate = editDate;
 		this.text = text;
 		this.entities = entities;
 		this.audio = audio;
@@ -94,62 +432,62 @@ public class Message {
 		this.contact = contact;
 		this.location = location;
 		this.venue = venue;
-		this.new_chat_member = new_chat_member;
-		this.left_chat_member = left_chat_member;
-		this.new_chat_title = new_chat_title;
-		this.new_chat_photo = new_chat_photo;
-		this.delete_chat_photo = delete_chat_photo;
-		this.group_chat_created = group_chat_created;
-		this.supergroup_chat_created = supergroup_chat_created;
-		this.channel_chat_created = channel_chat_created;
-		this.migrate_to_chat_id = migrate_to_chat_id;
-		this.migrate_from_chat_id = migrate_from_chat_id;
-		this.pinned_message = pinned_message;
+		this.newChatMember = newChatMember;
+		this.leftChatMember = leftChatMember;
+		this.newChatTitle = newChatTitle;
+		this.newChatPhoto = newChatPhoto;
+		this.deleteChatPhoto = deleteChatPhoto;
+		this.groupChatCreated = groupChatCreated;
+		this.supergroupChatCreated = supergroupChatCreated;
+		this.channelChatCreated = channelChatCreated;
+		this.migrateToChatId = migrateToChatId;
+		this.migratefromchatId = migrateFromChatId;
+		this.pinnedMessage = pinnedMessage;
 
 		// utility fields
-		this.is_command = (text != null && text.charAt(0) == '/');
-		if (this.is_command) {
+		this.isCommand = (text != null && text.charAt(0) == '/');
+		if (this.isCommand) {
 			String[] cmd_and_params = text.split(" ");
 
 			if (cmd_and_params[0].indexOf('@') > 0) {
 				String[] cmd_and_botname = cmd_and_params[0].split("@");
 
 				this.command = cmd_and_botname[0].trim();
-				this.command_recipient = cmd_and_botname[1].trim();
+				this.commandRecipient = cmd_and_botname[1].trim();
 			} else {
-				this.command_recipient = null;
+				this.commandRecipient = null;
 				this.command = cmd_and_params[0].trim();
 
 			}
 
 			if (cmd_and_params.length > 1)
-				this.command_parameters = Arrays.copyOfRange(cmd_and_params, 1, cmd_and_params.length);
+				this.commandParameters = Arrays.copyOfRange(cmd_and_params, 1, cmd_and_params.length);
 			else
-				this.command_parameters = null;
+				this.commandParameters = null;
 		} else {
 			this.command = null;
-			this.command_recipient = null;
-			this.command_parameters = null;
+			this.commandRecipient = null;
+			this.commandParameters = null;
 		}
 
-		this.is_reply = reply_to_message != null ? true : false;
+		this.isReply = replyToMessage != null ? true : false;
 	}
 
-	/*
-	 * Builder class for test purposes (otherwise creating a message could be a
-	 * real pain in the ass
+	/**
+	 * Builder class for test purposes (otherwise creating a message by
+	 * constructor would be a real pain in the ass)
 	 */
 	public static class Builder {
 
-		private Integer message_id;
+		private Integer messageId;
 		private User from;
 		private Integer date;
 		private Chat chat;
-		private User forward_from;
-		private Chat forward_from_chat;
-		private Integer forward_date;
-		private Message reply_to_message;
-		private Integer edit_date;
+		private User forwardFrom;
+		private Chat forwardFromChat;
+		private Integer forwardDate;
+		private Message replyToMessage;
+		private Integer editDate;
 		private String text;
 		private MessageEntity[] entities;
 		private Audio audio;
@@ -162,31 +500,31 @@ public class Message {
 		private Contact contact;
 		private Location location;
 		private Venue venue;
-		private User new_chat_member;
-		private User left_chat_member;
-		private String new_chat_title;
-		private PhotoSize[] new_chat_photo;
-		private Boolean delete_chat_photo;
-		private Boolean group_chat_created;
-		private Boolean supergroup_chat_created;
-		private Boolean channel_chat_created;
-		private Integer migrate_to_chat_id;
-		private Integer migrate_from_chat_id;
-		private Message pinned_message;
+		private User newChatMember;
+		private User leftChatMember;
+		private String newChatTitle;
+		private PhotoSize[] newChatPhoto;
+		private Boolean deleteChatPhoto;
+		private Boolean groupChatCreated;
+		private Boolean supergroupChatCreated;
+		private Boolean channelChatCreated;
+		private Integer migrateToChatId;
+		private Integer migrateFromChatId;
+		private Message pinnedMessage;
 
 		public Builder() {
 
 		}
 
 		public Message build() {
-			return new Message(message_id, from, date, chat, forward_from, forward_from_chat, forward_date, reply_to_message,
-					edit_date, text, entities, audio, document, photo, sticker, video, voice, caption, contact, location, venue,
-					new_chat_member, left_chat_member, new_chat_title, new_chat_photo, delete_chat_photo, group_chat_created,
-					supergroup_chat_created, channel_chat_created, migrate_to_chat_id, migrate_from_chat_id, pinned_message);
+			return new Message(messageId, from, date, chat, forwardFrom, forwardFromChat, forwardDate, replyToMessage,
+					editDate, text, entities, audio, document, photo, sticker, video, voice, caption, contact, location,
+					venue, newChatMember, leftChatMember, newChatTitle, newChatPhoto, deleteChatPhoto, groupChatCreated,
+					supergroupChatCreated, channelChatCreated, migrateToChatId, migrateFromChatId, pinnedMessage);
 		}
 
-		public Builder setmessageId(Integer message_id) {
-			this.message_id = message_id;
+		public Builder setmessageId(Integer messageId) {
+			this.messageId = messageId;
 			return this;
 		}
 
@@ -205,28 +543,28 @@ public class Message {
 			return this;
 		}
 
-		public Builder setForwardFrom(User forward_from) {
-			this.forward_from = forward_from;
+		public Builder setForwardFrom(User forwardFrom) {
+			this.forwardFrom = forwardFrom;
 			return this;
 		}
 
-		public Builder setForwardFromChat(Chat forward_from_chat) {
-			this.forward_from_chat = forward_from_chat;
+		public Builder setForwardFromChat(Chat forwardFromChat) {
+			this.forwardFromChat = forwardFromChat;
 			return this;
 		}
 
-		public Builder setForwardDate(Integer forward_date) {
-			this.forward_date = forward_date;
+		public Builder setForwardDate(Integer forwardDate) {
+			this.forwardDate = forwardDate;
 			return this;
 		}
 
-		public Builder setReplyToMessage(Message reply_to_message) {
-			this.reply_to_message = reply_to_message;
+		public Builder setReplyToMessage(Message replyToMessage) {
+			this.replyToMessage = replyToMessage;
 			return this;
 		}
 
-		public Builder setEditDate(Integer edit_date) {
-			this.edit_date = edit_date;
+		public Builder setEditDate(Integer editDate) {
+			this.editDate = editDate;
 			return this;
 		}
 
@@ -290,58 +628,58 @@ public class Message {
 			return this;
 		}
 
-		public Builder setNewChatMember(User new_chat_member) {
-			this.new_chat_member = new_chat_member;
+		public Builder setNewChatMember(User newChatMember) {
+			this.newChatMember = newChatMember;
 			return this;
 		}
 
-		public Builder setLeftChatMember(User left_chat_member) {
-			this.left_chat_member = left_chat_member;
+		public Builder setLeftChatMember(User leftChatMember) {
+			this.leftChatMember = leftChatMember;
 			return this;
 		}
 
-		public Builder setNewChatTitle(String new_chat_title) {
-			this.new_chat_title = new_chat_title;
+		public Builder setNewChatTitle(String newChatTitle) {
+			this.newChatTitle = newChatTitle;
 			return this;
 		}
 
-		public Builder setNewChatPhoto(PhotoSize[] new_chat_photo) {
-			this.new_chat_photo = new_chat_photo;
+		public Builder setNewChatPhoto(PhotoSize[] newChatPhoto) {
+			this.newChatPhoto = newChatPhoto;
 			return this;
 		}
 
-		public Builder setDeleteChatPhoto(Boolean delete_chat_photo) {
-			this.delete_chat_photo = delete_chat_photo;
+		public Builder setDeleteChatPhoto(Boolean deleteChatPhoto) {
+			this.deleteChatPhoto = deleteChatPhoto;
 			return this;
 		}
 
-		public Builder setGroupChatCreated(Boolean group_chat_created) {
-			this.group_chat_created = group_chat_created;
+		public Builder setGroupChatCreated(Boolean groupChatCreated) {
+			this.groupChatCreated = groupChatCreated;
 			return this;
 		}
 
-		public Builder setSupergroupChatCreated(Boolean supergroup_chat_created) {
-			this.supergroup_chat_created = supergroup_chat_created;
+		public Builder setSupergroupChatCreated(Boolean supergroupChatCreated) {
+			this.supergroupChatCreated = supergroupChatCreated;
 			return this;
 		}
 
-		public Builder setChannelChatCreated(Boolean channel_chat_created) {
-			this.channel_chat_created = channel_chat_created;
+		public Builder setChannelChatCreated(Boolean channelChatCreated) {
+			this.channelChatCreated = channelChatCreated;
 			return this;
 		}
 
-		public Builder setMigrateToChatId(Integer migrate_to_chat_id) {
-			this.migrate_to_chat_id = migrate_to_chat_id;
+		public Builder setMigrateToChatId(Integer migrateToChatId) {
+			this.migrateToChatId = migrateToChatId;
 			return this;
 		}
 
-		public Builder setMigratefromChatId(Integer migrate_from_chat_id) {
-			this.migrate_from_chat_id = migrate_from_chat_id;
+		public Builder setMigratefromChatId(Integer migrateFromChatId) {
+			this.migrateFromChatId = migrateFromChatId;
 			return this;
 		}
 
-		public Builder setPinnedMessage(Message pinned_message) {
-			this.pinned_message = pinned_message;
+		public Builder setPinnedMessage(Message pinnedMessage) {
+			this.pinnedMessage = pinnedMessage;
 			return this;
 		}
 

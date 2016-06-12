@@ -4,20 +4,69 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import it.pwned.telegram.bot.api.type.PhotoSize;
 
+/**
+ * This class represents a general file (as opposed to photos, voice messages
+ * and audio files).
+ *
+ */
 public final class Document {
-	public final String file_id;
-	public final PhotoSize thumb;
-	public final String file_name;
-	public final String mime_type;
-	public final Integer file_size;
 
-	public Document(@JsonProperty("file_id") String file_id, @JsonProperty("thumb") PhotoSize thumb,
-			@JsonProperty("file_name") String file_name, @JsonProperty("mime_type") String mime_type,
-			@JsonProperty("file_size") Integer file_size) {
-		this.file_id = file_id;
+	private final static String JSON_FIELD_FILE_ID = "file_id";
+	private final static String JSON_FIELD_THUMB = "thumb";
+	private final static String JSON_FIELD_FILE_NAME = "file_name";
+	private final static String JSON_FIELD_MIME_TYPE = "mime_type";
+	private final static String JSON_FIELD_FILE_SIZE = "file_size";
+
+	/**
+	 * Unique file identifier
+	 */
+	@JsonProperty(JSON_FIELD_FILE_ID)
+	public final String fileId;
+
+	/**
+	 * <em>Optional.</em> Document thumbnail as defined by sender
+	 */
+	@JsonProperty(JSON_FIELD_THUMB)
+	public final PhotoSize thumb;
+
+	/**
+	 * <em>Optional.</em> Original filename as defined by sender
+	 */
+	@JsonProperty(JSON_FIELD_FILE_NAME)
+	public final String fileName;
+
+	/**
+	 * <em>Optional.</em> MIME type of the file as defined by sender
+	 */
+	@JsonProperty(JSON_FIELD_MIME_TYPE)
+	public final String mimeType;
+
+	/**
+	 * <em>Optional.</em> File size
+	 */
+	@JsonProperty(JSON_FIELD_FILE_SIZE)
+	public final Integer fileSize;
+
+	/**
+	 * 
+	 * @param fileId
+	 *            Unique file identifier
+	 * @param thumb
+	 *            <em>Optional.</em> Document thumbnail as defined by sender
+	 * @param fileName
+	 *            <em>Optional.</em> Original filename as defined by sender
+	 * @param mimeType
+	 *            <em>Optional.</em> MIME type of the file as defined by sender
+	 * @param fileSize
+	 *            <em>Optional.</em> File size
+	 */
+	public Document(@JsonProperty(JSON_FIELD_FILE_ID) String fileId, @JsonProperty(JSON_FIELD_THUMB) PhotoSize thumb,
+			@JsonProperty(JSON_FIELD_FILE_NAME) String fileName, @JsonProperty(JSON_FIELD_MIME_TYPE) String mimeType,
+			@JsonProperty(JSON_FIELD_FILE_SIZE) Integer fileSize) {
+		this.fileId = fileId;
 		this.thumb = thumb;
-		this.file_name = file_name;
-		this.mime_type = mime_type;
-		this.file_size = file_size;
+		this.fileName = fileName;
+		this.mimeType = mimeType;
+		this.fileSize = fileSize;
 	}
 }

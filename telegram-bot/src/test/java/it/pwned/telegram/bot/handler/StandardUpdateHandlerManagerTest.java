@@ -58,7 +58,8 @@ public class StandardUpdateHandlerManagerTest {
 		List<UpdateHandler> handlers = new LinkedList<UpdateHandler>();
 		handlers.add(inline_handler);
 		
-		StandardUpdateHandlerManager m = new StandardUpdateHandlerManager(handlers, inline_handler);
+		StandardUpdateHandlerManager m = new StandardUpdateHandlerManager(handlers);
+		m.setInlineHandler(inline_handler);
 		
 		Update inline_update = new Update.Builder().setInlineQuery(new InlineQuery(null, null, null, null, null)).build();
 		Update inline_update2 = new Update.Builder().setChosenInlineResult(new ChosenInlineResult(null, null, null, null, null)).build();
@@ -186,7 +187,8 @@ public class StandardUpdateHandlerManagerTest {
 		handlers.add(handler1);
 		handlers.add(handler2);
 		
-		StandardUpdateHandlerManager m = new StandardUpdateHandlerManager(handlers, inline_handler);
+		StandardUpdateHandlerManager m = new StandardUpdateHandlerManager(handlers);
+		m.setInlineHandler(inline_handler);
 		
 		Update not_inline_update = new Update.Builder().build();
 		

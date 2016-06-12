@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import it.pwned.telegram.bot.api.type.Update;
 
@@ -17,16 +18,22 @@ public class StandardUpdateHandlerManager implements UpdateHandlerManager {
 	private static final Logger log = LoggerFactory.getLogger(StandardUpdateHandlerManager.class);
 
 	private final List<UpdateHandler> handlers;
-	private final UpdateHandler inline_handler;
+	private UpdateHandler inline_handler;
 	private final Map<UpdateHandler, Thread> handler_threads;
 
-	public StandardUpdateHandlerManager(List<UpdateHandler> handlers, UpdateHandler inline_handler) {
+	public StandardUpdateHandlerManager(List<UpdateHandler> handlers) {
 		this.handlers = handlers;
-		this.inline_handler = inline_handler;
 
 		this.handler_threads = new ConcurrentHashMap<UpdateHandler, Thread>();
 
 		// Collections.sort(handlers, AnnotationAwareOrderComparator.INSTANCE);
+	}
+	
+	@Override
+	@InlineHandlerQualifier
+	@Autowired(required=false)
+	public void setInlineHandler(UpdateHandler handler) {
+		this.inline_handler = handler;
 	}
 
 	@Override

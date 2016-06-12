@@ -19,11 +19,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pwned.telegram.bot.TelegramBot;
 import it.pwned.telegram.bot.api.TelegramBotApi;
 import it.pwned.telegram.bot.api.rest.TelegramBotRestApi;
-import it.pwned.telegram.bot.api.type.Audio;
 import it.pwned.telegram.bot.api.type.Update;
 import it.pwned.telegram.bot.collector.ApiUpdateCollector;
 import it.pwned.telegram.bot.collector.UpdateCollector;
-import it.pwned.telegram.bot.handler.InlineHandlerQualifier;
 import it.pwned.telegram.bot.handler.StandardUpdateHandlerManager;
 import it.pwned.telegram.bot.handler.UpdateHandler;
 import it.pwned.telegram.bot.handler.UpdateHandlerManager;
@@ -56,16 +54,16 @@ public class Application {
 	}
 
 	@Bean
-	public UpdateCollector updateCollector(TelegramBotApi api, @Value("${bot.api.updates.timeout:60}") Integer timeout) {
+	public UpdateCollector updateCollector(TelegramBotApi api,
+			@Value("${bot.api.updates.timeout:60}") Integer timeout) {
 		LinkedBlockingQueue<Update> update_queue = new LinkedBlockingQueue<Update>();
 		ApiUpdateCollector collector = new ApiUpdateCollector(api, update_queue, timeout);
 		return collector;
 	}
 
 	@Bean
-	public UpdateHandlerManager uhManager(List<UpdateHandler> handlers,
-			@InlineHandlerQualifier UpdateHandler inline_handler) {
-		return new StandardUpdateHandlerManager(handlers, inline_handler);
+	public UpdateHandlerManager uhManager(List<UpdateHandler> handlers) {
+		return new StandardUpdateHandlerManager(handlers);
 	}
 
 	@Bean
@@ -80,8 +78,7 @@ public class Application {
 		ConfigurableApplicationContext ctx = app.run(args);
 
 		TelegramBot bot = ctx.getBean(TelegramBot.class);
-		TelegramBotApi api = ctx.getBean(TelegramBotApi.class);
-		ObjectMapper m = ctx.getBean(ObjectMapper.class);
+		// TelegramBotApi api = ctx.getBean(TelegramBotApi.class);
 
 		Signal.handle(new Signal("INT"), new SignalHandler() {
 			@Override
@@ -89,15 +86,8 @@ public class Application {
 				bot.shutdown();
 			}
 		});
-		
-		Audio a = new Audio("xxkx", 10, "pupo", "gelato al cioccolato", "audio/mp3", 100);
-		
-		String sa = m.writeValueAsString(a);
-		
-		Audio a2 = m.readValue("{\"duration\":10,\"performer\":\"pupo\",\"title\":\"gelato al cioccolato\",\"file_size\":100,\"fileID\":\"xxkx\",\"mimeType\":\"audio/mp3\"}", Audio.class);
-		Audio a3 = m.readValue("{\"duration\":10,\"performer\":\"pupo\",\"title\":\"gelato al cioccolato\",\"file_size\":100,\"file_id\":\"xxkx\",\"mime_type\":\"audio/mp3\"}", Audio.class);
-		
-		//bot.run();
+
+		bot.run();
 
 		ctx.close();
 

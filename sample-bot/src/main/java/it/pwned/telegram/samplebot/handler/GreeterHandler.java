@@ -21,15 +21,15 @@ public class GreeterHandler implements UpdateHandler {
 
 		Message m = u.message;
 
-		if (m == null || (m.new_chat_member == null && m.left_chat_member == null))
+		if (m == null || (m.newChatMember == null && m.leftChatMember == null))
 			return true;
 
-		if (m.new_chat_member != null) {
+		if (m.newChatMember != null) {
 
 			executor.submit(() -> {
 				try {
-					api.sendMessage(m.chat.id, String.format("Welcome, %s!", m.new_chat_member.first_name), null, null,
-							null, m.message_id, null);
+					api.sendMessage(m.chat.id, String.format("Welcome, %s!", m.newChatMember.first_name), null, null,
+							null, m.messageId, null);
 				} catch (Exception e) {
 				}
 			});
@@ -37,8 +37,8 @@ public class GreeterHandler implements UpdateHandler {
 
 			executor.submit(() -> {
 				try {
-					api.sendMessage(m.chat.id, String.format("Goodbye, %s!", m.left_chat_member.first_name), null, null,
-							null, m.message_id, null);
+					api.sendMessage(m.chat.id, String.format("Goodbye, %s!", m.leftChatMember.first_name), null, null,
+							null, m.messageId, null);
 				} catch (Exception e) {
 				}
 			});
