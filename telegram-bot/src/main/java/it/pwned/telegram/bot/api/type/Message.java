@@ -2,7 +2,6 @@ package it.pwned.telegram.bot.api.type;
 
 import java.util.Arrays;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
