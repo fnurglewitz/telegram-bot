@@ -3,7 +3,7 @@ package it.pwned.telegram.bot.api.type;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * This object represents one special entity in a text message. For example,
+ * This class represents one special entity in a text message. For example,
  * hashtags, usernames, URLs, etc.
  *
  */
@@ -16,10 +16,10 @@ public class MessageEntity {
 	private final static String JSON_FIELD_USER = "user";
 
 	/**
-	 * Type of the entity. Can be mention (@username), hashtag, bot_command,
-	 * url, email, bold (bold text), italic (italic text), code (monowidth
-	 * string), pre (monowidth block), text_link (for clickable text URLs),
-	 * text_mention (for users without usernames)
+	 * Type of the entity. Can be mention (@username), hashtag, bot_command, url,
+	 * email, bold (bold text), italic (italic text), code (monowidth string), pre
+	 * (monowidth block), text_link (for clickable text URLs), text_mention (for
+	 * users without usernames)
 	 */
 	@JsonProperty(JSON_FIELD_TYPE)
 	public final String type;
@@ -37,8 +37,8 @@ public class MessageEntity {
 	public final Integer length;
 
 	/**
-	 * <em>Optional.</em> For “text_link” only, url that will be opened after
-	 * user taps on the text
+	 * <em>Optional.</em> For “text_link” only, url that will be opened after user
+	 * taps on the text
 	 */
 	@JsonProperty(JSON_FIELD_URL)
 	public final String url;
@@ -52,20 +52,19 @@ public class MessageEntity {
 	/**
 	 * 
 	 * @param type
-	 *            Type of the entity. Can be mention (@username), hashtag,
-	 *            bot_command, url, email, bold (bold text), italic (italic
-	 *            text), code (monowidth string), pre (monowidth block),
-	 *            text_link (for clickable text URLs), text_mention (for users
-	 *            without usernames)
+	 *          Type of the entity. Can be mention (@username), hashtag,
+	 *          bot_command, url, email, bold (bold text), italic (italic text),
+	 *          code (monowidth string), pre (monowidth block), text_link (for
+	 *          clickable text URLs), text_mention (for users without usernames)
 	 * @param offset
-	 *            Offset in UTF-16 code units to the start of the entity
+	 *          Offset in UTF-16 code units to the start of the entity
 	 * @param length
-	 *            Length of the entity in UTF-16 code units
+	 *          Length of the entity in UTF-16 code units
 	 * @param url
-	 *            <em>Optional.</em> For “text_link” only, url that will be
-	 *            opened after user taps on the text
+	 *          <em>Optional.</em> For “text_link” only, url that will be opened
+	 *          after user taps on the text
 	 * @param user
-	 *            <em>Optional.</em> For “text_mention” only, the mentioned user
+	 *          <em>Optional.</em> For “text_mention” only, the mentioned user
 	 */
 	public MessageEntity(@JsonProperty(JSON_FIELD_TYPE) String type, @JsonProperty(JSON_FIELD_OFFSET) Integer offset,
 			@JsonProperty(JSON_FIELD_LENGTH) Integer length, @JsonProperty(JSON_FIELD_URL) String url,

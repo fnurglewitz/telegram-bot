@@ -83,9 +83,9 @@ public class StandardUpdateHandlerManager implements UpdateHandlerManager {
 
 	@Override
 	public void dispatch(Update u) {
-		if (u.is_inline) {
+		if (Update.Util.isInline(u)) {
 			if (inline_handler != null) {
-				log.trace(String.format("Sending update <%d> to inline handler <%s>", u.update_id, inline_handler.getName()));
+				log.trace(String.format("Sending update <%d> to inline handler <%s>", u.updateId, inline_handler.getName()));
 				inline_handler.submit(u);
 			}
 		} else {
@@ -93,7 +93,7 @@ public class StandardUpdateHandlerManager implements UpdateHandlerManager {
 				if (h == inline_handler)
 					continue;
 
-				log.trace(String.format("Sending update <%d> to handler <%s>", u.update_id, h.getName()));
+				log.trace(String.format("Sending update <%d> to handler <%s>", u.updateId, h.getName()));
 				if (!h.submit(u))
 					return;
 			}

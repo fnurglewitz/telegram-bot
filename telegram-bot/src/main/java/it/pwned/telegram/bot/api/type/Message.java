@@ -75,8 +75,8 @@ public class Message {
 	public final User forwardFrom;
 
 	/**
-	 * <em>Optional.</em> For messages forwarded from a channel, information
-	 * about the original channel
+	 * <em>Optional.</em> For messages forwarded from a channel, information about
+	 * the original channel
 	 */
 	@JsonProperty(JSON_FIELD_FORWARD_FROM_CHAT)
 	public final Chat forwardFromChat;
@@ -89,9 +89,9 @@ public class Message {
 	public final Integer forwardDate;
 
 	/**
-	 * <em>Optional.</em> For replies, the original message. Note that the
-	 * Message object in this field will not contain further reply_to_message
-	 * fields even if it itself is a reply.
+	 * <em>Optional.</em> For replies, the original message. Note that the Message
+	 * object in this field will not contain further reply_to_message fields even
+	 * if it itself is a reply.
 	 */
 	@JsonProperty(JSON_FIELD_REPLY_TO_MESSAGE)
 	public final Message replyToMessage;
@@ -103,8 +103,8 @@ public class Message {
 	public final Integer editDate;
 
 	/**
-	 * <em>Optional.</em> For text messages, the actual UTF-8 text of the
-	 * message, 0-4096 characters.
+	 * <em>Optional.</em> For text messages, the actual UTF-8 text of the message,
+	 * 0-4096 characters.
 	 */
 	@JsonProperty(JSON_FIELD_TEXT)
 	public final String text;
@@ -220,8 +220,8 @@ public class Message {
 	/**
 	 * <em>Optional.</em> Service message: the supergroup has been created. This
 	 * field can‘t be received in a message coming through updates, because bot
-	 * can’t be a member of a supergroup when it is created. It can only be
-	 * found in reply_to_message if someone replies to a very first message in a
+	 * can’t be a member of a supergroup when it is created. It can only be found
+	 * in reply_to_message if someone replies to a very first message in a
 	 * directly created supergroup.
 	 */
 	@JsonProperty(JSON_FIELD_SUPERGROUP_CHAT_CREATED)
@@ -230,9 +230,8 @@ public class Message {
 	/**
 	 * <em>Optional.</em> Service message: the channel has been created. This
 	 * field can‘t be received in a message coming through updates, because bot
-	 * can’t be a member of a channel when it is created. It can only be found
-	 * in reply_to_message if someone replies to a very first message in a
-	 * channel.
+	 * can’t be a member of a channel when it is created. It can only be found in
+	 * reply_to_message if someone replies to a very first message in a channel.
 	 */
 	@JsonProperty(JSON_FIELD_CHANNEL_CHAT_CREATED)
 	public final Boolean channelChatCreated;
@@ -259,132 +258,116 @@ public class Message {
 
 	/**
 	 * <em>Optional.</em> Specified message was pinned. Note that the Message
-	 * object in this field will not contain further reply_to_message fields
-	 * even if it is itself a reply.
+	 * object in this field will not contain further reply_to_message fields even
+	 * if it is itself a reply.
 	 */
 	@JsonProperty(JSON_FIELD_PINNED_MESSAGE)
 	public final Message pinnedMessage;
 
-	// utility fields
-	@JsonIgnore
-	public final Boolean isCommand;
-	@JsonIgnore
-	public final String command;
-	@JsonIgnore
-	public final String commandRecipient;
-	@JsonIgnore
-	public final String[] commandParameters;
-	@JsonIgnore
-	public final Boolean isReply;
-
 	/**
 	 * 
 	 * @param messageId
-	 *            Unique message identifier
+	 *          Unique message identifier
 	 * @param from
-	 *            <em>Optional.</em> Sender, can be empty for messages sent to
-	 *            channels
+	 *          <em>Optional.</em> Sender, can be empty for messages sent to
+	 *          channels
 	 * @param date
-	 *            Date the message was sent in Unix time
+	 *          Date the message was sent in Unix time
 	 * @param chat
-	 *            Conversation the message belongs to
+	 *          Conversation the message belongs to
 	 * @param forwardFrom
-	 *            <em>Optional.</em> For forwarded messages, sender of the
-	 *            original message
+	 *          <em>Optional.</em> For forwarded messages, sender of the original
+	 *          message
 	 * @param forwardFromChat
-	 *            <em>Optional.</em> For messages forwarded from a channel,
-	 *            information about the original channel
+	 *          <em>Optional.</em> For messages forwarded from a channel,
+	 *          information about the original channel
 	 * @param forwardDate
-	 *            <em>Optional.</em> For forwarded messages, date the original
-	 *            message was sent in Unix time
+	 *          <em>Optional.</em> For forwarded messages, date the original
+	 *          message was sent in Unix time
 	 * @param replyToMessage
-	 *            <em>Optional.</em> For replies, the original message. Note
-	 *            that the Message object in this field will not contain further
-	 *            replyToMessage fields even if it itself is a reply.
+	 *          <em>Optional.</em> For replies, the original message. Note that
+	 *          the Message object in this field will not contain further
+	 *          replyToMessage fields even if it itself is a reply.
 	 * @param editDate
-	 *            <em>Optional.</em> Date the message was last edited in Unix
-	 *            time
+	 *          <em>Optional.</em> Date the message was last edited in Unix time
 	 * @param text
-	 *            <em>Optional.</em> For text messages, the actual UTF-8 text of
-	 *            the message, 0-4096 characters.
+	 *          <em>Optional.</em> For text messages, the actual UTF-8 text of the
+	 *          message, 0-4096 characters.
 	 * @param entities
-	 *            <em>Optional.</em> For text messages, special entities like
-	 *            usernames, URLs, bot commands, etc. that appear in the text
+	 *          <em>Optional.</em> For text messages, special entities like
+	 *          usernames, URLs, bot commands, etc. that appear in the text
 	 * @param audio
-	 *            <em>Optional.</em> Message is an audio file, information about
-	 *            the file
+	 *          <em>Optional.</em> Message is an audio file, information about the
+	 *          file
 	 * @param document
-	 *            <em>Optional.</em> Message is a general file, information
-	 *            about the file
+	 *          <em>Optional.</em> Message is a general file, information about
+	 *          the file
 	 * @param photo
-	 *            <em>Optional.</em> Message is a photo, available sizes of the
-	 *            photo
+	 *          <em>Optional.</em> Message is a photo, available sizes of the
+	 *          photo
 	 * @param sticker
-	 *            <em>Optional.</em> Message is a sticker, information about the
-	 *            sticker
+	 *          <em>Optional.</em> Message is a sticker, information about the
+	 *          sticker
 	 * @param video
-	 *            <em>Optional.</em> Message is a video, information about the
-	 *            video
+	 *          <em>Optional.</em> Message is a video, information about the video
 	 * @param voice
-	 *            <em>Optional.</em> Message is a voice message, information
-	 *            about the file
+	 *          <em>Optional.</em> Message is a voice message, information about
+	 *          the file
 	 * @param caption
-	 *            <em>Optional.</em> Caption for the document, photo or video,
-	 *            0-200 characters
+	 *          <em>Optional.</em> Caption for the document, photo or video, 0-200
+	 *          characters
 	 * @param contact
-	 *            <em>Optional.</em> Message is a shared contact, information
-	 *            about the contact
+	 *          <em>Optional.</em> Message is a shared contact, information about
+	 *          the contact
 	 * @param location
-	 *            <em>Optional.</em> Message is a shared location, information
-	 *            about the location
+	 *          <em>Optional.</em> Message is a shared location, information about
+	 *          the location
 	 * @param venue
-	 *            <em>Optional.</em> Message is a venue, information about the
-	 *            venue
+	 *          <em>Optional.</em> Message is a venue, information about the venue
 	 * @param newChatMember
-	 *            <em>Optional.</em> A new member was added to the group,
-	 *            information about them (this member may be the bot itself)
+	 *          <em>Optional.</em> A new member was added to the group,
+	 *          information about them (this member may be the bot itself)
 	 * @param leftChatMember
-	 *            <em>Optional.</em> A member was removed from the group,
-	 *            information about them (this member may be the bot itself)
+	 *          <em>Optional.</em> A member was removed from the group,
+	 *          information about them (this member may be the bot itself)
 	 * @param newChatTitle
-	 *            <em>Optional.</em> A chat title was changed to this value
+	 *          <em>Optional.</em> A chat title was changed to this value
 	 * @param newChatPhoto
-	 *            <em>Optional.</em> A chat photo was change to this value
+	 *          <em>Optional.</em> A chat photo was change to this value
 	 * @param deleteChatPhoto
-	 *            <em>Optional.</em> Service message: the chat photo was deleted
+	 *          <em>Optional.</em> Service message: the chat photo was deleted
 	 * @param groupChatCreated
-	 *            <em>Optional.</em> Service message: the group has been created
+	 *          <em>Optional.</em> Service message: the group has been created
 	 * @param supergroupChatCreated
-	 *            <em>Optional.</em> Service message: the supergroup has been
-	 *            created. This field can‘t be received in a message coming
-	 *            through updates, because bot can’t be a member of a supergroup
-	 *            when it is created. It can only be found in reply_to_message
-	 *            if someone replies to a very first message in a directly
-	 *            created supergroup.
+	 *          <em>Optional.</em> Service message: the supergroup has been
+	 *          created. This field can‘t be received in a message coming through
+	 *          updates, because bot can’t be a member of a supergroup when it is
+	 *          created. It can only be found in reply_to_message if someone
+	 *          replies to a very first message in a directly created supergroup.
 	 * @param channelChatCreated
-	 *            <em>Optional.</em> Service message: the channel has been
-	 *            created. This field can‘t be received in a message coming
-	 *            through updates, because bot can’t be a member of a channel
-	 *            when it is created. It can only be found in reply_to_message
-	 *            if someone replies to a very first message in a channel.
+	 *          <em>Optional.</em> Service message: the channel has been created.
+	 *          This field can‘t be received in a message coming through updates,
+	 *          because bot can’t be a member of a channel when it is created. It
+	 *          can only be found in reply_to_message if someone replies to a very
+	 *          first message in a channel.
 	 * @param migrateToChatId
-	 *            <em>Optional.</em> The group has been migrated to a supergroup
-	 *            with the specified identifier. This number may be greater than
-	 *            32 bits and some programming languages may have
-	 *            difficulty/silent defects in interpreting it. But it smaller
-	 *            than 52 bits, so a signed 64 bit integer or double-precision
-	 *            float type are safe for storing this identifier.
+	 *          <em>Optional.</em> The group has been migrated to a supergroup
+	 *          with the specified identifier. This number may be greater than 32
+	 *          bits and some programming languages may have difficulty/silent
+	 *          defects in interpreting it. But it smaller than 52 bits, so a
+	 *          signed 64 bit integer or double-precision float type are safe for
+	 *          storing this identifier.
 	 * @param migrateFromChatId
-	 *            <em>Optional.</em> The supergroup has been migrated from a
-	 *            group with the specified identifier. This number may be
-	 *            greater than 32 bits and some programming languages may have
-	 *            difficulty/silent defects in interpreting it. But it smaller
-	 *            than 52 bits, so a signed 64 bit integer or double-precision
-	 *            float type are safe for storing this identifier.
+	 *          <em>Optional.</em> The supergroup has been migrated from a group
+	 *          with the specified identifier. This number may be greater than 32
+	 *          bits and some programming languages may have difficulty/silent
+	 *          defects in interpreting it. But it smaller than 52 bits, so a
+	 *          signed 64 bit integer or double-precision float type are safe for
+	 *          storing this identifier.
 	 * @param pinnedMessage
-	 *            <em>Optional.</em> Specified message was pinned. Note that the
-	 *            Message object in this field will not contain further
-	 *            reply_to_message fields even if it is itself a reply.
+	 *          <em>Optional.</em> Specified message was pinned. Note that the
+	 *          Message object in this field will not contain further
+	 *          reply_to_message fields even if it is itself a reply.
 	 */
 	public Message(@JsonProperty(JSON_FIELD_MESSAGE_ID) Integer messageId, @JsonProperty(JSON_FIELD_FROM) User from,
 			@JsonProperty(JSON_FIELD_DATE) Integer date, @JsonProperty(JSON_FIELD_CHAT) Chat chat,
@@ -444,33 +427,70 @@ public class Message {
 		this.migratefromchatId = migrateFromChatId;
 		this.pinnedMessage = pinnedMessage;
 
-		// utility fields
-		this.isCommand = (text != null && text.charAt(0) == '/');
-		if (this.isCommand) {
-			String[] cmd_and_params = text.split(" ");
+	}
 
-			if (cmd_and_params[0].indexOf('@') > 0) {
-				String[] cmd_and_botname = cmd_and_params[0].split("@");
+	/**
+	 * Utility nested class to parse message fields and infer message content
+	 *
+	 */
+	public static class Util {
 
-				this.command = cmd_and_botname[0].trim();
-				this.commandRecipient = cmd_and_botname[1].trim();
-			} else {
-				this.commandRecipient = null;
-				this.command = cmd_and_params[0].trim();
+		public static class BotCommand {
 
+			public final String command;
+			public final String recipient;
+			public final String parameters[];
+
+			private BotCommand(String command, String recipient, String[] parameters) {
+				this.command = command;
+				this.recipient = recipient;
+				this.parameters = parameters;
 			}
 
-			if (cmd_and_params.length > 1)
-				this.commandParameters = Arrays.copyOfRange(cmd_and_params, 1, cmd_and_params.length);
-			else
-				this.commandParameters = null;
-		} else {
-			this.command = null;
-			this.commandRecipient = null;
-			this.commandParameters = null;
 		}
 
-		this.isReply = replyToMessage != null ? true : false;
+		public static boolean isCommand(Message m) {
+			return (m.text != null && m.text.charAt(0) == '/');
+		}
+
+		public static BotCommand parseCommand(Message m) {
+
+			BotCommand result = null;
+
+			if (isCommand(m)) {
+
+				String command;
+				String recipient;
+				String[] parameters;
+
+				String[] cmd_and_params = m.text.split(" ");
+
+				if (cmd_and_params[0].indexOf('@') > 0) {
+					String[] cmd_and_botname = cmd_and_params[0].split("@");
+
+					command = cmd_and_botname[0].trim();
+					recipient = cmd_and_botname[1].trim();
+				} else {
+					recipient = null;
+					command = cmd_and_params[0].trim();
+
+				}
+
+				if (cmd_and_params.length > 1)
+					parameters = Arrays.copyOfRange(cmd_and_params, 1, cmd_and_params.length);
+				else
+					parameters = null;
+
+				result = new BotCommand(command, recipient, parameters);
+			}
+
+			return result;
+		}
+
+		public static boolean isReply(Message m) {
+			return m.replyToMessage != null;
+		}
+
 	}
 
 	/**
@@ -518,8 +538,8 @@ public class Message {
 
 		public Message build() {
 			return new Message(messageId, from, date, chat, forwardFrom, forwardFromChat, forwardDate, replyToMessage,
-					editDate, text, entities, audio, document, photo, sticker, video, voice, caption, contact, location,
-					venue, newChatMember, leftChatMember, newChatTitle, newChatPhoto, deleteChatPhoto, groupChatCreated,
+					editDate, text, entities, audio, document, photo, sticker, video, voice, caption, contact, location, venue,
+					newChatMember, leftChatMember, newChatTitle, newChatPhoto, deleteChatPhoto, groupChatCreated,
 					supergroupChatCreated, channelChatCreated, migrateToChatId, migrateFromChatId, pinnedMessage);
 		}
 

@@ -50,8 +50,8 @@ public class ApiUpdateCollector implements UpdateCollector {
 			Arrays.sort(updates);
 
 			for (Update u : updates) {
-				if (u.update_id > last_update)
-					last_update = u.update_id;
+				if (u.updateId > last_update)
+					last_update = u.updateId;
 
 				try {
 					this.update_queue.put(u);

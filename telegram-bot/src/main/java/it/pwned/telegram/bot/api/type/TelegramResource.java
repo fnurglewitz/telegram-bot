@@ -10,6 +10,10 @@ import java.nio.charset.StandardCharsets;
 
 import org.springframework.core.io.Resource;
 
+/**
+ * Utility class to send strings as spring Resources
+ *
+ */
 public class TelegramResource implements Resource {
 	
 	private final String file_id;

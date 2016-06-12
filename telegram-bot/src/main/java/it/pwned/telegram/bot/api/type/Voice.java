@@ -2,18 +2,59 @@ package it.pwned.telegram.bot.api.type;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * This object represents a voice note.
+ *
+ */
 public class Voice {
-	public final String file_id;
+
+	private final static String JSON_FIELD_FILE_ID = "file_id";
+	private final static String JSON_FIELD_DURATION = "duration";
+	private final static String JSON_FIELD_MIME_TYPE = "mime_type";
+	private final static String JSON_FIELD_FILE_SIZE = "file_size";
+
+	/**
+	 * Unique identifier for this file
+	 */
+	@JsonProperty(JSON_FIELD_FILE_ID)
+	public final String fileId;
+
+	/**
+	 * Duration of the audio in seconds as defined by sender
+	 */
+	@JsonProperty(JSON_FIELD_DURATION)
 	public final Integer duration;
-	public final String mime_type;
-	public final Integer file_size;
 
-	public Voice(@JsonProperty("file_id") String file_id, @JsonProperty("duration") Integer duration,
-			@JsonProperty("mime_type") String mime_type, @JsonProperty("file_size") Integer file_size) {
+	/**
+	 * <em>Optional.</em> MIME type of the file as defined by sender
+	 */
+	@JsonProperty(JSON_FIELD_MIME_TYPE)
+	public final String mimeType;
 
-		this.file_id = file_id;
+	/**
+	 * <em>Optional.</em> File size
+	 */
+	@JsonProperty(JSON_FIELD_FILE_SIZE)
+	public final Integer fileSize;
+
+	/**
+	 * 
+	 * @param fileId
+	 *          Unique identifier for this file
+	 * @param duration
+	 *          Duration of the audio in seconds as defined by sender
+	 * @param mimeType
+	 *          <em>Optional.</em> MIME type of the file as defined by sender
+	 * @param filesize
+	 *          <em>Optional.</em> File size
+	 */
+	public Voice(@JsonProperty(JSON_FIELD_FILE_ID) String fileId, @JsonProperty(JSON_FIELD_DURATION) Integer duration,
+			@JsonProperty(JSON_FIELD_MIME_TYPE) String mimeType, @JsonProperty(JSON_FIELD_FILE_SIZE) Integer filesize) {
+
+		this.fileId = fileId;
 		this.duration = duration;
-		this.mime_type = mime_type;
-		this.file_size = file_size;
+		this.mimeType = mimeType;
+		this.fileSize = filesize;
 	}
+
 }

@@ -14,6 +14,7 @@ import it.pwned.telegram.bot.api.TelegramBotApi;
 import it.pwned.telegram.bot.api.type.Message;
 import it.pwned.telegram.bot.api.type.TelegramBotApiException;
 import it.pwned.telegram.bot.api.type.Update;
+import it.pwned.telegram.bot.api.type.Message.Util.BotCommand;
 import it.pwned.telegram.bot.handler.UpdateHandler;
 
 public class AoE2Handler implements UpdateHandler, Runnable {
@@ -44,7 +45,7 @@ public class AoE2Handler implements UpdateHandler, Runnable {
 	public boolean submit(Update u) {
 		boolean result = true;
 		if (catafrutti.equals(u.message.chat.id) || "private".equals(u.message.chat.type)
-				|| (u.message.isCommand && u.message.command.equals("/aoe"))) {
+				|| (Message.Util.isCommand(u.message) && Message.Util.parseCommand(u.message).command.equals("/aoe"))) {
 			try {
 				this.message_queue.put(u);
 			} catch (InterruptedException e) {
@@ -81,10 +82,12 @@ public class AoE2Handler implements UpdateHandler, Runnable {
 
 		executor.submit(() -> {
 
-			if (m != null && m.isCommand) {
+			if (m != null && Message.Util.isCommand(m)) {
 
-				if (m.commandParameters.length == 2 && m.commandParameters[0].equals("lang")) {
-					String culture = m.commandParameters[1];
+				BotCommand c = Message.Util.parseCommand(m);
+
+				if (c.parameters.length == 2 && c.parameters[0].equals("lang")) {
+					String culture = c.parameters[1];
 
 					if (culture != null && culture.length() == 2) {
 						jdbc.update("MERGE INTO AOE2.SETTINGS KEY(USER_ID) VALUES ( ?, ? );", new Object[] { m.from.id, culture });
@@ -118,7 +121,7 @@ public class AoE2Handler implements UpdateHandler, Runnable {
 					else {
 						// fetch culture from h2sql
 						try {
-							Integer user_id = m.from.id != null ? m.from.id : u.inline_query.from.id;
+							Integer user_id = m.from.id != null ? m.from.id : u.inlineQuery.from.id;
 
 							culture = jdbc.queryForObject("SELECT FAVORITE_LANG FROM AOE2.SETTINGS WHERE USER_ID = ?;", String.class,
 									user_id);

@@ -1,5 +1,9 @@
 package it.pwned.telegram.bot.api.type;
 
+/**
+ * Custom Exception created to wrap API errors
+ *
+ */
 public class TelegramBotApiException extends Exception {
 
 	private Integer errorCode;

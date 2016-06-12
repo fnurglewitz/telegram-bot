@@ -123,7 +123,7 @@ public class TelegramBotRestApiCall<T> {
 		}
 
 		if (!res.ok)
-			throw new TelegramBotApiException(res.description, res.error_code);
+			throw new TelegramBotApiException(res.description, res.errorCode);
 
 		return res.result;
 	}

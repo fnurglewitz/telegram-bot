@@ -175,7 +175,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 			throw new InvalidParameterException("(getResourceFromTelegramFile) Null value is not allowed for field: file");
 
 		try {
-			return new UrlResource(file_uri_template.expand(file.file_path));
+			return new UrlResource(file_uri_template.expand(file.filePath));
 		} catch (MalformedURLException e) {
 			return null;
 		}

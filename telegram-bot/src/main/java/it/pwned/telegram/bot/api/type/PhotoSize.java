@@ -2,17 +2,58 @@ package it.pwned.telegram.bot.api.type;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * This class represents one size of a photo or a {@link Document} /
+ * {@link Sticker} thumbnail.
+ *
+ */
 public final class PhotoSize {
-	public final String file_id;
-	public final Integer width;
-	public final Integer height;
-	public final Integer file_size;
 
-	public PhotoSize(@JsonProperty("file_id") String file_id, @JsonProperty("width") Integer width,
-			@JsonProperty("height") Integer height, @JsonProperty("file_size") Integer file_size) {
-		this.file_id = file_id;
+	private final static String JSON_FIELD_FILE_ID = "file_id";
+	private final static String JSON_FIELD_WIDTH = "width";
+	private final static String JSON_FIELD_HEIGHT = "height";
+	private final static String JSON_FIELD_FILE_SIZE = "file_size";
+
+	/**
+	 * Unique identifier for this file
+	 */
+	@JsonProperty(JSON_FIELD_FILE_ID)
+	public final String fileId;
+
+	/**
+	 * Photo width
+	 */
+	@JsonProperty(JSON_FIELD_WIDTH)
+	public final Integer width;
+
+	/**
+	 * Photo height
+	 */
+	@JsonProperty(JSON_FIELD_HEIGHT)
+	public final Integer height;
+
+	/**
+	 * <em>Optional.</em> File size
+	 */
+	@JsonProperty(JSON_FIELD_FILE_SIZE)
+	public final Integer fileSize;
+
+	/**
+	 * 
+	 * @param fileId
+	 *          Unique identifier for this file
+	 * @param width
+	 *          Photo width
+	 * @param height
+	 *          Photo height
+	 * @param fileSize
+	 *          <em>Optional.</em> File size
+	 */
+	public PhotoSize(@JsonProperty(JSON_FIELD_FILE_ID) String fileId, @JsonProperty(JSON_FIELD_WIDTH) Integer width,
+			@JsonProperty(JSON_FIELD_HEIGHT) Integer height, @JsonProperty(JSON_FIELD_FILE_SIZE) Integer fileSize) {
+		this.fileId = fileId;
 		this.width = width;
 		this.height = height;
-		this.file_size = file_size;
+		this.fileSize = fileSize;
 	}
 }

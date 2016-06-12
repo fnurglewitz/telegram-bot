@@ -40,7 +40,7 @@ public interface TelegramBotApi {
 	 */
 	Update[] getUpdates(Integer offset, Integer limit, Integer timeout) throws TelegramBotApiException;
 
-	Message sendMessage(long chat_id, String text, String parse_mode, Boolean disable_web_page_preview,
+	Message sendMessage(long chatId, String text, String parse_mode, Boolean disable_web_page_preview,
 			Boolean disable_notification, Integer reply_to_message_id, DummyKeyboard reply_markup)
 					throws TelegramBotApiException;
 

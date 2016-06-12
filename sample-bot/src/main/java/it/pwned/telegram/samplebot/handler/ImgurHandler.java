@@ -276,7 +276,7 @@ public class ImgurHandler implements UpdateHandler, Runnable {
 	}
 
 	public boolean submit(Update u) {
-		if (u.inline_query != null || u.chosen_inline_result != null)
+		if (u.inlineQuery != null || u.chosenInlineResult != null)
 			try {
 				this.update_queue.put(u);
 			} catch (InterruptedException e) {
@@ -336,10 +336,10 @@ public class ImgurHandler implements UpdateHandler, Runnable {
 
 	private void processUpdate(Update u) {
 
-		if (!checkPermissions(u.inline_query.from.id, u.inline_query.query))
+		if (!checkPermissions(u.inlineQuery.from.id, u.inlineQuery.query))
 			return;
 
-		final String[] array_ref = subreddits.get(u.inline_query.query);
+		final String[] array_ref = subreddits.get(u.inlineQuery.query);
 
 		if (array_ref != null && array_ref.length > 0) {
 
@@ -348,7 +348,7 @@ public class ImgurHandler implements UpdateHandler, Runnable {
 
 					List<InlineQueryResult> results = getResults(array_ref);
 
-					t_api.answerInlineQuery(u.inline_query.id, results, 60, null, null, null, null);
+					t_api.answerInlineQuery(u.inlineQuery.id, results, 60, null, null, null, null);
 
 				} catch (Exception e) {
 					log.error("Error while fetching the image.", e);
