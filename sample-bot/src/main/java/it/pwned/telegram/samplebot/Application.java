@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pwned.telegram.bot.TelegramBot;
 import it.pwned.telegram.bot.api.TelegramBotApi;
 import it.pwned.telegram.bot.api.rest.TelegramBotRestApi;
+import it.pwned.telegram.bot.api.type.Audio;
 import it.pwned.telegram.bot.api.type.Update;
 import it.pwned.telegram.bot.collector.ApiUpdateCollector;
 import it.pwned.telegram.bot.collector.UpdateCollector;
@@ -79,7 +80,8 @@ public class Application {
 		ConfigurableApplicationContext ctx = app.run(args);
 
 		TelegramBot bot = ctx.getBean(TelegramBot.class);
-		// TelegramBotApi api = ctx.getBean(TelegramBotApi.class);
+		TelegramBotApi api = ctx.getBean(TelegramBotApi.class);
+		ObjectMapper m = ctx.getBean(ObjectMapper.class);
 
 		Signal.handle(new Signal("INT"), new SignalHandler() {
 			@Override
@@ -87,8 +89,15 @@ public class Application {
 				bot.shutdown();
 			}
 		});
-
-		bot.run();
+		
+		Audio a = new Audio("xxkx", 10, "pupo", "gelato al cioccolato", "audio/mp3", 100);
+		
+		String sa = m.writeValueAsString(a);
+		
+		Audio a2 = m.readValue("{\"duration\":10,\"performer\":\"pupo\",\"title\":\"gelato al cioccolato\",\"file_size\":100,\"fileID\":\"xxkx\",\"mimeType\":\"audio/mp3\"}", Audio.class);
+		Audio a3 = m.readValue("{\"duration\":10,\"performer\":\"pupo\",\"title\":\"gelato al cioccolato\",\"file_size\":100,\"file_id\":\"xxkx\",\"mime_type\":\"audio/mp3\"}", Audio.class);
+		
+		//bot.run();
 
 		ctx.close();
 
