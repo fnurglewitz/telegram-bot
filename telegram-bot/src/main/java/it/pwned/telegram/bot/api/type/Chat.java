@@ -3,22 +3,41 @@ package it.pwned.telegram.bot.api.type;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public final class Chat {
-	public final Long id;
-	public final String type;
-	public final String title;
-	public final String username;
-	public final String first_name;
-	public final String last_name;
 
-	public Chat(@JsonProperty("id") Long id, @JsonProperty("type") String type, @JsonProperty("title") String title,
-			@JsonProperty("username") String username, @JsonProperty("first_name") String first_name,
-			@JsonProperty("last_name") String last_name) {
+	private final static String JSON_FIELD_ID = "id";
+	private final static String JSON_FIELD_TYPE = "type";
+	private final static String JSON_FIELD_TITLE = "title";
+	private final static String JSON_FIELD_USERNAME = "username";
+	private final static String JSON_FIELD_FIRST_NAME = "first_name";
+	private final static String JSON_FIELD_LAST_NAME = "last_name";
+
+	@JsonProperty(JSON_FIELD_ID)
+	public final Long id;
+
+	@JsonProperty(JSON_FIELD_TYPE)
+	public final String type;
+
+	@JsonProperty(JSON_FIELD_TITLE)
+	public final String title;
+
+	@JsonProperty(JSON_FIELD_USERNAME)
+	public final String username;
+
+	@JsonProperty(JSON_FIELD_FIRST_NAME)
+	public final String firstName;
+
+	@JsonProperty(JSON_FIELD_LAST_NAME)
+	public final String lastName;
+
+	public Chat(@JsonProperty(JSON_FIELD_ID) Long id, @JsonProperty(JSON_FIELD_TYPE) String type,
+			@JsonProperty(JSON_FIELD_TITLE) String title, @JsonProperty(JSON_FIELD_USERNAME) String username,
+			@JsonProperty(JSON_FIELD_FIRST_NAME) String firstName, @JsonProperty(JSON_FIELD_LAST_NAME) String lastName) {
 
 		this.id = id;
 		this.type = type;
 		this.title = title;
-		this.first_name = first_name;
-		this.last_name = last_name;
+		this.firstName = firstName;
+		this.lastName = lastName;
 		this.username = username;
 	}
 
