@@ -15,23 +15,23 @@ public class ApiUpdateCollector implements UpdateCollector {
 	private static final Logger log = LoggerFactory.getLogger(ApiUpdateCollector.class);
 
 	private final TelegramBotApi api;
-	private final BlockingQueue<Update> update_queue;
+	private final BlockingQueue<Update> updateQueue;
 	private final Integer timeout;
 
-	private int last_update = -1;
+	private int lastUpdate = -1;
 
-	public ApiUpdateCollector(TelegramBotApi api, BlockingQueue<Update> update_queue, Integer timeout) {
+	public ApiUpdateCollector(TelegramBotApi api, BlockingQueue<Update> updateQueue, Integer timeout) {
 		this.api = api;
-		this.update_queue = update_queue;
+		this.updateQueue = updateQueue;
 		this.timeout = timeout;
 	}
 
 	@Override
-	public Update next(boolean go_on) throws InterruptedException {
-		if (update_queue.isEmpty() && go_on)
+	public Update next(boolean goOn) throws InterruptedException {
+		if (updateQueue.isEmpty() && goOn)
 			fetch();
 
-		return update_queue.poll();
+		return updateQueue.poll();
 	}
 
 	private void fetch() {
@@ -39,7 +39,7 @@ public class ApiUpdateCollector implements UpdateCollector {
 		Update[] updates = null;
 
 		try {
-			updates = api.getUpdates(last_update + 1, null, timeout);
+			updates = api.getUpdates(lastUpdate + 1, null, timeout);
 		} catch (TelegramBotApiException ae) {
 			log.error("Could not fetch updates", ae);
 			updates = null;
@@ -50,11 +50,11 @@ public class ApiUpdateCollector implements UpdateCollector {
 			Arrays.sort(updates);
 
 			for (Update u : updates) {
-				if (u.updateId > last_update)
-					last_update = u.updateId;
+				if (u.updateId > lastUpdate)
+					lastUpdate = u.updateId;
 
 				try {
-					this.update_queue.put(u);
+					this.updateQueue.put(u);
 				} catch (InterruptedException e) {
 					// shit happens
 				}

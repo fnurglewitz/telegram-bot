@@ -6,42 +6,159 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import it.pwned.telegram.bot.api.type.InlineKeyboardMarkup;
 
+/**
+ * Represents a link to a page containing an embedded video player or a video
+ * file. By default, this video file will be sent by the user with an optional
+ * caption. Alternatively, you can use
+ * {@link InlineQueryResultVideo#inputMessageContent inputMessageContent} to
+ * send a message with the specified content instead of the video.
+ *
+ */
 @JsonInclude(Include.NON_NULL)
 public class InlineQueryResultVideo extends InlineQueryResult {
 
-	public final String type = "video";
-	public final String id;
-	public final String video_url;
-	public final String mime_type;
-	public final String thumb_url;
-	public final String title;
-	public final String caption;
-	public final Integer video_width;
-	public final Integer video_height;
-	public final Integer video_duration;
-	public final String description;
-	public final InlineKeyboardMarkup reply_markup;
-	public final InputMessageContent input_message_content;
+	private final static String JSON_FIELD_TYPE = "type";
+	private final static String JSON_FIELD_ID = "id";
+	private final static String JSON_FIELD_VIDEO_URL = "video_url";
+	private final static String JSON_FIELD_MIME_TYPE = "mime_type";
+	private final static String JSON_FIELD_THUMB_URL = "thumb_url";
+	private final static String JSON_FIELD_TITLE = "title";
+	private final static String JSON_FIELD_CAPTION = "caption";
+	private final static String JSON_FIELD_VIDEO_WIDTH = "video_width";
+	private final static String JSON_FIELD_VIDEO_HEIGHT = "video_height";
+	private final static String JSON_FIELD_VIDEO_DURATION = "video_duration";
+	private final static String JSON_FIELD_DESCRIPTION = "description";
+	private final static String JSON_FIELD_REPLY_MARKUP = "reply_markup";
+	private final static String JSON_FIELD_INPUT_MESSAGE_CONTENT = "input_message_content";
 
-	public InlineQueryResultVideo(@JsonProperty("id") String id, @JsonProperty("video_url") String video_url,
-			@JsonProperty("mime_type") String mime_type, @JsonProperty("thumb_url") String thumb_url,
-			@JsonProperty("title") String title, @JsonProperty("caption") String caption,
-			@JsonProperty("video_width") Integer video_width, @JsonProperty("video_height") Integer video_height,
-			@JsonProperty("video_duration") Integer video_duration, @JsonProperty("description") String description,
-			@JsonProperty("reply_markup") InlineKeyboardMarkup reply_markup,
-			@JsonProperty("input_message_content") InputMessageContent input_message_content) {
+	/**
+	 * Type of the result, must be video
+	 */
+	@JsonProperty(JSON_FIELD_TYPE)
+	public final String type = "video";
+
+	/**
+	 * Unique identifier for this result, 1-64 bytes
+	 */
+	@JsonProperty(JSON_FIELD_ID)
+	public final String id;
+
+	/**
+	 * A valid URL for the embedded video player or video file
+	 */
+	@JsonProperty(JSON_FIELD_VIDEO_URL)
+	public final String videoUrl;
+
+	/**
+	 * Mime type of the content of video url, "text/html" or "video/mp4"
+	 */
+	@JsonProperty(JSON_FIELD_MIME_TYPE)
+	public final String mimeType;
+
+	/**
+	 * URL of the thumbnail (jpeg only) for the video
+	 */
+	@JsonProperty(JSON_FIELD_THUMB_URL)
+	public final String thumbUrl;
+
+	/**
+	 * Title for the result
+	 */
+	@JsonProperty(JSON_FIELD_TITLE)
+	public final String title;
+
+	/**
+	 * <em>Optional.</em> Caption of the video to be sent, 0-200 characters
+	 */
+	@JsonProperty(JSON_FIELD_CAPTION)
+	public final String caption;
+
+	/**
+	 * <em>Optional.</em> Video width
+	 */
+	@JsonProperty(JSON_FIELD_VIDEO_WIDTH)
+	public final Integer videoWidth;
+
+	/**
+	 * <em>Optional.</em> Video height
+	 */
+	@JsonProperty(JSON_FIELD_VIDEO_HEIGHT)
+	public final Integer videoHeight;
+
+	/**
+	 * <em>Optional.</em> Video duration in seconds
+	 */
+	@JsonProperty(JSON_FIELD_VIDEO_DURATION)
+	public final Integer videoDuration;
+
+	/**
+	 * <em>Optional.</em> Short description of the result
+	 */
+	@JsonProperty(JSON_FIELD_DESCRIPTION)
+	public final String description;
+
+	/**
+	 * <em>Optional.</em> Inline keyboard attached to the message
+	 */
+	@JsonProperty(JSON_FIELD_REPLY_MARKUP)
+	public final InlineKeyboardMarkup replyMarkup;
+
+	/**
+	 * <em>Optional.</em> Content of the message to be sent instead of the video
+	 */
+	@JsonProperty(JSON_FIELD_INPUT_MESSAGE_CONTENT)
+	public final InputMessageContent inputMessageContent;
+
+	/**
+	 * 
+	 * @param id
+	 *          Unique identifier for this result, 1-64 bytes
+	 * @param videoUrl
+	 *          A valid URL for the embedded video player or video file
+	 * @param mimeType
+	 *          Mime type of the content of video url, "text/html" or "video/mp4"
+	 * @param thumbUrl
+	 *          URL of the thumbnail (jpeg only) for the video
+	 * @param title
+	 *          Title for the result
+	 * @param caption
+	 *          <em>Optional.</em> Caption of the video to be sent, 0-200
+	 *          characters
+	 * @param videoWidth
+	 *          <em>Optional.</em> Video width
+	 * @param videoHeight
+	 *          <em>Optional.</em> Video height
+	 * @param videoDuration
+	 *          <em>Optional.</em> Video duration in seconds
+	 * @param description
+	 *          <em>Optional.</em> Short description of the result
+	 * @param replyMarkup
+	 *          <em>Optional.</em> Inline keyboard attached to the message
+	 * @param inputMessageContent
+	 *          <em>Optional.</em> Content of the message to be sent instead of
+	 *          the video
+	 */
+	public InlineQueryResultVideo(@JsonProperty(JSON_FIELD_ID) String id,
+			@JsonProperty(JSON_FIELD_VIDEO_URL) String videoUrl, @JsonProperty(JSON_FIELD_MIME_TYPE) String mimeType,
+			@JsonProperty(JSON_FIELD_THUMB_URL) String thumbUrl, @JsonProperty(JSON_FIELD_TITLE) String title,
+			@JsonProperty(JSON_FIELD_CAPTION) String caption, @JsonProperty(JSON_FIELD_VIDEO_WIDTH) Integer videoWidth,
+			@JsonProperty(JSON_FIELD_VIDEO_HEIGHT) Integer videoHeight,
+			@JsonProperty(JSON_FIELD_VIDEO_DURATION) Integer videoDuration,
+			@JsonProperty(JSON_FIELD_DESCRIPTION) String description,
+			@JsonProperty(JSON_FIELD_REPLY_MARKUP) InlineKeyboardMarkup replyMarkup,
+			@JsonProperty(JSON_FIELD_INPUT_MESSAGE_CONTENT) InputMessageContent inputMessageContent) {
 		this.id = id;
-		this.video_url = video_url;
-		this.mime_type = mime_type;
-		this.thumb_url = thumb_url;
+		this.videoUrl = videoUrl;
+		this.mimeType = mimeType;
+		this.thumbUrl = thumbUrl;
 		this.title = title;
 		this.caption = caption;
-		this.video_width = video_width;
-		this.video_height = video_height;
-		this.video_duration = video_duration;
+		this.videoWidth = videoWidth;
+		this.videoHeight = videoHeight;
+		this.videoDuration = videoDuration;
 		this.description = description;
-		this.reply_markup = reply_markup;
-		this.input_message_content = input_message_content;
+		this.replyMarkup = replyMarkup;
+		this.inputMessageContent = inputMessageContent;
 
 	}
 

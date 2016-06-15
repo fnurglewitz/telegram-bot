@@ -29,7 +29,7 @@ public interface TelegramBotApi {
 	 *          updates. By default, updates starting with the earliest
 	 *          unconfirmed update are returned. An update is considered confirmed
 	 *          as soon as getUpdates is called with an offset higher than its
-	 *          update_id.
+	 *          updateId.
 	 * @param limit
 	 *          Limits the number of updates to be retrieved. Values between 1-100
 	 *          are accepted. Defaults to 100
@@ -40,142 +40,132 @@ public interface TelegramBotApi {
 	 */
 	Update[] getUpdates(Integer offset, Integer limit, Integer timeout) throws TelegramBotApiException;
 
-	Message sendMessage(long chatId, String text, String parse_mode, Boolean disable_web_page_preview,
-			Boolean disable_notification, Integer reply_to_message_id, DummyKeyboard reply_markup)
-					throws TelegramBotApiException;
+	Message sendMessage(long chatId, String text, String parseMode, Boolean disableWebPagePreview,
+			Boolean disableNotification, Integer replyToMessageId, DummyKeyboard replyMarkup) throws TelegramBotApiException;
 
-	Message sendMessage(String chat_id, String text, String parse_mode, Boolean disable_web_page_preview,
-			Boolean disable_notification, Integer reply_to_message_id, DummyKeyboard reply_markup)
-					throws TelegramBotApiException;
+	Message sendMessage(String chatId, String text, String parseMode, Boolean disableWebPagePreview,
+			Boolean disableNotification, Integer replyToMessageId, DummyKeyboard replyMarkup) throws TelegramBotApiException;
 
-	Message forwardMessage(long chat_id, long from_chat_id, Boolean disable_notification, int message_id)
+	Message forwardMessage(long chatId, long fromChatId, Boolean disableNotification, int messageId)
 			throws TelegramBotApiException;
 
-	Message forwardMessage(String chat_id, String from_chat_id, Boolean disable_notification, int message_id)
+	Message forwardMessage(String chatId, String fromChatId, Boolean disableNotification, int messageId)
 			throws TelegramBotApiException;
 
-	Message sendLocation(long chat_id, float latitude, float longitude, Integer reply_to_message_id,
-			DummyKeyboard reply_markup) throws TelegramBotApiException;
+	Message sendLocation(long chatId, float latitude, float longitude, Integer replyToMessageId,
+			DummyKeyboard replyMarkup) throws TelegramBotApiException;
 
-	Message sendLocation(String chat_id, float latitude, float longitude, Integer reply_to_message_id,
-			DummyKeyboard reply_markup) throws TelegramBotApiException;
+	Message sendLocation(String chatId, float latitude, float longitude, Integer replyToMessageId,
+			DummyKeyboard replyMarkup) throws TelegramBotApiException;
 
-	void sendChatAction(long chat_id, ChatAction action) throws TelegramBotApiException;
+	void sendChatAction(long chatId, ChatAction action) throws TelegramBotApiException;
 
-	void sendChatAction(String chat_id, ChatAction action) throws TelegramBotApiException;
+	void sendChatAction(String chatId, ChatAction action) throws TelegramBotApiException;
 
-	UserProfilePhotos getUserProfilePhotos(int user_id, Integer offset, Integer limit) throws TelegramBotApiException;
+	UserProfilePhotos getUserProfilePhotos(int userId, Integer offset, Integer limit) throws TelegramBotApiException;
 
-	Message sendPhoto(long chat_id, Resource photo, String caption, Boolean disable_notification,
-			Integer reply_to_message_id, DummyKeyboard reply_markup) throws TelegramBotApiException;
+	Message sendPhoto(long chatId, Resource photo, String caption, Boolean disableNotification, Integer replyToMessageId,
+			DummyKeyboard replyMarkup) throws TelegramBotApiException;
 
-	Message sendPhoto(String chat_id, Resource photo, String caption, Boolean disable_notification,
-			Integer reply_to_message_id, DummyKeyboard reply_markup) throws TelegramBotApiException;
+	Message sendPhoto(String chatId, Resource photo, String caption, Boolean disableNotification,
+			Integer replyToMessageId, DummyKeyboard replyMarkup) throws TelegramBotApiException;
 
-	Message sendAudio(long chat_id, Resource audio, Integer duration, String performer, String title,
-			Boolean disable_notification, Integer reply_to_message_id, DummyKeyboard reply_markup)
-					throws TelegramBotApiException;
+	Message sendAudio(long chatId, Resource audio, Integer duration, String performer, String title,
+			Boolean disableNotification, Integer replyToMessageId, DummyKeyboard replyMarkup) throws TelegramBotApiException;
 
-	Message sendAudio(String chat_id, Resource audio, Integer duration, String performer, String title,
-			Boolean disable_notification, Integer reply_to_message_id, DummyKeyboard reply_markup)
-					throws TelegramBotApiException;
+	Message sendAudio(String chatId, Resource audio, Integer duration, String performer, String title,
+			Boolean disableNotification, Integer replyToMessageId, DummyKeyboard replyMarkup) throws TelegramBotApiException;
 
-	Message sendDocument(long chat_id, Resource document, String caption, Boolean disable_notification,
-			Integer reply_to_message_id, DummyKeyboard reply_markup) throws TelegramBotApiException;
+	Message sendDocument(long chatId, Resource document, String caption, Boolean disableNotification,
+			Integer replyToMessageId, DummyKeyboard replyMarkup) throws TelegramBotApiException;
 
-	Message sendDocument(String chat_id, Resource document, String caption, Boolean disable_notification,
-			Integer reply_to_message_id, DummyKeyboard reply_markup) throws TelegramBotApiException;
+	Message sendDocument(String chatId, Resource document, String caption, Boolean disableNotification,
+			Integer replyToMessageId, DummyKeyboard replyMarkup) throws TelegramBotApiException;
 
-	Message sendSticker(long chat_id, Resource sticker, Boolean disable_notification, Integer reply_to_message_id,
-			DummyKeyboard reply_markup) throws TelegramBotApiException;
+	Message sendSticker(long chatId, Resource sticker, Boolean disableNotification, Integer replyToMessageId,
+			DummyKeyboard replyMarkup) throws TelegramBotApiException;
 
-	Message sendSticker(String chat_id, Resource sticker, Boolean disable_notification, Integer reply_to_message_id,
-			DummyKeyboard reply_markup) throws TelegramBotApiException;
+	Message sendSticker(String chatId, Resource sticker, Boolean disableNotification, Integer replyToMessageId,
+			DummyKeyboard replyMarkup) throws TelegramBotApiException;
 
-	Message sendVideo(long chat_id, Resource video, Integer duration, Integer width, Integer height, String caption,
-			Boolean disable_notification, Integer reply_to_message_id, DummyKeyboard reply_markup)
-					throws TelegramBotApiException;
+	Message sendVideo(long chatId, Resource video, Integer duration, Integer width, Integer height, String caption,
+			Boolean disableNotification, Integer replyToMessageId, DummyKeyboard replyMarkup) throws TelegramBotApiException;
 
-	Message sendVideo(String chat_id, Resource video, Integer duration, Integer width, Integer height, String caption,
-			Boolean disable_notification, Integer reply_to_message_id, DummyKeyboard reply_markup)
-					throws TelegramBotApiException;
+	Message sendVideo(String chatId, Resource video, Integer duration, Integer width, Integer height, String caption,
+			Boolean disableNotification, Integer replyToMessageId, DummyKeyboard replyMarkup) throws TelegramBotApiException;
 
-	Message sendVoice(long chat_id, Resource voice, Integer duration, Boolean disable_notification,
-			Integer reply_to_message_id, DummyKeyboard reply_markup) throws TelegramBotApiException;
+	Message sendVoice(long chatId, Resource voice, Integer duration, Boolean disableNotification,
+			Integer replyToMessageId, DummyKeyboard replyMarkup) throws TelegramBotApiException;
 
-	Message sendVoice(String chat_id, Resource voice, Integer duration, Boolean disable_notification,
-			Integer reply_to_message_id, DummyKeyboard reply_markup) throws TelegramBotApiException;
+	Message sendVoice(String chatId, Resource voice, Integer duration, Boolean disableNotification,
+			Integer replyToMessageId, DummyKeyboard replyMarkup) throws TelegramBotApiException;
 
-	Message sendVenue(long chat_id, float latitude, float longitude, String title, String address, String foursquare_id,
-			Boolean disable_notification, Integer reply_to_message_id, DummyKeyboard reply_markup)
-					throws TelegramBotApiException;
+	Message sendVenue(long chatId, float latitude, float longitude, String title, String address, String foursquareId,
+			Boolean disableNotification, Integer replyToMessageId, DummyKeyboard replyMarkup) throws TelegramBotApiException;
 
-	Message sendVenue(String chat_id, float latitude, float longitude, String title, String address, String foursquare_id,
-			Boolean disable_notification, Integer reply_to_message_id, DummyKeyboard reply_markup)
-					throws TelegramBotApiException;
+	Message sendVenue(String chatId, float latitude, float longitude, String title, String address, String foursquareId,
+			Boolean disableNotification, Integer replyToMessageId, DummyKeyboard replyMarkup) throws TelegramBotApiException;
 
-	Message sendContact(long chat_id, String phone_number, String first_name, String last_name,
-			Boolean disable_notification, Integer reply_to_message_id, DummyKeyboard reply_markup)
-					throws TelegramBotApiException;
+	Message sendContact(long chatId, String phoneNumber, String firstName, String lastName, Boolean disableNotification,
+			Integer replyToMessageId, DummyKeyboard replyMarkup) throws TelegramBotApiException;
 
-	Message sendContact(String chat_id, String phone_number, String first_name, String last_name,
-			Boolean disable_notification, Integer reply_to_message_id, DummyKeyboard reply_markup)
-					throws TelegramBotApiException;
+	Message sendContact(String chatId, String phoneNumber, String firstName, String lastName, Boolean disableNotification,
+			Integer replyToMessageId, DummyKeyboard replyMarkup) throws TelegramBotApiException;
 
-	TelegramFile getFile(String file_id) throws TelegramBotApiException;
+	TelegramFile getFile(String fileId) throws TelegramBotApiException;
 
 	Resource getResourceFromTelegramFile(TelegramFile file) throws TelegramBotApiException;
 
-	Boolean answerInlineQuery(String inline_query_id, List<InlineQueryResult> results, Integer cache_time,
-			Boolean is_personal, String next_offset, String switch_pm_text, String switch_pm_parameter) throws TelegramBotApiException;
+	Boolean answerInlineQuery(String inlineQueryId, List<InlineQueryResult> results, Integer cacheTime,
+			Boolean isPersonal, String nextOffset, String switchPmText, String switchPmParameter)
+			throws TelegramBotApiException;
 
-	Boolean kickChatMember(long chat_id, int user_id) throws TelegramBotApiException;
+	Boolean kickChatMember(long chatId, int userId) throws TelegramBotApiException;
 
-	Boolean kickChatMember(String chat_id, int user_id) throws TelegramBotApiException;
-	
-	Boolean leaveChat(long chat_id) throws TelegramBotApiException;
-	
-	Boolean leaveChat(String chat_id) throws TelegramBotApiException;
+	Boolean kickChatMember(String chatId, int userId) throws TelegramBotApiException;
 
-	Boolean unbanChatMember(long chat_id, int user_id) throws TelegramBotApiException;
+	Boolean leaveChat(long chatId) throws TelegramBotApiException;
 
-	Boolean unbanChatMember(String chat_id, int user_id) throws TelegramBotApiException;
+	Boolean leaveChat(String chatId) throws TelegramBotApiException;
 
-	Boolean answerCallbackQuery(String callback_query_id, String text, Boolean show_alert) throws TelegramBotApiException;
+	Boolean unbanChatMember(long chatId, int userId) throws TelegramBotApiException;
 
-	Message editMessageText(long chat_id, Integer message_id, String inline_message_id, String text, String parse_mode,
-			Boolean disable_web_page_preview, InlineKeyboardMarkup reply_markup) throws TelegramBotApiException;
+	Boolean unbanChatMember(String chatId, int userId) throws TelegramBotApiException;
 
-	Message editMessageText(String chat_id, Integer message_id, String inline_message_id, String text, String parse_mode,
-			Boolean disable_web_page_preview, InlineKeyboardMarkup reply_markup) throws TelegramBotApiException;
+	Boolean answerCallbackQuery(String callbackQueryId, String text, Boolean showAlert) throws TelegramBotApiException;
 
-	Message editMessageCaption(long chat_id, Integer message_id, String inline_message_id, String caption,
-			InlineKeyboardMarkup reply_markup) throws TelegramBotApiException;
+	Message editMessageText(long chatId, Integer messageId, String inlineMessageId, String text, String parseMode,
+			Boolean disableWebPagePreview, InlineKeyboardMarkup replyMarkup) throws TelegramBotApiException;
 
-	Message editMessageCaption(String chat_id, Integer message_id, String inline_message_id, String caption,
-			InlineKeyboardMarkup reply_markup) throws TelegramBotApiException;
+	Message editMessageText(String chatId, Integer messageId, String inlineMessageId, String text, String parseMode,
+			Boolean disableWebPagePreview, InlineKeyboardMarkup replyMarkup) throws TelegramBotApiException;
 
-	Message editMessageReplyMarkup(long chat_id, Integer message_id, String inline_message_id,
-			InlineKeyboardMarkup reply_markup) throws TelegramBotApiException;
+	Message editMessageCaption(long chatId, Integer messageId, String inlineMessageId, String caption,
+			InlineKeyboardMarkup replyMarkup) throws TelegramBotApiException;
 
-	Message editMessageReplyMarkup(String chat_id, Integer message_id, String inline_message_id,
-			InlineKeyboardMarkup reply_markup) throws TelegramBotApiException;
-	
-	Chat getChat(long chat_id) throws TelegramBotApiException;
-	
-	Chat getChat(String chat_id) throws TelegramBotApiException;
-	
-	ChatMember[] getChatAdministrators(long chat_id) throws TelegramBotApiException;
-	
-	ChatMember[] getChatAdministrators(String chat_id) throws TelegramBotApiException;
-	
-	ChatMember getChatMember(long chat_id, int user_id) throws TelegramBotApiException;
-	
-	ChatMember getChatMember(String chat_id, int user_id) throws TelegramBotApiException;
-	
-	int getChatMembersCount(long chat_id) throws TelegramBotApiException;
-	
-	int getChatMembersCount(String chat_id) throws TelegramBotApiException;
-	
-	
+	Message editMessageCaption(String chatId, Integer messageId, String inlineMessageId, String caption,
+			InlineKeyboardMarkup replyMarkup) throws TelegramBotApiException;
+
+	Message editMessageReplyMarkup(long chatId, Integer messageId, String inlineMessageId,
+			InlineKeyboardMarkup replyMarkup) throws TelegramBotApiException;
+
+	Message editMessageReplyMarkup(String chatId, Integer messageId, String inlineMessageId,
+			InlineKeyboardMarkup replyMarkup) throws TelegramBotApiException;
+
+	Chat getChat(long chatId) throws TelegramBotApiException;
+
+	Chat getChat(String chatId) throws TelegramBotApiException;
+
+	ChatMember[] getChatAdministrators(long chatId) throws TelegramBotApiException;
+
+	ChatMember[] getChatAdministrators(String chatId) throws TelegramBotApiException;
+
+	ChatMember getChatMember(long chatId, int userId) throws TelegramBotApiException;
+
+	ChatMember getChatMember(String chatId, int userId) throws TelegramBotApiException;
+
+	int getChatMembersCount(long chatId) throws TelegramBotApiException;
+
+	int getChatMembersCount(String chatId) throws TelegramBotApiException;
+
 }

@@ -313,7 +313,7 @@ public class ImgurHandler implements UpdateHandler, Runnable {
 
 					switch (SendAction.getSendActionFromMimeType(img.type)) {
 					case Photo:
-						result.add(new InlineQueryResultPhoto(Integer.toString(i), img.link, null, null, img.link, img.title,
+						result.add(new InlineQueryResultPhoto(Integer.toString(i), img.link, null, null, null, img.title,
 								img.description, img.title, null, null));
 						break;
 					case Gif:
