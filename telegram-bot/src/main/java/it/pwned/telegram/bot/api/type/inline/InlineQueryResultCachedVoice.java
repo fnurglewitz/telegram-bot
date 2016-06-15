@@ -6,25 +6,85 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import it.pwned.telegram.bot.api.type.InlineKeyboardMarkup;
 
+/**
+ * Represents a link to a voice message stored on the Telegram servers. By
+ * default, this voice message will be sent by the user. Alternatively, you can
+ * use {@link InlineQueryResultCachedVoice#inputMessageContent
+ * inputMessageContent} to send a message with the specified content instead of
+ * the voice message.
+ *
+ */
 @JsonInclude(Include.NON_NULL)
 public class InlineQueryResultCachedVoice extends InlineQueryResult {
 
-	public final String type = "voice";
-	public final String id;
-	public final String voice_file_id;
-	public final String title;
-	public final InlineKeyboardMarkup reply_markup;
-	public final InputMessageContent input_message_content;
+	private final static String JSON_FIELD_TYPE = "type";
+	private final static String JSON_FIELD_ID = "id";
+	private final static String JSON_FIELD_VOICE_FILE_ID = "voice_file_id";
+	private final static String JSON_FIELD_TITLE = "title";
+	private final static String JSON_FIELD_REPLY_MARKUP = "reply_markup";
+	private final static String JSON_FIELD_INPUT_MESSAGE_CONTENT = "input_message_content";
 
-	public InlineQueryResultCachedVoice(@JsonProperty("id") String id,
-			@JsonProperty("voice_file_id") String voice_file_id, @JsonProperty("title") String title,
-			@JsonProperty("reply_markup") InlineKeyboardMarkup reply_markup,
-			@JsonProperty("input_message_content") InputMessageContent input_message_content) {
+	/**
+	 * Type of the result, must be voice
+	 */
+	@JsonProperty(JSON_FIELD_TYPE)
+	public final String type = "voice";
+
+	/**
+	 * Unique identifier for this result, 1-64 bytes
+	 */
+	@JsonProperty(JSON_FIELD_ID)
+	public final String id;
+
+	/**
+	 * A valid file identifier for the voice message
+	 */
+	@JsonProperty(JSON_FIELD_VOICE_FILE_ID)
+	public final String voiceFileId;
+
+	/**
+	 * Voice message title
+	 */
+	@JsonProperty(JSON_FIELD_TITLE)
+	public final String title;
+
+	/**
+	 * <em>Optional.</em> An Inline keyboard attached to the message
+	 */
+	@JsonProperty(JSON_FIELD_REPLY_MARKUP)
+	public final InlineKeyboardMarkup replyMarkup;
+
+	/**
+	 * <em>Optional.</em> Content of the message to be sent instead of the voice
+	 * message
+	 */
+	@JsonProperty(JSON_FIELD_INPUT_MESSAGE_CONTENT)
+	public final InputMessageContent inputMessageContent;
+
+	/**
+	 * 
+	 * @param id
+	 *            Unique identifier for this result, 1-64 bytes
+	 * @param voiceFileId
+	 *            A valid file identifier for the voice message
+	 * @param title
+	 *            Voice message title
+	 * @param replyMarkup
+	 *            <em>Optional.</em> An Inline keyboard attached to the message
+	 * @param inputMessageContent
+	 *            <em>Optional.</em> Content of the message to be sent instead
+	 *            of the voice message
+	 */
+	public InlineQueryResultCachedVoice(@JsonProperty(JSON_FIELD_ID) String id,
+			@JsonProperty(JSON_FIELD_VOICE_FILE_ID) String voiceFileId, @JsonProperty(JSON_FIELD_TITLE) String title,
+			@JsonProperty(JSON_FIELD_REPLY_MARKUP) InlineKeyboardMarkup replyMarkup,
+			@JsonProperty(JSON_FIELD_INPUT_MESSAGE_CONTENT) InputMessageContent inputMessageContent) {
 		this.id = id;
-		this.voice_file_id = voice_file_id;
+		this.voiceFileId = voiceFileId;
 		this.title = title;
-		this.reply_markup = reply_markup;
-		this.input_message_content = input_message_content;
+		this.replyMarkup = replyMarkup;
+		this.inputMessageContent = inputMessageContent;
+
 	}
 
 }
