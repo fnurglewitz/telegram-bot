@@ -490,6 +490,42 @@ public class Message {
 			return m.replyToMessage != null;
 		}
 
+		public static boolean hasText(Message m) {
+			return m.text != null;
+		}
+		
+		public static boolean hasAudio(Message m) {
+			return m.audio != null;
+		}
+		
+		public static boolean hasDocument(Message m) {
+			return m.document != null;
+		}
+		
+		public static boolean hasPhoto(Message m) {
+			return m.photo != null;
+		}
+		
+		public static boolean hasSticker(Message m) {
+			return m.sticker != null;
+		}
+		
+		public static boolean hasVideo(Message m) {
+			return m.video != null;
+		}
+		
+		public static boolean hasVoice(Message m) {
+			return m.voice != null;
+		}
+		
+		public static boolean hasLocation(Message m) {
+			return m.location != null;
+		}
+		
+		public static boolean hasVenue(Message m) {
+			return m.venue != null;
+		}
+		
 	}
 
 	/**
