@@ -138,15 +138,15 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Message sendLocation(ChatId chatId, float latitude, float longitude, Integer replyToMessageId,
-			AbstractKeyboardMarkup replyMarkup) throws TelegramBotApiException {
+	public Message sendLocation(ChatId chatId, float latitude, float longitude, Boolean disableNotification,
+			Integer replyToMessageId, AbstractKeyboardMarkup replyMarkup) throws TelegramBotApiException {
 
 		TelegramBotRestApiCall.Builder<Message> builder = new TelegramBotRestApiCall.Builder<Message>("sendLocation",
 				apiUriTemplate, mapper, restTemplate, Message.class);
 
 		builder.setParam("chat_id", chatId, true).setParam("latitude", latitude, true)
-				.setParam("longitude", longitude, true).setParam("reply_to_message_id", replyToMessageId, false)
-				.setParam("reply_markup", replyMarkup, false);
+				.setParam("longitude", longitude, true).setParam("disable_notification", disableNotification, false)
+				.setParam("reply_to_message_id", replyToMessageId, false).setParam("reply_markup", replyMarkup, false);
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
 		return builder.build().call();

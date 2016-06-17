@@ -11,11 +11,14 @@ public class ChatId implements MultipartDataEntity {
 	private Long longValue = null;
 	private String stringValue = null;
 
-	public ChatId(Long chatId) {
+	public ChatId(long chatId) {
 		longValue = chatId;
 	}
 
 	public ChatId(String chatId) {
+		if (chatId == null)
+			throw new IllegalArgumentException("ChatId cannot be null");
+
 		stringValue = chatId;
 	}
 
