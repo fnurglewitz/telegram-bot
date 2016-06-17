@@ -24,19 +24,19 @@ public class AoE2Handler implements UpdateHandler, Runnable {
 
 	private final TelegramBotApi api;
 	private final ThreadPoolTaskExecutor executor;
-	private final BlockingQueue<Update> message_queue;
-	private final String taunts_path;
+	private final BlockingQueue<Update> messageQueue;
+	private final String tauntsPath;
 	private final Map<Integer, String> taunts;
 	private final JdbcTemplate jdbc;
 
 	private static final Pattern pattern = Pattern.compile("^([0-9]+)((?:@)?([a-z]{2}))?$");
 
-	public AoE2Handler(TelegramBotApi api, BlockingQueue<Update> message_queue, ThreadPoolTaskExecutor executor,
-			String taunts_path, JdbcTemplate jdbc) {
+	public AoE2Handler(TelegramBotApi api, BlockingQueue<Update> messageQueue, ThreadPoolTaskExecutor executor,
+			String tauntsPath, JdbcTemplate jdbc) {
 		this.api = api;
 		this.executor = executor;
-		this.message_queue = message_queue;
-		this.taunts_path = taunts_path;
+		this.messageQueue = messageQueue;
+		this.tauntsPath = tauntsPath;
 		this.taunts = new ConcurrentHashMap<Integer, String>();
 		this.jdbc = jdbc;
 
@@ -48,7 +48,7 @@ public class AoE2Handler implements UpdateHandler, Runnable {
 		if (catafrutti.equals(u.message.chat.id) || "private".equals(u.message.chat.type)
 				|| (Message.Util.isCommand(u.message) && Message.Util.parseCommand(u.message).command.equals("/aoe"))) {
 			try {
-				this.message_queue.put(u);
+				this.messageQueue.put(u);
 			} catch (InterruptedException e) {
 				// shit happens
 			}
@@ -65,15 +65,15 @@ public class AoE2Handler implements UpdateHandler, Runnable {
 
 	private String getTauntPathByNumberAndCulture(int taunt, String culture) {
 
-		String taunt_string = this.taunts.get(taunt);
+		String tauntString = this.taunts.get(taunt);
 
-		if (taunt_string == null)
+		if (tauntString == null)
 			this.taunts.get(30); // wololo
 
 		if (culture == null || "".equals(culture))
 			culture = "en";
 
-		return String.format("%s/%s/%s", taunts_path, culture, taunt_string);
+		return String.format("%s/%s/%s", tauntsPath, culture, tauntString);
 
 	}
 
@@ -122,19 +122,19 @@ public class AoE2Handler implements UpdateHandler, Runnable {
 					else {
 						// fetch culture from h2sql
 						try {
-							Integer user_id = m.from.id != null ? m.from.id : u.inlineQuery.from.id;
+							Integer userId = m.from.id != null ? m.from.id : u.inlineQuery.from.id;
 
 							culture = jdbc.queryForObject("SELECT FAVORITE_LANG FROM AOE2.SETTINGS WHERE USER_ID = ?;", String.class,
-									user_id);
+									userId);
 						} catch (Exception e) {
 							culture = null;
 						}
 					}
 
-					String taunt_url = getTauntPathByNumberAndCulture(taunt, culture);
+					String tauntUrl = getTauntPathByNumberAndCulture(taunt, culture);
 
 					try {
-						api.sendVoice(new ChatId(m.chat.id), new FileSystemResource(taunt_url), null, null, null, null);
+						api.sendVoice(new ChatId(m.chat.id), new FileSystemResource(tauntUrl), null, null, null, null);
 					} catch (TelegramBotApiException e) {
 					}
 
@@ -156,17 +156,17 @@ public class AoE2Handler implements UpdateHandler, Runnable {
 
 	@Override
 	public void run() {
-		boolean go_on = true;
-		while (go_on || !message_queue.isEmpty()) {
+		boolean goOn = true;
+		while (goOn || !messageQueue.isEmpty()) {
 			try {
 
-				processUpdate(message_queue.take());
+				processUpdate(messageQueue.take());
 
 				if (Thread.currentThread().isInterrupted())
 					throw new InterruptedException();
 
 			} catch (InterruptedException e) {
-				go_on = false;
+				goOn = false;
 			}
 		}
 	}
@@ -218,18 +218,18 @@ public class AoE2Handler implements UpdateHandler, Runnable {
 		this.taunts.put(42, "42 what age are you in.mp3");
 
 		// flyway?
-		Integer schema_check = jdbc
+		Integer schemaCheck = jdbc
 				.queryForObject("SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME='AOE2';", Integer.class);
 
-		if (schema_check == null || new Integer(0).compareTo(schema_check) == 0) {
+		if (schemaCheck == null || new Integer(0).compareTo(schemaCheck) == 0) {
 			jdbc.execute("CREATE SCHEMA AOE2;");
 			jdbc.execute("CREATE TABLE AOE2.SETTINGS ( USER_ID BIGINT PRIMARY KEY, FAVORITE_LANG VARCHAR(50));");
 		} else {
-			schema_check = jdbc.queryForObject(
+			schemaCheck = jdbc.queryForObject(
 					"SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='AOE2' AND TABLE_NAME='SETTINGS';",
 					Integer.class);
 
-			if (schema_check == null || new Integer(0).compareTo(schema_check) == 0) {
+			if (schemaCheck == null || new Integer(0).compareTo(schemaCheck) == 0) {
 				jdbc.execute("CREATE TABLE AOE2.SETTINGS ( USER_ID BIGINT PRIMARY KEY, FAVORITE_LANG VARCHAR(50));");
 			}
 		}

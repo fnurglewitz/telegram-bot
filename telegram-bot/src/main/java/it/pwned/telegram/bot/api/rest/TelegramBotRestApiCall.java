@@ -17,7 +17,6 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriTemplate;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.pwned.telegram.bot.api.type.Chat;
@@ -35,7 +34,7 @@ public class TelegramBotRestApiCall<T> {
 	private final RestTemplate rest;
 
 	@SuppressWarnings("rawtypes")
-	private static final Map<Class, ParameterizedTypeReference> type_refs = initializeParameterizedTypeReferences();
+	private static final Map<Class, ParameterizedTypeReference> typeRefs = initializeParameterizedTypeReferences();
 
 	@SuppressWarnings("rawtypes")
 	private static Map<Class, ParameterizedTypeReference> initializeParameterizedTypeReferences() {
@@ -73,7 +72,7 @@ public class TelegramBotRestApiCall<T> {
 		});
 
 		// for methods without an output (ie. sendChatAction)
-		tmp.put(String.class, new ParameterizedTypeReference<String>() {
+		tmp.put(String.class, new ParameterizedTypeReference<Response<String>>() {
 		});
 
 		return tmp;
@@ -81,21 +80,21 @@ public class TelegramBotRestApiCall<T> {
 
 	private final ObjectMapper mapper;
 	private final String method;
-	private final UriTemplate uri_template;
-	private final HttpMethod http_method;
+	private final UriTemplate uriTemplate;
+	private final HttpMethod httpMethod;
 	private final HttpEntity<?> entity;
 	@SuppressWarnings("rawtypes")
-	private final Class payload_type;
+	private final Class payloadType;
 
 	@SuppressWarnings("rawtypes")
-	private TelegramBotRestApiCall(String method, UriTemplate uri_template, ObjectMapper mapper, RestTemplate rest,
-			HttpMethod http_method, HttpEntity<?> entity, Class payload_type) {
+	private TelegramBotRestApiCall(String method, UriTemplate uriTemplate, ObjectMapper mapper, RestTemplate rest,
+			HttpMethod httpMethod, HttpEntity<?> entity, Class payloadType) {
 		this.method = method;
-		this.uri_template = uri_template;
-		this.http_method = http_method;
+		this.uriTemplate = uriTemplate;
+		this.httpMethod = httpMethod;
 		this.mapper = mapper;
 		this.entity = entity;
-		this.payload_type = payload_type;
+		this.payloadType = payloadType;
 		this.rest = rest;
 	}
 
@@ -105,7 +104,7 @@ public class TelegramBotRestApiCall<T> {
 		Response<T> res = null;
 
 		try {
-			res = (Response<T>) rest.exchange(uri_template.expand(method), http_method, entity, type_refs.get(payload_type))
+			res = (Response<T>) rest.exchange(uriTemplate.expand(method), httpMethod, entity, typeRefs.get(payloadType))
 					.getBody();
 		} catch (HttpStatusCodeException he) {
 			Integer statusCode = null;
@@ -133,45 +132,39 @@ public class TelegramBotRestApiCall<T> {
 		private final ObjectMapper mapper;
 		private final RestTemplate rest;
 		private final String method;
-		private final UriTemplate uri_template;
+		private final UriTemplate uriTemplate;
 		private final MultiValueMap<String, Object> body = new LinkedMultiValueMap<String, Object>();
 		private final HttpHeaders headers = new HttpHeaders();
 		@SuppressWarnings("rawtypes")
-		private final Class payload_type;
+		private final Class payloadType;
 
-		private HttpMethod http_method;
+		private HttpMethod httpMethod;
 		private HttpEntity<?> entity;
 
 		@SuppressWarnings("rawtypes")
-		public Builder(String method, UriTemplate uri_template, ObjectMapper mapper, RestTemplate rest,
-				Class payload_type) {
+		public Builder(String method, UriTemplate uriTemplate, ObjectMapper mapper, RestTemplate rest, Class payloadType) {
 			this.method = method;
-			this.uri_template = uri_template;
+			this.uriTemplate = uriTemplate;
 			this.mapper = mapper;
 			this.rest = rest;
-			this.payload_type = payload_type;
-			this.http_method = HttpMethod.POST;
+			this.payloadType = payloadType;
+			this.httpMethod = HttpMethod.POST;
 		}
 
-		public Builder<T> setParam(String name, Object param, boolean required, boolean serialize_to_json) {
+		public Builder<T> setParam(String name, Object param, boolean required) {
 
 			if (required && param == null)
 				throw new InvalidParameterException(
 						String.format("(%s) Null value is not allowed for field: %s", this.method, name));
 
-			if (serialize_to_json) {
-				if (param != null)
-					body.add(name, serializeToJsonString(param));
-			} else {
-				if (param != null)
-					this.body.add(name, param);
-			}
+			if (param != null)
+				this.body.add(name, param);
 
 			return this;
 		}
 
 		public Builder<T> setHttpMethod(HttpMethod method) {
-			this.http_method = method;
+			this.httpMethod = method;
 			return this;
 		}
 
@@ -186,15 +179,7 @@ public class TelegramBotRestApiCall<T> {
 				this.entity = new HttpEntity<Object>(body, headers);
 			}
 
-			return new TelegramBotRestApiCall<T>(method, uri_template, mapper, rest, http_method, entity, payload_type);
-		}
-
-		private String serializeToJsonString(Object obj) {
-			try {
-				return mapper.writeValueAsString(obj);
-			} catch (JsonProcessingException e) {
-				return null;
-			}
+			return new TelegramBotRestApiCall<T>(method, uriTemplate, mapper, rest, httpMethod, entity, payloadType);
 		}
 
 	}

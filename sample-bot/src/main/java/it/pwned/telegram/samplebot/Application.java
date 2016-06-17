@@ -19,8 +19,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pwned.telegram.bot.TelegramBot;
 import it.pwned.telegram.bot.api.TelegramBotApi;
 import it.pwned.telegram.bot.api.rest.TelegramBotRestApi;
-import it.pwned.telegram.bot.api.type.ChatId;
-import it.pwned.telegram.bot.api.type.ParseMode;
 import it.pwned.telegram.bot.api.type.Update;
 import it.pwned.telegram.bot.collector.ApiUpdateCollector;
 import it.pwned.telegram.bot.collector.UpdateCollector;
@@ -56,10 +54,9 @@ public class Application {
 	}
 
 	@Bean
-	public UpdateCollector updateCollector(TelegramBotApi api,
-			@Value("${bot.api.updates.timeout:60}") Integer timeout) {
-		LinkedBlockingQueue<Update> update_queue = new LinkedBlockingQueue<Update>();
-		ApiUpdateCollector collector = new ApiUpdateCollector(api, update_queue, timeout);
+	public UpdateCollector updateCollector(TelegramBotApi api, @Value("${bot.api.updates.timeout:60}") Integer timeout) {
+		LinkedBlockingQueue<Update> updateQueue = new LinkedBlockingQueue<Update>();
+		ApiUpdateCollector collector = new ApiUpdateCollector(api, updateQueue, timeout);
 		return collector;
 	}
 
@@ -80,7 +77,7 @@ public class Application {
 		ConfigurableApplicationContext ctx = app.run(args);
 
 		TelegramBot bot = ctx.getBean(TelegramBot.class);
-		TelegramBotApi api = ctx.getBean(TelegramBotApi.class);
+		// TelegramBotApi api = ctx.getBean(TelegramBotApi.class);
 
 		Signal.handle(new Signal("INT"), new SignalHandler() {
 			@Override
@@ -89,15 +86,7 @@ public class Application {
 			}
 		});
 
-		//bot.run();
-		log.info("no pm");
-		api.sendMessage(new ChatId(42024718L), "<b>plain</b> *plain* plain", ParseMode.PLAIN, null, null, null, null);
-		Thread.sleep(1000);
-		log.info("mkdown");
-		api.sendMessage(new ChatId(42024718L), "<b>plain</b> *plain* plain", ParseMode.MARKDOWN, null, null, null, null);
-		Thread.sleep(1000);
-		log.info("html");
-		api.sendMessage(new ChatId(42024718L), "<b>plain</b> *plain* plain", ParseMode.HTML, null, null, null, null);
+		bot.run();
 
 		ctx.close();
 

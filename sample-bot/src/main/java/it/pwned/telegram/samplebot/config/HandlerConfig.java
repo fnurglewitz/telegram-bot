@@ -32,8 +32,8 @@ public class HandlerConfig {
 
 	@InlineHandler
 	public UpdateHandler imgur(TelegramBotApi api, ThreadPoolTaskExecutor executor) {
-		LinkedBlockingQueue<Update> update_queue = new LinkedBlockingQueue<Update>();
-		ImgurHandler handler = new ImgurHandler(api, update_queue, executor) {
+		LinkedBlockingQueue<Update> updateQueue = new LinkedBlockingQueue<Update>();
+		ImgurHandler handler = new ImgurHandler(api, updateQueue, executor) {
 			@Override
 			public String getName() {
 				return "ImgurHandlerName";
@@ -45,9 +45,9 @@ public class HandlerConfig {
 	@Bean
 	@Order(value = 1)
 	public UpdateHandler aoe2(TelegramBotApi api, ThreadPoolTaskExecutor executor,
-			@Value("${aoe2.taunts}") String taunts_path, JdbcTemplate jdbc) {
-		LinkedBlockingQueue<Update> update_queue = new LinkedBlockingQueue<Update>();
-		return new AoE2Handler(api, update_queue, executor, taunts_path, jdbc);
+			@Value("${aoe2.taunts}") String tauntsPath, JdbcTemplate jdbc) {
+		LinkedBlockingQueue<Update> updateQueue = new LinkedBlockingQueue<Update>();
+		return new AoE2Handler(api, updateQueue, executor, tauntsPath, jdbc);
 
 	}
 

@@ -189,14 +189,14 @@ public class ImgurHandler implements UpdateHandler, Runnable {
 
 		}
 
-		private final String client_id;
-		private RestTemplate rest_template;
-		private final UriTemplate service_uri = new UriTemplate(
+		private final String clientId;
+		private RestTemplate restTemplate;
+		private final UriTemplate serviceUri = new UriTemplate(
 				"https://api.imgur.com/3/gallery/r/{subreddit}/{sort}/{window}/{page}");
 
-		public ImgurApi(String client_id) {
-			this.client_id = client_id;
-			this.rest_template = new RestTemplate();
+		public ImgurApi(String clientId) {
+			this.clientId = clientId;
+			this.restTemplate = new RestTemplate();
 		}
 
 		public ImgurResponse getSubredditPhotosByPage(String subreddit, Integer page, String sort, String window) {
@@ -207,7 +207,7 @@ public class ImgurHandler implements UpdateHandler, Runnable {
 			MultiValueMap<String, Object> body = new LinkedMultiValueMap<String, Object>();
 
 			HttpHeaders headers = new HttpHeaders();
-			headers.add("Authorization", "Client-ID " + this.client_id);
+			headers.add("Authorization", "Client-ID " + this.clientId);
 
 			Map<String, String> uriVariables = new HashMap<String, String>();
 			uriVariables.put("subreddit", subreddit);
@@ -220,17 +220,17 @@ public class ImgurHandler implements UpdateHandler, Runnable {
 			ImgurResponse res = null;
 
 			try {
-				res = rest_template.exchange(service_uri.expand(uriVariables), HttpMethod.GET, httpEntity,
+				res = restTemplate.exchange(serviceUri.expand(uriVariables), HttpMethod.GET, httpEntity,
 						new ParameterizedTypeReference<ImgurResponse>() {
 						}).getBody();
 
 			} catch (RestClientException e) {
-				int local_status = -1;
+				int localStatus = -1;
 				if (e instanceof HttpClientErrorException) {
-					local_status = ((HttpClientErrorException) e).getStatusCode().value();
+					localStatus = ((HttpClientErrorException) e).getStatusCode().value();
 				}
 
-				res = new ImgurResponse(new GalleryImage[0], false, local_status);
+				res = new ImgurResponse(new GalleryImage[0], false, localStatus);
 			}
 
 			return res;
@@ -239,23 +239,23 @@ public class ImgurHandler implements UpdateHandler, Runnable {
 
 	private static final Logger log = LoggerFactory.getLogger(ImgurHandler.class);
 	private ImgurApi api;
-	private final TelegramBotApi t_api;
+	private final TelegramBotApi telegramApi;
 	private final Random rand;
 	private final Map<String, String[]> subreddits;
 	private final ThreadPoolTaskExecutor executor;
-	private final BlockingQueue<Update> update_queue;
+	private final BlockingQueue<Update> updateQueue;
 
-	public ImgurHandler(TelegramBotApi api, BlockingQueue<Update> update_queue, ThreadPoolTaskExecutor executor) {
-		this.t_api = api;
+	public ImgurHandler(TelegramBotApi api, BlockingQueue<Update> updateQueue, ThreadPoolTaskExecutor executor) {
+		this.telegramApi = api;
 		this.executor = executor;
-		this.update_queue = update_queue;
+		this.updateQueue = updateQueue;
 		this.subreddits = new HashMap<String, String[]>();
 		this.rand = new Random();
 	}
 
 	@Autowired
-	public void setImgurApi(@Value("${imgur.client-id}") String client_id) {
-		this.api = new ImgurApi(client_id);
+	public void setImgurApi(@Value("${imgur.client-id}") String clientId) {
+		this.api = new ImgurApi(clientId);
 	}
 
 	@Autowired
@@ -277,14 +277,14 @@ public class ImgurHandler implements UpdateHandler, Runnable {
 	public boolean submit(Update u) {
 		if (u.inlineQuery != null || u.chosenInlineResult != null)
 			try {
-				this.update_queue.put(u);
+				this.updateQueue.put(u);
 			} catch (InterruptedException e) {
 				// shit happens
 			}
 		return true;
 	}
 
-	private boolean checkPermissions(long user_id, String query) {
+	private boolean checkPermissions(long userId, String query) {
 
 		boolean result = true;
 
@@ -338,16 +338,16 @@ public class ImgurHandler implements UpdateHandler, Runnable {
 		if (!checkPermissions(u.inlineQuery.from.id, u.inlineQuery.query))
 			return;
 
-		final String[] array_ref = subreddits.get(u.inlineQuery.query);
+		final String[] arrayRef = subreddits.get(u.inlineQuery.query);
 
-		if (array_ref != null && array_ref.length > 0) {
+		if (arrayRef != null && arrayRef.length > 0) {
 
 			executor.submit(() -> {
 				try {
 
-					List<InlineQueryResult> results = getResults(array_ref);
+					List<InlineQueryResult> results = getResults(arrayRef);
 
-					t_api.answerInlineQuery(u.inlineQuery.id, results, 60, null, null, null, null);
+					telegramApi.answerInlineQuery(u.inlineQuery.id, results, 60, null, null, null, null);
 
 				} catch (Exception e) {
 					log.error("Error while fetching the image.", e);
@@ -360,17 +360,17 @@ public class ImgurHandler implements UpdateHandler, Runnable {
 
 	@Override
 	public void run() {
-		boolean go_on = true;
-		while (go_on || !update_queue.isEmpty()) {
+		boolean goOn = true;
+		while (goOn || !updateQueue.isEmpty()) {
 			try {
 
-				processUpdate(update_queue.take());
+				processUpdate(updateQueue.take());
 
 				if (Thread.currentThread().isInterrupted())
 					throw new InterruptedException();
 
 			} catch (InterruptedException e) {
-				go_on = false;
+				goOn = false;
 			}
 		}
 	}

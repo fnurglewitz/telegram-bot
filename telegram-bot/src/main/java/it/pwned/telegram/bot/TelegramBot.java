@@ -21,7 +21,7 @@ public final class TelegramBot {
 	private final UpdateCollector collector;
 	private final UpdateHandlerManager manager;
 
-	private volatile boolean go_on = true;
+	private volatile boolean goOn = true;
 
 	public TelegramBot(TelegramBotApi api, UpdateCollector collector, UpdateHandlerManager manager) {
 		this.api = api;
@@ -30,9 +30,9 @@ public final class TelegramBot {
 	}
 
 	public void shutdown() {
-		if (go_on) {
+		if (goOn) {
 			log.info("Bot shutting down...");
-			go_on = false;
+			goOn = false;
 		}
 	}
 
@@ -49,9 +49,9 @@ public final class TelegramBot {
 
 		Update u = null;
 
-		while (go_on || u != null) {
+		while (goOn || u != null) {
 
-			u = collector.next(go_on);
+			u = collector.next(goOn);
 
 			if (u != null)
 				manager.dispatch(u);

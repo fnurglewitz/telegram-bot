@@ -1,5 +1,7 @@
 package it.pwned.telegram.bot.api.type;
 
+import org.springframework.http.MediaType;
+
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
@@ -7,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * {@link it.pwned.telegram.bot.api.TelegramBotApi#sendChatAction}
  *
  */
-public enum ChatAction {
+public enum ChatAction implements MultipartDataEntity {
 
 	TYPING("typing"), 
 	UPLOAD_PHOTO("upload_photo"), 
@@ -24,13 +26,20 @@ public enum ChatAction {
 		this.value = value;
 	}
 
+	@JsonValue
 	@Override
 	public String toString() {
 		return value;
 	}
 
-	@JsonValue
-	public String getAction() {
-		return value;
+	@Override
+	public String stringValue() {
+		return toString();
 	}
+
+	@Override
+	public MediaType getContentType() {
+		return MediaType.TEXT_PLAIN;
+	}
+
 }

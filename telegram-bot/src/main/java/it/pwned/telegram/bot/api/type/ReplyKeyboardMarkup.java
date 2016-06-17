@@ -1,5 +1,7 @@
 package it.pwned.telegram.bot.api.type;
 
+import java.util.ArrayList;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -105,16 +107,28 @@ public final class ReplyKeyboardMarkup extends AbstractKeyboardMarkup {
 		private Boolean oneTimeKeyboard;
 		private Boolean selective;
 
-		public Builder() {
+		private ArrayList<ArrayList<KeyboardButton>> keyboard;
+		int rows = 0;
 
+		public Builder() {
+			keyboard = new ArrayList<ArrayList<KeyboardButton>>();
 		}
 
 		public ReplyKeyboardMarkup build() {
-			KeyboardButton[][] keyboard = null;
 
-			// TODO: build keyboard here
+			// thank you StackOverflow
+			final int listSize = keyboard.size();
+			KeyboardButton[][] out = new KeyboardButton[listSize][];
+			for (int i = 0; i < listSize; i++) {
+				ArrayList<KeyboardButton> sublist = keyboard.get(i);
+				final int sublistSize = sublist.size();
+				out[i] = new KeyboardButton[sublistSize];
+				for (int j = 0; j < sublistSize; j++) {
+					out[i][j] = sublist.get(j);
+				}
+			}
 
-			return new ReplyKeyboardMarkup(keyboard, resizeKeyboard, oneTimeKeyboard, selective);
+			return new ReplyKeyboardMarkup(out, resizeKeyboard, oneTimeKeyboard, selective);
 		}
 
 		public Builder setResizeKeyboard(Boolean resizeKeyboard) {
@@ -132,14 +146,13 @@ public final class ReplyKeyboardMarkup extends AbstractKeyboardMarkup {
 			return this;
 		}
 
-		// TODO: keyboard building (add rows, add buttons)
-
 		/**
 		 * 
 		 * @return Returns the added row index
 		 */
 		public int addRow() {
-			return 0;
+			keyboard.add(new ArrayList<KeyboardButton>());
+			return rows++;
 		}
 
 		/**
@@ -149,7 +162,7 @@ public final class ReplyKeyboardMarkup extends AbstractKeyboardMarkup {
 		 *          row index
 		 */
 		public void deleteRow(int idx) {
-
+			keyboard.remove(idx);
 		}
 
 		/**
@@ -161,7 +174,7 @@ public final class ReplyKeyboardMarkup extends AbstractKeyboardMarkup {
 		 *          Index of the row
 		 */
 		public void addButton(KeyboardButton btn, int idx) {
-
+			keyboard.get(idx).add(btn);
 		}
 
 	}

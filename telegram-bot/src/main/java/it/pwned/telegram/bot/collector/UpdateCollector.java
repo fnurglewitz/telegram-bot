@@ -4,6 +4,6 @@ import it.pwned.telegram.bot.api.type.Update;
 
 public interface UpdateCollector {
 
-	public Update next(boolean go_on) throws InterruptedException;
+	public Update next(boolean goOn) throws InterruptedException;
 
 }

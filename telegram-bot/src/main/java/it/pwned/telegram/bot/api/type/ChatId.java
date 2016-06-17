@@ -1,10 +1,12 @@
 package it.pwned.telegram.bot.api.type;
 
+import org.springframework.http.MediaType;
+
 /**
  * Represents a Telegram Chat Id
  *
  */
-public class ChatId {
+public class ChatId implements MultipartDataEntity {
 
 	private Long longValue = null;
 	private String stringValue = null;
@@ -20,6 +22,16 @@ public class ChatId {
 	@Override
 	public String toString() {
 		return longValue == null ? stringValue : Long.toString(longValue);
+	}
+
+	@Override
+	public String stringValue() {
+		return toString();
+	}
+
+	@Override
+	public MediaType getContentType() {
+		return MediaType.TEXT_PLAIN;
 	}
 
 }

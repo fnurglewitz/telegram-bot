@@ -18,13 +18,13 @@ public class StandardUpdateHandlerManager implements UpdateHandlerManager {
 	private static final Logger log = LoggerFactory.getLogger(StandardUpdateHandlerManager.class);
 
 	private final List<UpdateHandler> handlers;
-	private UpdateHandler inline_handler;
-	private final Map<UpdateHandler, Thread> handler_threads;
+	private UpdateHandler inlineHandler;
+	private final Map<UpdateHandler, Thread> handlerThreads;
 
 	public StandardUpdateHandlerManager(List<UpdateHandler> handlers) {
 		this.handlers = handlers;
 
-		this.handler_threads = new ConcurrentHashMap<UpdateHandler, Thread>();
+		this.handlerThreads = new ConcurrentHashMap<UpdateHandler, Thread>();
 
 		// Collections.sort(handlers, AnnotationAwareOrderComparator.INSTANCE);
 	}
@@ -33,19 +33,19 @@ public class StandardUpdateHandlerManager implements UpdateHandlerManager {
 	@InlineHandlerQualifier
 	@Autowired(required=false)
 	public void setInlineHandler(UpdateHandler handler) {
-		this.inline_handler = handler;
+		this.inlineHandler = handler;
 	}
 
 	@Override
 	public void shutdown() {
 		log.info("Shutting down handlers");
 
-		handler_threads.forEach((h, t) -> {
+		handlerThreads.forEach((h, t) -> {
 			log.info(String.format("Sending interrupt signal to handler <%>", h.getName()));
 			t.interrupt();
 		});
 
-		handler_threads.forEach((h, t) -> {
+		handlerThreads.forEach((h, t) -> {
 			log.info(String.format("Join thread on handler <%>", h.getName()));
 			joinThreadAndIgnoreInterrupt(t);
 		});
@@ -69,7 +69,7 @@ public class StandardUpdateHandlerManager implements UpdateHandlerManager {
 				log.info(String.format("Starting thread for handler <%s>", h.getName()));
 				Thread t = new Thread(h.getRunnable(), h.getName());
 				t.start();
-				handler_threads.put(h, t);
+				handlerThreads.put(h, t);
 			}
 		});
 
@@ -84,13 +84,13 @@ public class StandardUpdateHandlerManager implements UpdateHandlerManager {
 	@Override
 	public void dispatch(Update u) {
 		if (Update.Util.isInline(u)) {
-			if (inline_handler != null) {
-				log.trace(String.format("Sending update <%d> to inline handler <%s>", u.updateId, inline_handler.getName()));
-				inline_handler.submit(u);
+			if (inlineHandler != null) {
+				log.trace(String.format("Sending update <%d> to inline handler <%s>", u.updateId, inlineHandler.getName()));
+				inlineHandler.submit(u);
 			}
 		} else {
 			for (UpdateHandler h : handlers) {
-				if (h == inline_handler)
+				if (h == inlineHandler)
 					continue;
 
 				log.trace(String.format("Sending update <%d> to handler <%s>", u.updateId, h.getName()));

@@ -11,18 +11,17 @@ import org.springframework.http.client.ClientHttpResponse;
 
 public class LoggingRequestInterceptor implements ClientHttpRequestInterceptor {
 
-    private static final Logger log = LoggerFactory.getLogger(LoggingRequestInterceptor.class);
+	private static final Logger log = LoggerFactory.getLogger(LoggingRequestInterceptor.class);
 
-    @Override
-    public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
+	@Override
+	public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
+			throws IOException {
 
-        ClientHttpResponse response = execution.execute(request, body);
-        
-        if(log.isDebugEnabled()) {
-        	log.debug(request.getURI() + "\n\n" + new String(body));
-        }
+		ClientHttpResponse response = execution.execute(request, body);
 
-        return response;
-    }
+		log.trace(request.getURI() + "\n\n" + new String(body));
+
+		return response;
+	}
 
 }

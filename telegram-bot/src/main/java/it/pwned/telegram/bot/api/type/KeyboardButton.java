@@ -38,17 +38,15 @@ public class KeyboardButton {
 	/**
 	 * 
 	 * @param text
-	 *            Text of the button. If none of the optional fields are used,
-	 *            it will be sent to the bot as a message when the button is
-	 *            pressed
+	 *          Text of the button. If none of the optional fields are used, it
+	 *          will be sent to the bot as a message when the button is pressed
 	 * @param requestContact
-	 *            <em>Optional.</em> If True, the user's phone number will be
-	 *            sent as a contact when the button is pressed. Available in
-	 *            private chats only
+	 *          <em>Optional.</em> If True, the user's phone number will be sent
+	 *          as a contact when the button is pressed. Available in private
+	 *          chats only
 	 * @param requestLocation
-	 *            <em>Optional.</em> If True, the user's current location will
-	 *            be sent when the button is pressed. Available in private chats
-	 *            only
+	 *          <em>Optional.</em> If True, the user's current location will be
+	 *          sent when the button is pressed. Available in private chats only
 	 */
 	public KeyboardButton(@JsonProperty(JSON_FIELD_TEXT) String text,
 			@JsonProperty(JSON_FIELD_REQUEST_CONTACT) Boolean requestContact,
@@ -58,7 +56,7 @@ public class KeyboardButton {
 			throw new IllegalArgumentException("requestContact and requestLocation fields are mutually exclusive.");
 
 		this.text = text;
-		this.requestContact = requestContact;
-		this.requestLocation = requestLocation;
+		this.requestContact = requestContact == null ? false : requestContact;
+		this.requestLocation = requestLocation == null ? false : requestLocation;
 	}
 }

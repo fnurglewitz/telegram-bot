@@ -22,7 +22,7 @@ public class StandardUpdateHandlerManagerTest {
 	
 		AtomicInteger counter = new AtomicInteger(0);
 		
-		UpdateHandler inline_handler = new UpdateHandler() {
+		UpdateHandler inlineHandler = new UpdateHandler() {
 			
 			@Override
 			public boolean submit(Update u) {
@@ -56,19 +56,19 @@ public class StandardUpdateHandlerManagerTest {
 		};
 		
 		List<UpdateHandler> handlers = new LinkedList<UpdateHandler>();
-		handlers.add(inline_handler);
+		handlers.add(inlineHandler);
 		
 		StandardUpdateHandlerManager m = new StandardUpdateHandlerManager(handlers);
-		m.setInlineHandler(inline_handler);
+		m.setInlineHandler(inlineHandler);
 		
-		Update inline_update = new Update.Builder().setInlineQuery(new InlineQuery(null, null, null, null, null)).build();
-		Update inline_update2 = new Update.Builder().setChosenInlineResult(new ChosenInlineResult(null, null, null, null, null)).build();
+		Update inlineUpdate = new Update.Builder().setInlineQuery(new InlineQuery(null, null, null, null, null)).build();
+		Update inlineUpdate2 = new Update.Builder().setChosenInlineResult(new ChosenInlineResult(null, null, null, null, null)).build();
 		
-		Update not_inline_update = new Update.Builder().build();
+		Update notInlineUpdate = new Update.Builder().build();
 		
-		m.dispatch(inline_update);
-		m.dispatch(inline_update2);
-		m.dispatch(not_inline_update);
+		m.dispatch(inlineUpdate);
+		m.dispatch(inlineUpdate2);
+		m.dispatch(notInlineUpdate);
 		
 		assertEquals(2, counter.intValue());
 		
@@ -82,7 +82,7 @@ public class StandardUpdateHandlerManagerTest {
 	
 		AtomicInteger counter = new AtomicInteger(0);
 		
-		UpdateHandler inline_handler = new UpdateHandler() {
+		UpdateHandler inlineHandler = new UpdateHandler() {
 			
 			@Override
 			public boolean submit(Update u) {
@@ -183,17 +183,17 @@ public class StandardUpdateHandlerManagerTest {
 
 		
 		List<UpdateHandler> handlers = new LinkedList<UpdateHandler>();
-		handlers.add(inline_handler);
+		handlers.add(inlineHandler);
 		handlers.add(handler1);
 		handlers.add(handler2);
 		
 		StandardUpdateHandlerManager m = new StandardUpdateHandlerManager(handlers);
-		m.setInlineHandler(inline_handler);
+		m.setInlineHandler(inlineHandler);
 		
-		Update not_inline_update = new Update.Builder().build();
+		Update notInlineUpdate = new Update.Builder().build();
 		
-		m.dispatch(not_inline_update);
-		m.dispatch(not_inline_update);
+		m.dispatch(notInlineUpdate);
+		m.dispatch(notInlineUpdate);
 		
 		assertEquals(4, counter.intValue());
 		

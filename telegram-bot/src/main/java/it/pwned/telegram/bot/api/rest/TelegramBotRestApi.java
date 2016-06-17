@@ -62,8 +62,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		TelegramBotRestApiCall.Builder<Update[]> builder = new TelegramBotRestApiCall.Builder<Update[]>("getUpdates",
 				apiUriTemplate, mapper, restTemplate, Update[].class);
 
-		builder.setParam("offset", offset, false, false).setParam("limit", limit, false, false).setParam("timeout", timeout,
-				false, false);
+		builder.setParam("offset", offset, false).setParam("limit", limit, false).setParam("timeout", timeout, false);
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
 		return builder.build().call();
@@ -76,8 +75,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		TelegramBotRestApiCall.Builder<UserProfilePhotos> builder = new TelegramBotRestApiCall.Builder<UserProfilePhotos>(
 				"getUserProfilePhotos", apiUriTemplate, mapper, restTemplate, UserProfilePhotos.class);
 
-		builder.setParam("user_id", userId, true, false).setParam("offset", offset, false, false).setParam("limit", limit,
-				false, false);
+		builder.setParam("user_id", userId, true).setParam("offset", offset, false).setParam("limit", limit, false);
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
 		return builder.build().call();
@@ -89,7 +87,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		TelegramBotRestApiCall.Builder<TelegramFile> builder = new TelegramBotRestApiCall.Builder<TelegramFile>("getFile",
 				apiUriTemplate, mapper, restTemplate, TelegramFile.class);
 
-		builder.setParam("file_id", fileId, true, false);
+		builder.setParam("file_id", fileId, true);
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
 		return builder.build().call();
@@ -116,12 +114,10 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		TelegramBotRestApiCall.Builder<Message> builder = new TelegramBotRestApiCall.Builder<Message>("sendMessage",
 				apiUriTemplate, mapper, restTemplate, Message.class);
 
-		builder.setParam("chat_id", chatId, true, false).setParam("text", text, true, false)
-				.setParam("parse_mode", parseMode, false, false)
-				.setParam("disable_web_page_preview", disableWebPagePreview, false, false)
-				.setParam("disable_notification", disableNotification, false, false)
-				.setParam("reply_to_message_id", replyToMessageId, false, false)
-				.setParam("reply_markup", replyMarkup, false, true);
+		builder.setParam("chat_id", chatId, true).setParam("text", text, true).setParam("parse_mode", parseMode, false)
+				.setParam("disable_web_page_preview", disableWebPagePreview, false)
+				.setParam("disable_notification", disableNotification, false)
+				.setParam("reply_to_message_id", replyToMessageId, false).setParam("reply_markup", replyMarkup, false);
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
 		return builder.build().call();
@@ -134,9 +130,8 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		TelegramBotRestApiCall.Builder<Message> builder = new TelegramBotRestApiCall.Builder<Message>("forwardMessage",
 				apiUriTemplate, mapper, restTemplate, Message.class);
 
-		builder.setParam("chat_id", chatId, true, false).setParam("from_chat_id", fromChatId, true, false)
-				.setParam("disable_notification", disableNotification, false, false)
-				.setParam("message_id", messageId, true, false);
+		builder.setParam("chat_id", chatId, true).setParam("from_chat_id", fromChatId, true)
+				.setParam("disable_notification", disableNotification, false).setParam("message_id", messageId, true);
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
 		return builder.build().call();
@@ -149,9 +144,9 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		TelegramBotRestApiCall.Builder<Message> builder = new TelegramBotRestApiCall.Builder<Message>("sendLocation",
 				apiUriTemplate, mapper, restTemplate, Message.class);
 
-		builder.setParam("chat_id", chatId, true, false).setParam("latitude", latitude, true, false)
-				.setParam("longitude", longitude, true, false).setParam("reply_to_message_id", replyToMessageId, false, false)
-				.setParam("reply_markup", replyMarkup, false, true);
+		builder.setParam("chat_id", chatId, true).setParam("latitude", latitude, true)
+				.setParam("longitude", longitude, true).setParam("reply_to_message_id", replyToMessageId, false)
+				.setParam("reply_markup", replyMarkup, false);
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
 		return builder.build().call();
@@ -163,7 +158,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		TelegramBotRestApiCall.Builder<String> builder = new TelegramBotRestApiCall.Builder<String>("sendChatAction",
 				apiUriTemplate, mapper, restTemplate, String.class);
 
-		builder.setParam("chat_id", chatId, true, false).setParam("action", action, true, false);
+		builder.setParam("chat_id", chatId, true).setParam("action", action, true);
 
 		builder.build().call();
 	}
@@ -175,10 +170,9 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		TelegramBotRestApiCall.Builder<Message> builder = new TelegramBotRestApiCall.Builder<Message>("sendPhoto",
 				apiUriTemplate, mapper, restTemplate, Message.class);
 
-		builder.setParam("chat_id", chatId, true, false).setParam("photo", photo, true, false)
-				.setParam("caption", caption, false, false).setParam("disable_notification", disableNotification, false, false)
-				.setParam("reply_to_message_id", replyToMessageId, false, false)
-				.setParam("reply_markup", replyMarkup, false, true);
+		builder.setParam("chat_id", chatId, true).setParam("photo", photo, true).setParam("caption", caption, false)
+				.setParam("disable_notification", disableNotification, false)
+				.setParam("reply_to_message_id", replyToMessageId, false).setParam("reply_markup", replyMarkup, false);
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
 		return builder.build().call();
@@ -192,11 +186,10 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		TelegramBotRestApiCall.Builder<Message> builder = new TelegramBotRestApiCall.Builder<Message>("sendAudio",
 				apiUriTemplate, mapper, restTemplate, Message.class);
 
-		builder.setParam("chat_id", chatId, true, false).setParam("audio", audio, true, false)
-				.setParam("duration", duration, false, false).setParam("performer", performer, false, false)
-				.setParam("title", title, false, false).setParam("disable_notification", disableNotification, false, false)
-				.setParam("reply_to_message_id", replyToMessageId, false, false)
-				.setParam("reply_markup", replyMarkup, false, true);
+		builder.setParam("chat_id", chatId, true).setParam("audio", audio, true).setParam("duration", duration, false)
+				.setParam("performer", performer, false).setParam("title", title, false)
+				.setParam("disable_notification", disableNotification, false)
+				.setParam("reply_to_message_id", replyToMessageId, false).setParam("reply_markup", replyMarkup, false);
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
 		return builder.build().call();
@@ -209,10 +202,9 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		TelegramBotRestApiCall.Builder<Message> builder = new TelegramBotRestApiCall.Builder<Message>("sendDocument",
 				apiUriTemplate, mapper, restTemplate, Message.class);
 
-		builder.setParam("chat_id", chatId, true, false).setParam("document", document, true, false)
-				.setParam("caption", caption, false, false).setParam("disable_notification", disableNotification, false, false)
-				.setParam("reply_to_message_id", replyToMessageId, false, false)
-				.setParam("reply_markup", replyMarkup, false, true);
+		builder.setParam("chat_id", chatId, true).setParam("document", document, true).setParam("caption", caption, false)
+				.setParam("disable_notification", disableNotification, false)
+				.setParam("reply_to_message_id", replyToMessageId, false).setParam("reply_markup", replyMarkup, false);
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
 		return builder.build().call();
@@ -225,10 +217,9 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		TelegramBotRestApiCall.Builder<Message> builder = new TelegramBotRestApiCall.Builder<Message>("sendSticker",
 				apiUriTemplate, mapper, restTemplate, Message.class);
 
-		builder.setParam("chat_id", chatId, true, false).setParam("sticker", sticker, true, false)
-				.setParam("disable_notification", disableNotification, false, false)
-				.setParam("reply_to_message_id", replyToMessageId, false, false)
-				.setParam("reply_markup", replyMarkup, false, true);
+		builder.setParam("chat_id", chatId, true).setParam("sticker", sticker, true)
+				.setParam("disable_notification", disableNotification, false)
+				.setParam("reply_to_message_id", replyToMessageId, false).setParam("reply_markup", replyMarkup, false);
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
 		return builder.build().call();
@@ -242,12 +233,10 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		TelegramBotRestApiCall.Builder<Message> builder = new TelegramBotRestApiCall.Builder<Message>("sendVideo",
 				apiUriTemplate, mapper, restTemplate, Message.class);
 
-		builder.setParam("chat_id", chatId, true, false).setParam("video", video, true, false)
-				.setParam("duration", duration, false, false).setParam("width", width, false, false)
-				.setParam("height", height, false, false).setParam("caption", caption, false, false)
-				.setParam("disable_notification", disableNotification, false, false)
-				.setParam("reply_to_message_id", replyToMessageId, false, false)
-				.setParam("reply_markup", replyMarkup, false, true);
+		builder.setParam("chat_id", chatId, true).setParam("video", video, true).setParam("duration", duration, false)
+				.setParam("width", width, false).setParam("height", height, false).setParam("caption", caption, false)
+				.setParam("disable_notification", disableNotification, false)
+				.setParam("reply_to_message_id", replyToMessageId, false).setParam("reply_markup", replyMarkup, false);
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
 		return builder.build().call();
@@ -260,11 +249,9 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		TelegramBotRestApiCall.Builder<Message> builder = new TelegramBotRestApiCall.Builder<Message>("sendVoice",
 				apiUriTemplate, mapper, restTemplate, Message.class);
 
-		builder.setParam("chat_id", chatId, true, false).setParam("voice", voice, true, false)
-				.setParam("duration", duration, false, false)
-				.setParam("disable_notification", disableNotification, false, false)
-				.setParam("reply_to_message_id", replyToMessageId, false, false)
-				.setParam("reply_markup", replyMarkup, false, true);
+		builder.setParam("chat_id", chatId, true).setParam("voice", voice, true).setParam("duration", duration, false)
+				.setParam("disable_notification", disableNotification, false)
+				.setParam("reply_to_message_id", replyToMessageId, false).setParam("reply_markup", replyMarkup, false);
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
 		return builder.build().call();
@@ -278,10 +265,10 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		TelegramBotRestApiCall.Builder<Boolean> builder = new TelegramBotRestApiCall.Builder<Boolean>("answerInlineQuery",
 				apiUriTemplate, mapper, restTemplate, Boolean.class);
 
-		builder.setParam("inline_query_id", inlineQueryId, true, false).setParam("results", results, true, false)
-				.setParam("cache_time", cacheTime, false, false).setParam("is_personal", isPersonal, false, false)
-				.setParam("next_offset", nextOffset, false, false).setParam("switch_pm_text", switchPmText, false, false)
-				.setParam("switch_pm_parameter", switchPmParameter, false, false);
+		builder.setParam("inline_query_id", inlineQueryId, true).setParam("results", results, true)
+				.setParam("cache_time", cacheTime, false).setParam("is_personal", isPersonal, false)
+				.setParam("next_offset", nextOffset, false).setParam("switch_pm_text", switchPmText, false)
+				.setParam("switch_pm_parameter", switchPmParameter, false);
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
 		return builder.build().call();
@@ -295,12 +282,10 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		TelegramBotRestApiCall.Builder<Message> builder = new TelegramBotRestApiCall.Builder<Message>("sendVenue",
 				apiUriTemplate, mapper, restTemplate, Message.class);
 
-		builder.setParam("chat_id", chatId, true, false).setParam("latitude", latitude, true, false)
-				.setParam("longitude", longitude, true, false).setParam("title", title, true, false)
-				.setParam("address", address, true, false).setParam("foursquare_id", foursquareId, false, false)
-				.setParam("disable_notification", disableNotification, false, false)
-				.setParam("reply_to_message_id", replyToMessageId, false, false)
-				.setParam("reply_markup", replyMarkup, false, true);
+		builder.setParam("chat_id", chatId, true).setParam("latitude", latitude, true)
+				.setParam("longitude", longitude, true).setParam("title", title, true).setParam("address", address, true)
+				.setParam("foursquare_id", foursquareId, false).setParam("disable_notification", disableNotification, false)
+				.setParam("reply_to_message_id", replyToMessageId, false).setParam("reply_markup", replyMarkup, false);
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
 		return builder.build().call();
@@ -314,11 +299,10 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		TelegramBotRestApiCall.Builder<Message> builder = new TelegramBotRestApiCall.Builder<Message>("sendContact",
 				apiUriTemplate, mapper, restTemplate, Message.class);
 
-		builder.setParam("chat_id", chatId, true, false).setParam("phone_number", phoneNumber, true, false)
-				.setParam("first_name", firstName, true, false).setParam("last_name", lastName, false, false)
-				.setParam("disable_notification", disableNotification, false, false)
-				.setParam("reply_to_message_id", replyToMessageId, false, false)
-				.setParam("reply_markup", replyMarkup, false, true);
+		builder.setParam("chat_id", chatId, true).setParam("phone_number", phoneNumber, true)
+				.setParam("first_name", firstName, true).setParam("last_name", lastName, false)
+				.setParam("disable_notification", disableNotification, false)
+				.setParam("reply_to_message_id", replyToMessageId, false).setParam("reply_markup", replyMarkup, false);
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
 		return builder.build().call();
@@ -330,7 +314,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		TelegramBotRestApiCall.Builder<Boolean> builder = new TelegramBotRestApiCall.Builder<Boolean>("kickChatMember",
 				apiUriTemplate, mapper, restTemplate, Boolean.class);
 
-		builder.setParam("chat_id", chatId, true, false).setParam("user_id", userId, true, false);
+		builder.setParam("chat_id", chatId, true).setParam("user_id", userId, true);
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
 		return builder.build().call();
@@ -342,7 +326,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		TelegramBotRestApiCall.Builder<Boolean> builder = new TelegramBotRestApiCall.Builder<Boolean>("unbanChatMember",
 				apiUriTemplate, mapper, restTemplate, Boolean.class);
 
-		builder.setParam("chat_id", chatId, true, false).setParam("user_id", userId, true, false);
+		builder.setParam("chat_id", chatId, true).setParam("user_id", userId, true);
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
 		return builder.build().call();
@@ -355,8 +339,8 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		TelegramBotRestApiCall.Builder<Boolean> builder = new TelegramBotRestApiCall.Builder<Boolean>("answerCallbackQuery",
 				apiUriTemplate, mapper, restTemplate, Boolean.class);
 
-		builder.setParam("callback_query_id", callbackQueryId, true, false).setParam("text", text, false, false)
-				.setParam("show_alert", showAlert, false, false);
+		builder.setParam("callback_query_id", callbackQueryId, true).setParam("text", text, false).setParam("show_alert",
+				showAlert, false);
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
 		return builder.build().call();
@@ -373,11 +357,10 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		TelegramBotRestApiCall.Builder<Message> builder = new TelegramBotRestApiCall.Builder<Message>("editMessageText",
 				apiUriTemplate, mapper, restTemplate, Message.class);
 
-		builder.setParam("chat_id", chatId, false, false).setParam("message_id", messageId, false, false)
-				.setParam("inline_message_id", inlineMessageId, false, false).setParam("text", text, true, false)
-				.setParam("parse_mode", parseMode, false, false)
-				.setParam("disable_web_page_preview", disableWebPagePreview, false, false)
-				.setParam("reply_markup", replyMarkup, false, true);
+		builder.setParam("chat_id", chatId, false).setParam("message_id", messageId, false)
+				.setParam("inline_message_id", inlineMessageId, false).setParam("text", text, true)
+				.setParam("parse_mode", parseMode, false).setParam("disable_web_page_preview", disableWebPagePreview, false)
+				.setParam("reply_markup", replyMarkup, false);
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
 		return builder.build().call();
@@ -393,9 +376,9 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		TelegramBotRestApiCall.Builder<Message> builder = new TelegramBotRestApiCall.Builder<Message>("editMessageCaption",
 				apiUriTemplate, mapper, restTemplate, Message.class);
 
-		builder.setParam("chat_id", chatId, false, false).setParam("message_id", messageId, false, false)
-				.setParam("inline_message_id", inlineMessageId, false, false).setParam("caption", caption, false, false)
-				.setParam("reply_markup", replyMarkup, false, true);
+		builder.setParam("chat_id", chatId, false).setParam("message_id", messageId, false)
+				.setParam("inline_message_id", inlineMessageId, false).setParam("caption", caption, false)
+				.setParam("reply_markup", replyMarkup, false);
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
 		return builder.build().call();
@@ -411,9 +394,8 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		TelegramBotRestApiCall.Builder<Message> builder = new TelegramBotRestApiCall.Builder<Message>(
 				"editMessageReplyMarkup", apiUriTemplate, mapper, restTemplate, Message.class);
 
-		builder.setParam("chat_id", chatId, false, false).setParam("message_id", messageId, false, false)
-				.setParam("inline_message_id", inlineMessageId, false, false)
-				.setParam("reply_markup", replyMarkup, false, true);
+		builder.setParam("chat_id", chatId, false).setParam("message_id", messageId, false)
+				.setParam("inline_message_id", inlineMessageId, false).setParam("reply_markup", replyMarkup, false);
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
 		return builder.build().call();
@@ -425,7 +407,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		TelegramBotRestApiCall.Builder<Chat> builder = new TelegramBotRestApiCall.Builder<Chat>("getChat", apiUriTemplate,
 				mapper, restTemplate, Chat.class);
 
-		builder.setParam("chat_id", chatId, true, false);
+		builder.setParam("chat_id", chatId, true);
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
 		return builder.build().call();
@@ -437,7 +419,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		TelegramBotRestApiCall.Builder<ChatMember[]> builder = new TelegramBotRestApiCall.Builder<ChatMember[]>(
 				"getChatAdministrators", apiUriTemplate, mapper, restTemplate, ChatMember[].class);
 
-		builder.setParam("chat_id", chatId, true, false);
+		builder.setParam("chat_id", chatId, true);
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
 		return builder.build().call();
@@ -449,7 +431,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		TelegramBotRestApiCall.Builder<ChatMember> builder = new TelegramBotRestApiCall.Builder<ChatMember>("getChatMember",
 				apiUriTemplate, mapper, restTemplate, ChatMember.class);
 
-		builder.setParam("chat_id", chatId, true, false).setParam("user_id", userId, true, false);
+		builder.setParam("chat_id", chatId, true).setParam("user_id", userId, true);
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
 		return builder.build().call();
@@ -461,7 +443,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		TelegramBotRestApiCall.Builder<Integer> builder = new TelegramBotRestApiCall.Builder<Integer>("getChatMembersCount",
 				apiUriTemplate, mapper, restTemplate, Integer.class);
 
-		builder.setParam("chat_id", chatId, true, false);
+		builder.setParam("chat_id", chatId, true);
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
 		return builder.build().call();
@@ -473,7 +455,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		TelegramBotRestApiCall.Builder<Boolean> builder = new TelegramBotRestApiCall.Builder<Boolean>("leaveChat",
 				apiUriTemplate, mapper, restTemplate, Boolean.class);
 
-		builder.setParam("chat_id", chatId, true, false);
+		builder.setParam("chat_id", chatId, true);
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
 		return builder.build().call();
