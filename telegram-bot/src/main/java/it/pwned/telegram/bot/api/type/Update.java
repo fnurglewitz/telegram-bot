@@ -6,7 +6,7 @@ import it.pwned.telegram.bot.api.type.inline.ChosenInlineResult;
 import it.pwned.telegram.bot.api.type.inline.InlineQuery;
 
 /**
- * This class represents an incoming update. Only <b>one<b> of the optional
+ * This class represents an incoming update. Only <b>one</b> of the optional
  * parameters can be present in any given update.
  *
  */

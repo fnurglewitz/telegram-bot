@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 @JsonInclude(Include.NON_NULL)
-public final class ForceReply extends DummyKeyboard {
+public final class ForceReply extends AbstractKeyboardMarkup {
 
 	private final static String JSON_FIELD_FORCE_REPLY = "force_reply";
 	private final static String JSON_FIELD_SELECTIVE = "selective";

@@ -2,6 +2,9 @@ package it.pwned.telegram.bot.api.type.inline;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import it.pwned.telegram.bot.api.type.ParseMode;
+
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
@@ -27,7 +30,7 @@ public class InputTextMessageContent extends InputMessageContent {
 	 * bold, italic, fixed-width text or inline URLs in your bot's message.
 	 */
 	@JsonProperty(JSON_FIELD_PARSE_MODE)
-	public final String parseMode;
+	public final ParseMode parseMode;
 
 	/**
 	 * <em>Optional.</em> Disables link previews for links in the sent message
@@ -51,7 +54,7 @@ public class InputTextMessageContent extends InputMessageContent {
 			@JsonProperty(JSON_FIELD_PARSE_MODE) String parseMode,
 			@JsonProperty(JSON_FIELD_DISABLE_WEB_PAGE_PREVIEW) Boolean disableWebPagePreview) {
 		this.messageText = messageText;
-		this.parseMode = parseMode;
+		this.parseMode = ParseMode.fromString(parseMode);
 		this.disableWebPagePreview = disableWebPagePreview;
 
 	}

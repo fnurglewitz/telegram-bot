@@ -10,7 +10,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import it.pwned.telegram.bot.api.TelegramBotApi;
+import it.pwned.telegram.bot.api.type.ChatId;
 import it.pwned.telegram.bot.api.type.Message;
+import it.pwned.telegram.bot.api.type.ParseMode;
 import it.pwned.telegram.bot.api.type.TelegramBotApiException;
 import it.pwned.telegram.bot.api.type.Update;
 import it.pwned.telegram.bot.handler.InlineHandler;
@@ -61,7 +63,7 @@ public class HandlerConfig {
 
 					if (m.text.toLowerCase().contains("patriarcato")) {
 						try {
-							api.sendMessage(m.chat.id, "*GLORIA AL PATRIARCATO DI AQUILEIA*", "Markdown", true, false, m.messageId,
+							api.sendMessage(new ChatId(m.chat.id), "*GLORIA AL PATRIARCATO DI AQUILEIA*", ParseMode.MARKDOWN, true, false, m.messageId,
 									null);
 						} catch (TelegramBotApiException e) {
 							// forna sabotaged us

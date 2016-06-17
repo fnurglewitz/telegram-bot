@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 @JsonInclude(Include.NON_NULL)
-public final class ReplyKeyboardHide extends DummyKeyboard {
+public final class ReplyKeyboardHide extends AbstractKeyboardMarkup {
 
 	private final static String JSON_FIELD_HIDE_KEYBOARD = "hide_keyboard";
 	private final static String JSON_FIELD_SELECTIVE = "selective";

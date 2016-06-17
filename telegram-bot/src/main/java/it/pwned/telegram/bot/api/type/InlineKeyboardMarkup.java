@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 @JsonInclude(Include.NON_NULL)
-public class InlineKeyboardMarkup extends DummyKeyboard {
+public class InlineKeyboardMarkup extends AbstractKeyboardMarkup {
 
 	private final static String JSON_FIELD_INLINE_KEYBOARD = "inline_keyboard";
 

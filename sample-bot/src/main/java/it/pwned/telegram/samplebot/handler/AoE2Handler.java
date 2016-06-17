@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import it.pwned.telegram.bot.api.TelegramBotApi;
+import it.pwned.telegram.bot.api.type.ChatId;
 import it.pwned.telegram.bot.api.type.Message;
 import it.pwned.telegram.bot.api.type.TelegramBotApiException;
 import it.pwned.telegram.bot.api.type.Update;
@@ -99,7 +100,7 @@ public class AoE2Handler implements UpdateHandler, Runnable {
 
 			if (m != null && m.newChatMember != null) {
 				try {
-					api.sendVoice(m.chat.id, new FileSystemResource(getTauntPathByNumberAndCulture(8)), null, null, m.messageId,
+					api.sendVoice(new ChatId(m.chat.id), new FileSystemResource(getTauntPathByNumberAndCulture(8)), null, null, m.messageId,
 							null);
 				} catch (TelegramBotApiException e) {
 				}
@@ -133,7 +134,7 @@ public class AoE2Handler implements UpdateHandler, Runnable {
 					String taunt_url = getTauntPathByNumberAndCulture(taunt, culture);
 
 					try {
-						api.sendVoice(m.chat.id, new FileSystemResource(taunt_url), null, null, null, null);
+						api.sendVoice(new ChatId(m.chat.id), new FileSystemResource(taunt_url), null, null, null, null);
 					} catch (TelegramBotApiException e) {
 					}
 

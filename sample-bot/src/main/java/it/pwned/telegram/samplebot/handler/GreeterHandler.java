@@ -3,6 +3,7 @@ package it.pwned.telegram.samplebot.handler;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import it.pwned.telegram.bot.api.TelegramBotApi;
+import it.pwned.telegram.bot.api.type.ChatId;
 import it.pwned.telegram.bot.api.type.Message;
 import it.pwned.telegram.bot.api.type.Update;
 import it.pwned.telegram.bot.handler.UpdateHandler;
@@ -28,7 +29,7 @@ public class GreeterHandler implements UpdateHandler {
 
 			executor.submit(() -> {
 				try {
-					api.sendMessage(m.chat.id, String.format("Welcome, %s!", m.newChatMember.firstName), null, null,
+					api.sendMessage(new ChatId(m.chat.id), String.format("Welcome, %s!", m.newChatMember.firstName), null, null,
 							null, m.messageId, null);
 				} catch (Exception e) {
 				}
@@ -37,7 +38,7 @@ public class GreeterHandler implements UpdateHandler {
 
 			executor.submit(() -> {
 				try {
-					api.sendMessage(m.chat.id, String.format("Goodbye, %s!", m.leftChatMember.firstName), null, null,
+					api.sendMessage(new ChatId(m.chat.id), String.format("Goodbye, %s!", m.leftChatMember.firstName), null, null,
 							null, m.messageId, null);
 				} catch (Exception e) {
 				}
