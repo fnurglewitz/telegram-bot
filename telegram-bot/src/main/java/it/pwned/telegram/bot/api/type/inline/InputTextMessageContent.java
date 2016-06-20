@@ -51,10 +51,10 @@ public class InputTextMessageContent extends InputMessageContent {
 	 *          message
 	 */
 	public InputTextMessageContent(@JsonProperty(JSON_FIELD_MESSAGE_TEXT) String messageText,
-			@JsonProperty(JSON_FIELD_PARSE_MODE) String parseMode,
+			@JsonProperty(JSON_FIELD_PARSE_MODE) ParseMode parseMode,
 			@JsonProperty(JSON_FIELD_DISABLE_WEB_PAGE_PREVIEW) Boolean disableWebPagePreview) {
 		this.messageText = messageText;
-		this.parseMode = ParseMode.fromString(parseMode);
+		this.parseMode = parseMode;
 		this.disableWebPagePreview = disableWebPagePreview;
 
 	}

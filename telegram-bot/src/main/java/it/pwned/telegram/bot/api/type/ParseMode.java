@@ -2,6 +2,7 @@ package it.pwned.telegram.bot.api.type;
 
 import org.springframework.http.MediaType;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum ParseMode implements MultipartDataEntity {
@@ -13,6 +14,7 @@ public enum ParseMode implements MultipartDataEntity {
 		this.value = value;
 	}
 
+	@JsonCreator
 	public static ParseMode fromString(String mode) {
 		switch (mode) {
 		case "Markdown":

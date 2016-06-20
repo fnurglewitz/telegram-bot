@@ -22,7 +22,7 @@ public class MessageEntity {
 	 * users without usernames)
 	 */
 	@JsonProperty(JSON_FIELD_TYPE)
-	public final String type;
+	public final MessageEntityType type;
 
 	/**
 	 * Offset in UTF-16 code units to the start of the entity
@@ -66,7 +66,7 @@ public class MessageEntity {
 	 * @param user
 	 *          <em>Optional.</em> For “text_mention” only, the mentioned user
 	 */
-	public MessageEntity(@JsonProperty(JSON_FIELD_TYPE) String type, @JsonProperty(JSON_FIELD_OFFSET) Integer offset,
+	public MessageEntity(@JsonProperty(JSON_FIELD_TYPE) MessageEntityType type, @JsonProperty(JSON_FIELD_OFFSET) Integer offset,
 			@JsonProperty(JSON_FIELD_LENGTH) Integer length, @JsonProperty(JSON_FIELD_URL) String url,
 			@JsonProperty(JSON_FIELD_USER) User user) {
 		this.type = type;

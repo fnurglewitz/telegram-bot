@@ -1,5 +1,6 @@
 package it.pwned.telegram.bot.api.type;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
@@ -17,8 +18,9 @@ public enum ChatMemberStatus {
 		this.value = value;
 	}
 
-	public static ChatMemberStatus fromString(String type) {
-		switch (type) {
+	@JsonCreator
+	public static ChatMemberStatus fromString(String status) {
+		switch (status) {
 		case "creator":
 			return ChatMemberStatus.CREATOR;
 
@@ -39,13 +41,9 @@ public enum ChatMemberStatus {
 		}
 	}
 
+	@JsonValue
 	@Override
 	public String toString() {
-		return value;
-	}
-
-	@JsonValue
-	public String getType() {
 		return value;
 	}
 

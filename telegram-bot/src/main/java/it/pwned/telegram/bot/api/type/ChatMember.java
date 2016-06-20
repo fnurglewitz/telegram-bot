@@ -26,14 +26,15 @@ public class ChatMember {
 	/**
 	 * 
 	 * @param user
-	 *            Information about the user
+	 *          Information about the user
 	 * @param status
-	 *            The member's status in the chat. Can be "creator",
-	 *            "administrator", "member", "left" or "kicked"
+	 *          The member's status in the chat. Can be "creator",
+	 *          "administrator", "member", "left" or "kicked"
 	 */
-	public ChatMember(@JsonProperty(JSON_FIELD_USER) User user, @JsonProperty(JSON_FIELD_STATUS) String status) {
+	public ChatMember(@JsonProperty(JSON_FIELD_USER) User user,
+			@JsonProperty(JSON_FIELD_STATUS) ChatMemberStatus status) {
 		this.user = user;
-		this.status = ChatMemberStatus.fromString(status);
+		this.status = status;
 	}
 
 }
