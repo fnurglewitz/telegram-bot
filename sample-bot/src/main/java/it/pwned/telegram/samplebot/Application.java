@@ -30,7 +30,6 @@ import it.pwned.telegram.samplebot.config.RestConfig;
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
 
-@SuppressWarnings("restriction")
 @SpringBootApplication
 public class Application {
 
