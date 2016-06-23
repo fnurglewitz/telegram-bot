@@ -11,11 +11,15 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import it.pwned.telegram.bot.api.TelegramBotApi;
+import it.pwned.telegram.bot.api.type.BooleanOrMessage;
+import it.pwned.telegram.bot.api.type.CallbackQuery;
 import it.pwned.telegram.bot.api.type.InlineKeyboardButton;
 import it.pwned.telegram.bot.api.type.InlineKeyboardMarkup;
 import it.pwned.telegram.bot.api.type.ParseMode;
+import it.pwned.telegram.bot.api.type.ReplyKeyboardHide;
 import it.pwned.telegram.bot.api.type.TelegramBotApiException;
 import it.pwned.telegram.bot.api.type.Update;
+import it.pwned.telegram.bot.api.type.inline.ChosenInlineResult;
 import it.pwned.telegram.bot.api.type.inline.InlineQuery;
 import it.pwned.telegram.bot.api.type.inline.InlineQueryResult;
 import it.pwned.telegram.bot.api.type.inline.InlineQueryResultArticle;
@@ -121,6 +125,12 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 
 				if (Update.Util.hasInlineQuery(u))
 					handleInlineQuery(u.inlineQuery);
+				
+				if(Update.Util.hasInlineResult(u))
+					handleChosenResult(u.chosenInlineResult);
+				
+				if(Update.Util.hasCallbackQuery(u))
+					handleCallbackQuery(u.callbackQuery);
 
 			} catch (InterruptedException e) {
 
@@ -198,6 +208,22 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 				new InputTextMessageContent(q.question, ParseMode.HTML, null));
 
 		return iqr;
+	}
+	
+	private void handleChosenResult(ChosenInlineResult chosenInlineResult) {
+
+	}
+	
+	private void handleCallbackQuery(CallbackQuery callbackQuery) {
+		
+		try {
+			BooleanOrMessage bm = api.editMessageReplyMarkup(null, null, callbackQuery.inlineMessageId, null);
+			
+		} catch (TelegramBotApiException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 }

@@ -19,6 +19,7 @@ import org.springframework.web.util.UriTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import it.pwned.telegram.bot.api.type.BooleanOrMessage;
 import it.pwned.telegram.bot.api.type.Chat;
 import it.pwned.telegram.bot.api.type.ChatMember;
 import it.pwned.telegram.bot.api.type.Message;
@@ -69,6 +70,9 @@ public class TelegramBotRestApiCall<T> {
 		});
 
 		tmp.put(Integer.class, new ParameterizedTypeReference<Response<Integer>>() {
+		});
+
+		tmp.put(BooleanOrMessage.class, new ParameterizedTypeReference<Response<BooleanOrMessage>>() {
 		});
 
 		// for methods without an output (ie. sendChatAction)

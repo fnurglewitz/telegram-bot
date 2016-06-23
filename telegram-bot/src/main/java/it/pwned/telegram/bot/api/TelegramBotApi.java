@@ -9,6 +9,7 @@ import it.pwned.telegram.bot.api.type.ChatAction;
 import it.pwned.telegram.bot.api.type.ChatId;
 import it.pwned.telegram.bot.api.type.ChatMember;
 import it.pwned.telegram.bot.api.type.AbstractKeyboardMarkup;
+import it.pwned.telegram.bot.api.type.BooleanOrMessage;
 import it.pwned.telegram.bot.api.type.InlineKeyboardMarkup;
 import it.pwned.telegram.bot.api.type.TelegramFile;
 import it.pwned.telegram.bot.api.type.Message;
@@ -608,7 +609,7 @@ public interface TelegramBotApi {
 	 *         Message is returned, otherwise True is returned.
 	 * @throws TelegramBotApiException
 	 */
-	Message editMessageText(ChatId chatId, Integer messageId, String inlineMessageId, String text, ParseMode parseMode,
+	BooleanOrMessage editMessageText(ChatId chatId, Integer messageId, String inlineMessageId, String text, ParseMode parseMode,
 			Boolean disableWebPagePreview, InlineKeyboardMarkup replyMarkup) throws TelegramBotApiException;
 
 	/**
@@ -633,7 +634,7 @@ public interface TelegramBotApi {
 	 *         Message is returned, otherwise True is returned.
 	 * @throws TelegramBotApiException
 	 */
-	Message editMessageCaption(ChatId chatId, Integer messageId, String inlineMessageId, String caption,
+	BooleanOrMessage editMessageCaption(ChatId chatId, Integer messageId, String inlineMessageId, String caption,
 			InlineKeyboardMarkup replyMarkup) throws TelegramBotApiException;
 
 	/**
@@ -657,7 +658,7 @@ public interface TelegramBotApi {
 	 *         Message is returned, otherwise True is returned.
 	 * @throws TelegramBotApiException
 	 */
-	Message editMessageReplyMarkup(ChatId chatId, Integer messageId, String inlineMessageId,
+	BooleanOrMessage editMessageReplyMarkup(ChatId chatId, Integer messageId, String inlineMessageId,
 			InlineKeyboardMarkup replyMarkup) throws TelegramBotApiException;
 
 	/**

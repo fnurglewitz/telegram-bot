@@ -19,6 +19,7 @@ import it.pwned.telegram.bot.api.type.ChatAction;
 import it.pwned.telegram.bot.api.type.ChatId;
 import it.pwned.telegram.bot.api.type.ChatMember;
 import it.pwned.telegram.bot.api.type.AbstractKeyboardMarkup;
+import it.pwned.telegram.bot.api.type.BooleanOrMessage;
 import it.pwned.telegram.bot.api.type.InlineKeyboardMarkup;
 import it.pwned.telegram.bot.api.type.Message;
 import it.pwned.telegram.bot.api.type.ParseMode;
@@ -347,15 +348,15 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Message editMessageText(ChatId chatId, Integer messageId, String inlineMessageId, String text,
+	public BooleanOrMessage editMessageText(ChatId chatId, Integer messageId, String inlineMessageId, String text,
 			ParseMode parseMode, Boolean disableWebPagePreview, InlineKeyboardMarkup replyMarkup)
 			throws TelegramBotApiException {
 
 		if (inlineMessageId == null && (chatId == null || messageId == null))
 			throw new InvalidParameterException("(editMessageText) chat_id+message_id or inline_message_id are mandatory");
 
-		TelegramBotRestApiCall.Builder<Message> builder = new TelegramBotRestApiCall.Builder<Message>("editMessageText",
-				apiUriTemplate, mapper, restTemplate, Message.class);
+		TelegramBotRestApiCall.Builder<BooleanOrMessage> builder = new TelegramBotRestApiCall.Builder<BooleanOrMessage>(
+				"editMessageText", apiUriTemplate, mapper, restTemplate, BooleanOrMessage.class);
 
 		builder.setParam("chat_id", chatId, false).setParam("message_id", messageId, false)
 				.setParam("inline_message_id", inlineMessageId, false).setParam("text", text, true)
@@ -367,14 +368,14 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Message editMessageCaption(ChatId chatId, Integer messageId, String inlineMessageId, String caption,
+	public BooleanOrMessage editMessageCaption(ChatId chatId, Integer messageId, String inlineMessageId, String caption,
 			InlineKeyboardMarkup replyMarkup) throws TelegramBotApiException {
 
 		if (inlineMessageId == null && (chatId == null || messageId == null))
 			throw new InvalidParameterException("(editMessageText) chat_id+message_id or inline_message_id are mandatory");
 
-		TelegramBotRestApiCall.Builder<Message> builder = new TelegramBotRestApiCall.Builder<Message>("editMessageCaption",
-				apiUriTemplate, mapper, restTemplate, Message.class);
+		TelegramBotRestApiCall.Builder<BooleanOrMessage> builder = new TelegramBotRestApiCall.Builder<BooleanOrMessage>(
+				"editMessageCaption", apiUriTemplate, mapper, restTemplate, BooleanOrMessage.class);
 
 		builder.setParam("chat_id", chatId, false).setParam("message_id", messageId, false)
 				.setParam("inline_message_id", inlineMessageId, false).setParam("caption", caption, false)
@@ -385,14 +386,14 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Message editMessageReplyMarkup(ChatId chatId, Integer messageId, String inlineMessageId,
+	public BooleanOrMessage editMessageReplyMarkup(ChatId chatId, Integer messageId, String inlineMessageId,
 			InlineKeyboardMarkup replyMarkup) throws TelegramBotApiException {
 
 		if (inlineMessageId == null && (chatId == null || messageId == null))
 			throw new InvalidParameterException("(editMessageText) chat_id+message_id or inline_message_id are mandatory");
 
-		TelegramBotRestApiCall.Builder<Message> builder = new TelegramBotRestApiCall.Builder<Message>(
-				"editMessageReplyMarkup", apiUriTemplate, mapper, restTemplate, Message.class);
+		TelegramBotRestApiCall.Builder<BooleanOrMessage> builder = new TelegramBotRestApiCall.Builder<BooleanOrMessage>(
+				"editMessageReplyMarkup", apiUriTemplate, mapper, restTemplate, BooleanOrMessage.class);
 
 		builder.setParam("chat_id", chatId, false).setParam("message_id", messageId, false)
 				.setParam("inline_message_id", inlineMessageId, false).setParam("reply_markup", replyMarkup, false);
