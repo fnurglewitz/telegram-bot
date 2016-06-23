@@ -27,9 +27,15 @@ import it.pwned.telegram.bot.handler.UpdateHandler;
 import it.pwned.telegram.bot.handler.UpdateHandlerManager;
 import it.pwned.telegram.samplebot.config.HandlerConfig;
 import it.pwned.telegram.samplebot.config.RestConfig;
+import it.pwned.telegram.samplebot.trivia.api.OpenTdbRestApi;
+import it.pwned.telegram.samplebot.trivia.type.Question;
+import it.pwned.telegram.samplebot.trivia.type.QuestionCategory;
+import it.pwned.telegram.samplebot.trivia.type.QuestionDifficulty;
+import it.pwned.telegram.samplebot.trivia.type.QuestionType;
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
 
+@SuppressWarnings("restriction")
 @SpringBootApplication
 public class Application {
 
@@ -85,8 +91,12 @@ public class Application {
 			}
 		});
 
-		bot.run();
+		//bot.run();
 
+		OpenTdbRestApi a = new OpenTdbRestApi(ctx.getBean(RestTemplate.class));
+		
+		Question[] q = a.getQuestions(1, QuestionCategory.ANY, QuestionDifficulty.EASY, QuestionType.MULTIPLE);
+		
 		ctx.close();
 
 		log.info("Bye");

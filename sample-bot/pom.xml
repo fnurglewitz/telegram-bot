@@ -37,6 +37,10 @@
 			<artifactId>h2</artifactId>
 			<version>1.4.192</version>
 		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+		</dependency>
 
 	</dependencies>
 

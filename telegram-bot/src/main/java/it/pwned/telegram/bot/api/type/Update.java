@@ -98,9 +98,19 @@ public final class Update implements Comparable<Update> {
 	}
 
 	public static class Util {
+
+		public static boolean isMessage(Update u) {
+			return u.message != null;
+		}
+
 		public static boolean isInline(Update u) {
 			return (u.inlineQuery != null || u.chosenInlineResult != null || u.callbackQuery != null);
 		}
+
+		public static boolean hasInlineQuery(Update u) {
+			return u.inlineQuery != null;
+		}
+
 	}
 
 	public static class Builder {
