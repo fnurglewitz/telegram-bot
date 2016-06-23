@@ -3,6 +3,7 @@ package it.pwned.telegram.samplebot.handler;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import it.pwned.telegram.bot.api.type.Update;
@@ -65,24 +66,27 @@ public class UserDataHandler implements UpdateHandler, Runnable {
 
 			try {
 				final User u = userQueue.take();
-				
+
 				int count = 0;
 
-				count = jdbc.update("UPDATE PUBLIC.USER SET FIRST_NAME = ?, LAST_NAME = ?, USERNAME = ? WHERE USER_ID = ? ;",
-						new Object[] { u.firstName, u.lastName, u.username, u.id }, new int[] { java.sql.Types.VARCHAR,
-								java.sql.Types.VARCHAR, java.sql.Types.VARCHAR, java.sql.Types.VARCHAR, java.sql.Types.BIGINT });
-				
-				if(count <= 0) {
+				count = jdbc.update(
+						"UPDATE PUBLIC.USER SET FIRST_NAME = ?, LAST_NAME = ?, USERNAME = ? WHERE USER_ID = ? ;",
+						new Object[] { u.firstName, u.lastName, u.username, u.id });
+
+				if (count <= 0) {
 					// insert
-					jdbc.update("INSERT INTO PUBLIC.USER ( USER_ID, FIRST_NAME, LAST_NAME, USERNAME ) VALUES ( ?, ?, ?, ? );",
-							new Object[] { u.id, u.firstName, u.lastName, u.username },
-							new int[] { java.sql.Types.BIGINT, java.sql.Types.VARCHAR, java.sql.Types.VARCHAR, java.sql.Types.VARCHAR  }
-							);
+					jdbc.update(
+							"INSERT INTO PUBLIC.USER ( USER_ID, FIRST_NAME, LAST_NAME, USERNAME ) VALUES ( ?, ?, ?, ? );",
+							new Object[] { u.id, u.firstName, u.lastName, u.username });
 				}
 
+				if (Thread.currentThread().isInterrupted())
+					throw new InterruptedException();
+
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				goOn = false;
+			} catch (DataAccessException de) {
+
 			}
 
 		}

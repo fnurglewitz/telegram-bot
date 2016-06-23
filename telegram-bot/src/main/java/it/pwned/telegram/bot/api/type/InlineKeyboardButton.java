@@ -1,12 +1,15 @@
 package it.pwned.telegram.bot.api.type;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
  * This class represents one button of an inline keyboard. You must use exactly
  * one of the optional fields.
  *
  */
+@JsonInclude(Include.NON_NULL)
 public class InlineKeyboardButton {
 
 	private final static String JSON_FIELD_TEXT = "text";

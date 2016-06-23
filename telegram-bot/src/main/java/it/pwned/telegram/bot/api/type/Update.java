@@ -27,8 +27,8 @@ public final class Update implements Comparable<Update> {
 	public final Integer updateId;
 
 	/**
-	 * <em>Optional.</em> New incoming message of any kind — text, photo, sticker,
-	 * etc.
+	 * <em>Optional.</em> New incoming message of any kind — text, photo,
+	 * sticker, etc.
 	 */
 	@JsonProperty(JSON_FIELD_MESSAGE)
 	public final Message message;
@@ -47,8 +47,8 @@ public final class Update implements Comparable<Update> {
 	public final InlineQuery inlineQuery;
 
 	/**
-	 * <em>Optional.</em> The result of an inline query that was chosen by a user
-	 * and sent to their chat partner.
+	 * <em>Optional.</em> The result of an inline query that was chosen by a
+	 * user and sent to their chat partner.
 	 */
 	@JsonProperty(JSON_FIELD_CHOSEN_INLINE_RESULT)
 	public final ChosenInlineResult chosenInlineResult;
@@ -62,23 +62,24 @@ public final class Update implements Comparable<Update> {
 	/**
 	 * 
 	 * @param updateId
-	 *          The update's unique identifier. Update identifiers start from a
-	 *          certain positive number and increase sequentially.
+	 *            The update's unique identifier. Update identifiers start from
+	 *            a certain positive number and increase sequentially.
 	 * @param message
-	 *          <em>Optional.</em> New incoming message of any kind — text, photo,
-	 *          sticker, etc.
+	 *            <em>Optional.</em> New incoming message of any kind — text,
+	 *            photo, sticker, etc.
 	 * @param editedMessage
-	 *          <em>Optional.</em> New version of a message that is known to the
-	 *          bot and was edited
+	 *            <em>Optional.</em> New version of a message that is known to
+	 *            the bot and was edited
 	 * @param inlineQuery
-	 *          <em>Optional.</em> New incoming inline query
+	 *            <em>Optional.</em> New incoming inline query
 	 * @param chosenInlineResult
-	 *          <em>Optional.</em> The result of an inline query that was chosen
-	 *          by a user and sent to their chat partner.
+	 *            <em>Optional.</em> The result of an inline query that was
+	 *            chosen by a user and sent to their chat partner.
 	 * @param callbackQuery
-	 *          <em>Optional.</em> New incoming callback query
+	 *            <em>Optional.</em> New incoming callback query
 	 */
-	public Update(@JsonProperty(JSON_FIELD_UPDATE_ID) Integer updateId, @JsonProperty(JSON_FIELD_MESSAGE) Message message,
+	public Update(@JsonProperty(JSON_FIELD_UPDATE_ID) Integer updateId,
+			@JsonProperty(JSON_FIELD_MESSAGE) Message message,
 			@JsonProperty(JSON_FIELD_EDITED_MESSAGE) Message editedMessage,
 			@JsonProperty(JSON_FIELD_INLINE_QUERY) InlineQuery inlineQuery,
 			@JsonProperty(JSON_FIELD_CHOSEN_INLINE_RESULT) ChosenInlineResult chosenInlineResult,
@@ -109,6 +110,14 @@ public final class Update implements Comparable<Update> {
 
 		public static boolean hasInlineQuery(Update u) {
 			return u.inlineQuery != null;
+		}
+
+		public static boolean hasInlineResult(Update u) {
+			return u.chosenInlineResult != null;
+		}
+
+		public static boolean hasCallbackQuery(Update u) {
+			return u.callbackQuery != null;
 		}
 
 	}

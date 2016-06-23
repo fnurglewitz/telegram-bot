@@ -1,6 +1,8 @@
 package it.pwned.telegram.bot.api.type;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
  * This class represents one button of the reply keyboard. For simple text
@@ -8,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * button. Optional fields are mutually exclusive.
  * 
  */
+@JsonInclude(Include.NON_NULL)
 public class KeyboardButton {
 
 	private final static String JSON_FIELD_TEXT = "text";

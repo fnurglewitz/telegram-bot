@@ -11,6 +11,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.web.client.RestTemplate;
 
 import it.pwned.telegram.bot.api.TelegramBotApi;
 import it.pwned.telegram.bot.api.type.Update;
@@ -23,9 +24,16 @@ import it.pwned.telegram.bot.handler.UpdateHandler;
 import it.pwned.telegram.samplebot.handler.GreeterHandler;
 import it.pwned.telegram.samplebot.handler.TriviaHandler;
 import it.pwned.telegram.samplebot.handler.UserDataHandler;
+import it.pwned.telegram.samplebot.trivia.api.OpenTdbApi;
+import it.pwned.telegram.samplebot.trivia.api.OpenTdbRestApi;
 
 @Configuration
 public class HandlerConfig {
+
+	@Bean
+	public OpenTdbApi tdbApi(RestTemplate restTemplate) {
+		return new OpenTdbRestApi(restTemplate);
+	}
 
 	@Bean
 	@Order(value = 1)
@@ -34,9 +42,9 @@ public class HandlerConfig {
 	}
 
 	@InlineHandler
-	public UpdateHandler trivia(TelegramBotApi api, ThreadPoolTaskExecutor executor) {
+	public UpdateHandler trivia(TelegramBotApi api, OpenTdbApi trivia, ThreadPoolTaskExecutor executor) {
 		LinkedBlockingQueue<Update> updateQueue = new LinkedBlockingQueue<Update>();
-		TriviaHandler handler = new TriviaHandler(api, updateQueue, executor) {
+		TriviaHandler handler = new TriviaHandler(api, trivia, updateQueue, executor) {
 			@Override
 			public String getName() {
 				return "TriviaHandler";
