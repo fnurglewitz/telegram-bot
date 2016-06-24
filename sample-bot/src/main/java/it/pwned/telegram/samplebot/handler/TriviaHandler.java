@@ -13,6 +13,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import it.pwned.telegram.bot.api.TelegramBotApi;
 import it.pwned.telegram.bot.api.type.BooleanOrMessage;
 import it.pwned.telegram.bot.api.type.CallbackQuery;
+import it.pwned.telegram.bot.api.type.ChatId;
 import it.pwned.telegram.bot.api.type.InlineKeyboardButton;
 import it.pwned.telegram.bot.api.type.InlineKeyboardMarkup;
 import it.pwned.telegram.bot.api.type.ParseMode;
@@ -39,6 +40,8 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 	private final OpenTdbApi trivia;
 	private final BlockingQueue<Update> updateQueue;
 	private final ThreadPoolTaskExecutor executor;
+	private final List<String> validQuestionIds;
+	private final Map<Long, String> questionTexts;
 
 	private volatile boolean goOn = true;
 
@@ -79,6 +82,9 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 		this.trivia = trivia;
 		this.updateQueue = updateQueue;
 		this.executor = executor;
+
+		this.validQuestionIds = new LinkedList<String>();
+		this.questionTexts = new HashMap<Long, String>();
 	}
 
 	@Override
@@ -125,11 +131,11 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 
 				if (Update.Util.hasInlineQuery(u))
 					handleInlineQuery(u.inlineQuery);
-				
-				if(Update.Util.hasInlineResult(u))
+
+				if (Update.Util.hasInlineResult(u))
 					handleChosenResult(u.chosenInlineResult);
-				
-				if(Update.Util.hasCallbackQuery(u))
+
+				if (Update.Util.hasCallbackQuery(u))
 					handleCallbackQuery(u.callbackQuery);
 
 			} catch (InterruptedException e) {
@@ -176,9 +182,9 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 			kb.addRow();
 
 			InlineKeyboardButton btn1 = new InlineKeyboardButton("true", null,
-					q.correctAnswer.equals("1") ? "win" : "lose", null);
+					q.correctAnswer.equals("1") ? Long.toString(System.currentTimeMillis()) : "FAIL", null);
 			InlineKeyboardButton btn2 = new InlineKeyboardButton("false", null,
-					q.correctAnswer.equals("0") ? "win" : "lose", null);
+					q.correctAnswer.equals("0") ? Long.toString(System.currentTimeMillis()) : "FAIL", null);
 
 			kb.addButton(btn1, 0);
 			kb.addButton(btn2, 0);
@@ -188,17 +194,17 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 			kb.addRow();
 			kb.addRow();
 
-			InlineKeyboardButton btn1 = new InlineKeyboardButton(q.correctAnswer, null, "win", null);
+			InlineKeyboardButton btn1 = new InlineKeyboardButton(q.correctAnswer, null, Long.toString(System.currentTimeMillis()), null);
 
 			kb.addButton(btn1, 0);
 
 			for (int i = 0; i < q.incorrectAnswers.length; i++) {
-				InlineKeyboardButton btn = new InlineKeyboardButton(q.incorrectAnswers[i], null, "lose", null);
-				if(i>1)
+				InlineKeyboardButton btn = new InlineKeyboardButton(q.incorrectAnswers[i], null, "FAIL", null);
+				if (i > 1)
 					kb.addButton(btn, 1);
 				else
 					kb.addButton(btn, 0);
-				
+
 			}
 
 		}
@@ -210,20 +216,33 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 		return iqr;
 	}
 	
-	private void handleChosenResult(ChosenInlineResult chosenInlineResult) {
-
+	private String buildAnswerData(Question q) {
+		return String.format("W%s", q.question);	
 	}
-	
+
+	private void handleChosenResult(ChosenInlineResult chosenInlineResult) {
+		validQuestionIds.add(chosenInlineResult.inlineMessageId);
+	}
+
 	private void handleCallbackQuery(CallbackQuery callbackQuery) {
-		
+
 		try {
-			BooleanOrMessage bm = api.editMessageReplyMarkup(null, null, callbackQuery.inlineMessageId, null);
-			
+			if (validQuestionIds.contains(callbackQuery.inlineMessageId)) {
+
+				if (callbackQuery.data.charAt(0) == 'W') {
+					
+					BooleanOrMessage bm = api.editMessageReplyMarkup(null, null, callbackQuery.inlineMessageId, null);
+					bm = api.editMessageText(null, null, callbackQuery.inlineMessageId, String.format("%s\nWinner: %s", callbackQuery.data.substring(1)), null, null, null);
+
+					validQuestionIds.remove(callbackQuery.inlineMessageId);
+				}
+			}
+
 		} catch (TelegramBotApiException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 
 }
