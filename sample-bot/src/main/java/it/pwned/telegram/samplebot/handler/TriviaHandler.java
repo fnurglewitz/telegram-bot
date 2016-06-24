@@ -1,5 +1,7 @@
 package it.pwned.telegram.samplebot.handler;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -7,7 +9,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import it.pwned.telegram.bot.api.TelegramBotApi;
@@ -27,6 +34,7 @@ import it.pwned.telegram.bot.api.type.inline.InlineQueryResultArticle;
 import it.pwned.telegram.bot.api.type.inline.InlineQueryResultPhoto;
 import it.pwned.telegram.bot.api.type.inline.InputTextMessageContent;
 import it.pwned.telegram.bot.handler.UpdateHandler;
+import it.pwned.telegram.samplebot.Application;
 import it.pwned.telegram.samplebot.trivia.api.OpenTdbApi;
 import it.pwned.telegram.samplebot.trivia.api.TriviaApiException;
 import it.pwned.telegram.samplebot.trivia.type.Question;
@@ -36,12 +44,12 @@ import it.pwned.telegram.samplebot.trivia.type.QuestionType;
 
 public class TriviaHandler implements UpdateHandler, Runnable {
 
+	private static final Logger log = LoggerFactory.getLogger(Application.class);
+
 	private final TelegramBotApi api;
 	private final OpenTdbApi trivia;
 	private final BlockingQueue<Update> updateQueue;
-	private final ThreadPoolTaskExecutor executor;
-	private final List<String> validQuestionIds;
-	private final Map<Long, String> questionTexts;
+	private final JdbcTemplate jdbc;
 
 	private volatile boolean goOn = true;
 
@@ -76,15 +84,11 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 		categoryImages = Collections.unmodifiableMap(tmp);
 	}
 
-	public TriviaHandler(TelegramBotApi api, OpenTdbApi trivia, BlockingQueue<Update> updateQueue,
-			ThreadPoolTaskExecutor executor) {
+	public TriviaHandler(TelegramBotApi api, OpenTdbApi trivia, BlockingQueue<Update> updateQueue, JdbcTemplate jdbc) {
 		this.api = api;
 		this.trivia = trivia;
 		this.updateQueue = updateQueue;
-		this.executor = executor;
-
-		this.validQuestionIds = new LinkedList<String>();
-		this.questionTexts = new HashMap<Long, String>();
+		this.jdbc = jdbc;
 	}
 
 	@Override
@@ -156,13 +160,29 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 
 			Question[] qs = trivia.getQuestions(4, QuestionCategory.ANY, diff, QuestionType.ANY);
 
+			long timestamp = System.currentTimeMillis();
+
 			for (int i = 0; i < qs.length; i++) {
-				InlineQueryResult r = convertQuestionToInlineResult(qs[i], i);
-				if (r != null)
+				InlineQueryResult r = convertQuestionToInlineResult(qs[i], String.format("%d_%d", timestamp, i));
+				if (r != null) {
+
+					String normalizedAnswer = qs[i].correctAnswer;
+
+					if ("0".equals(normalizedAnswer))
+						normalizedAnswer = "false";
+					if ("1".equals(normalizedAnswer))
+						normalizedAnswer = "true";
+
+					jdbc.update(
+							"INSERT INTO PUBLIC.QUESTION_DATA ( RESULT_TS, RESULT_ID, QUESTION_DATA, QUESTION_ANSWER ) VALUES ( ?, ?, ?, ? );",
+							new Object[] { Long.toString(timestamp), String.format("%d_%d", timestamp, i),
+									qs[i].question, normalizedAnswer });
+
 					results.add(r);
+				}
 			}
 
-			api.answerInlineQuery(q.id, results, null, null, null, null, null);
+			api.answerInlineQuery(q.id, results, 1, null, null, null, null);
 
 		} catch (TelegramBotApiException e) {
 			// TODO Auto-generated catch block
@@ -174,7 +194,7 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 
 	}
 
-	private InlineQueryResult convertQuestionToInlineResult(Question q, int idx) {
+	private InlineQueryResult convertQuestionToInlineResult(Question q, String resultId) {
 
 		InlineKeyboardMarkup.Builder kb = new InlineKeyboardMarkup.Builder();
 
@@ -182,9 +202,9 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 			kb.addRow();
 
 			InlineKeyboardButton btn1 = new InlineKeyboardButton("true", null,
-					q.correctAnswer.equals("1") ? Long.toString(System.currentTimeMillis()) : "FAIL", null);
+					q.correctAnswer.equals("1") ? resultId : "FAIL", null);
 			InlineKeyboardButton btn2 = new InlineKeyboardButton("false", null,
-					q.correctAnswer.equals("0") ? Long.toString(System.currentTimeMillis()) : "FAIL", null);
+					q.correctAnswer.equals("0") ? resultId : "FAIL", null);
 
 			kb.addButton(btn1, 0);
 			kb.addButton(btn2, 0);
@@ -194,7 +214,7 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 			kb.addRow();
 			kb.addRow();
 
-			InlineKeyboardButton btn1 = new InlineKeyboardButton(q.correctAnswer, null, Long.toString(System.currentTimeMillis()), null);
+			InlineKeyboardButton btn1 = new InlineKeyboardButton(q.correctAnswer, null, resultId, null);
 
 			kb.addButton(btn1, 0);
 
@@ -209,32 +229,65 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 
 		}
 
-		InlineQueryResultPhoto iqr = new InlineQueryResultPhoto(Integer.toString(idx), categoryImages.get(q.category),
+		InlineQueryResultPhoto iqr = new InlineQueryResultPhoto(resultId, categoryImages.get(q.category),
 				categoryImages.get(q.category), 104, 104, "", "", null, kb.build(),
 				new InputTextMessageContent(q.question, ParseMode.HTML, null));
 
 		return iqr;
 	}
-	
-	private String buildAnswerData(Question q) {
-		return String.format("W%s", q.question);	
-	}
 
 	private void handleChosenResult(ChosenInlineResult chosenInlineResult) {
-		validQuestionIds.add(chosenInlineResult.inlineMessageId);
+
+		log.trace(String.format("Chosen question with id: %s", chosenInlineResult.resultId));
+
+		final String ts = chosenInlineResult.resultId.split("_")[0];
+
+		jdbc.update("DELETE FROM PUBLIC.QUESTION_DATA WHERE RESULT_TS = ? AND RESULT_ID <> ? ;",
+				new Object[] { ts, chosenInlineResult.resultId });
+
 	}
 
 	private void handleCallbackQuery(CallbackQuery callbackQuery) {
 
 		try {
-			if (validQuestionIds.contains(callbackQuery.inlineMessageId)) {
+			final Integer x = jdbc.queryForObject("SELECT COUNT(1) FROM PUBLIC.QUESTION_DATA WHERE RESULT_ID = ? ;",
+					Integer.class, new Object[] { callbackQuery.data });
 
-				if (callbackQuery.data.charAt(0) == 'W') {
-					
-					BooleanOrMessage bm = api.editMessageReplyMarkup(null, null, callbackQuery.inlineMessageId, null);
-					bm = api.editMessageText(null, null, callbackQuery.inlineMessageId, String.format("%s\nWinner: %s", callbackQuery.data.substring(1)), null, null, null);
+			if (x > 0) {
 
-					validQuestionIds.remove(callbackQuery.inlineMessageId);
+				if (!"FAIL".equals(callbackQuery.data)) {
+
+					final String newText = jdbc.query(
+							"SELECT QUESTION_DATA, QUESTION_ANSWER FROM PUBLIC.QUESTION_DATA WHERE RESULT_ID = ? ;",
+							new Object[] { callbackQuery.data }, new ResultSetExtractor<String>() {
+
+								@Override
+								public String extractData(ResultSet rs) throws SQLException, DataAccessException {
+
+									final String name = callbackQuery.from.username == null
+											|| "".equals(callbackQuery.from.username)
+													? String.format("%s %s", callbackQuery.from.firstName,
+															callbackQuery.from.lastName)
+													: callbackQuery.from.username;
+
+									if (rs.next()) {
+
+										return String.format("%s\n<b>Answer: </b>%s\n<b>Winner: </b>%s",
+												rs.getString(1), rs.getString(2), name);
+									} else
+										return String.format("Ooops, something wrong happened. (And it's %s's fault)",
+												name);
+								}
+
+							});
+
+					api.editMessageReplyMarkup(null, null, callbackQuery.inlineMessageId, null);
+
+					api.editMessageText(null, null, callbackQuery.inlineMessageId, newText, ParseMode.HTML, null, null);
+
+					jdbc.update("DELETE FROM PUBLIC.QUESTION_DATA WHERE RESULT_ID = ? ;",
+							new Object[] { callbackQuery.data });
+
 				}
 			}
 

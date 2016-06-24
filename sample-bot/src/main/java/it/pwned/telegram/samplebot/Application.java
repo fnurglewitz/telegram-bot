@@ -11,18 +11,15 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
 import it.pwned.telegram.bot.TelegramBot;
 import it.pwned.telegram.bot.api.TelegramBotApi;
 import it.pwned.telegram.bot.api.rest.TelegramBotRestApi;
-import it.pwned.telegram.bot.api.type.ChatId;
 import it.pwned.telegram.bot.api.type.Update;
 import it.pwned.telegram.bot.collector.ApiUpdateCollector;
 import it.pwned.telegram.bot.collector.UpdateCollector;
@@ -31,11 +28,6 @@ import it.pwned.telegram.bot.handler.UpdateHandler;
 import it.pwned.telegram.bot.handler.UpdateHandlerManager;
 import it.pwned.telegram.samplebot.config.HandlerConfig;
 import it.pwned.telegram.samplebot.config.RestConfig;
-import it.pwned.telegram.samplebot.trivia.api.OpenTdbRestApi;
-import it.pwned.telegram.samplebot.trivia.type.Question;
-import it.pwned.telegram.samplebot.trivia.type.QuestionCategory;
-import it.pwned.telegram.samplebot.trivia.type.QuestionDifficulty;
-import it.pwned.telegram.samplebot.trivia.type.QuestionType;
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
 
@@ -99,19 +91,8 @@ public class Application {
 				bot.shutdown();
 			}
 		});
-
-		
 		
 		bot.run();
-		//api.sendPhoto(new ChatId(-20633065L), ctx.getBean(ResourceLoader.class).getResource("classpath:icons/20.png"), "prova", null, null, null);
-		
-		
-		
-		/*
-		OpenTdbRestApi a = new OpenTdbRestApi(ctx.getBean(RestTemplate.class));
-		
-		Question[] q = a.getQuestions(1, QuestionCategory.ANY, QuestionDifficulty.EASY, QuestionType.MULTIPLE);
-		*/
 		
 		ctx.close();
 
