@@ -433,6 +433,8 @@ public class Message {
 	 *
 	 */
 	public static class Util {
+		
+		private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
 		public static class BotCommand {
 
@@ -478,7 +480,7 @@ public class Message {
 				if (cmd_and_params.length > 1)
 					parameters = Arrays.copyOfRange(cmd_and_params, 1, cmd_and_params.length);
 				else
-					parameters = null;
+					parameters = EMPTY_STRING_ARRAY;
 
 				result = new BotCommand(command, recipient, parameters);
 			}

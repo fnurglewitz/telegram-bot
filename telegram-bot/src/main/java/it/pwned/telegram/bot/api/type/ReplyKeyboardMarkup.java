@@ -1,6 +1,7 @@
 package it.pwned.telegram.bot.api.type;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -144,6 +145,33 @@ public final class ReplyKeyboardMarkup extends AbstractKeyboardMarkup {
 		public Builder setSelective(Boolean selective) {
 			this.selective = selective;
 			return this;
+		}
+
+		public void loadButtonsFromList(List<KeyboardButton> buttons, int buttonsPerRow) {
+
+			keyboard = new ArrayList<ArrayList<KeyboardButton>>();
+
+			int rows = 0;
+
+			rows = buttons.size() / buttonsPerRow;
+
+			if (buttons.size() % buttonsPerRow > 0)
+				++rows;
+
+			for (int row = 0; row < rows; row++) {
+
+				addRow();
+
+				for (int btnIdx = 0; btnIdx < buttonsPerRow; btnIdx++) {
+
+					int currentButtonIndex = ((row) * buttonsPerRow) + btnIdx;
+
+					if (currentButtonIndex < buttons.size())
+						addButton(buttons.get(currentButtonIndex), row);
+
+				}
+
+			}
 		}
 
 		/**

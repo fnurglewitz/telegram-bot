@@ -31,6 +31,7 @@ import it.pwned.telegram.bot.api.type.ParseMode;
 import it.pwned.telegram.bot.api.type.TelegramBotApiException;
 import it.pwned.telegram.bot.api.type.Update;
 import it.pwned.telegram.bot.api.type.User;
+import it.pwned.telegram.bot.api.type.User.Util.UserNameFormat;
 import it.pwned.telegram.bot.api.type.inline.ChosenInlineResult;
 import it.pwned.telegram.bot.api.type.inline.InlineQuery;
 import it.pwned.telegram.bot.api.type.inline.InlineQueryResult;
@@ -135,6 +136,7 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 		while (goOn) {
 
 			try {
+
 				final Update u = updateQueue.take();
 
 				if (Update.Util.hasInlineQuery(u))
@@ -146,8 +148,11 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 				if (Update.Util.hasCallbackQuery(u))
 					handleCallbackQuery(u.callbackQuery);
 
-			} catch (InterruptedException e) {
+				if (Thread.currentThread().isInterrupted())
+					throw new InterruptedException();
 
+			} catch (InterruptedException e) {
+				goOn = false;
 			}
 
 		}
@@ -201,13 +206,13 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 		if (q.type == QuestionType.BOOLEAN) {
 			kb.addRow();
 
-			InlineKeyboardButton btn1 = new InlineKeyboardButton("true", null, q.correctAnswer.equals("1") ? "WIN" : "FAIL",
-					null);
-			InlineKeyboardButton btn2 = new InlineKeyboardButton("false", null, q.correctAnswer.equals("0") ? "WIN" : "FAIL",
-					null);
+			InlineKeyboardButton btnTrue = new InlineKeyboardButton("true", null,
+					q.correctAnswer.equals("1") ? "WIN" : "FAIL", null);
+			InlineKeyboardButton btnFalse = new InlineKeyboardButton("false", null,
+					q.correctAnswer.equals("0") ? "WIN" : "FAIL", null);
 
-			kb.addButton(btn1, 0);
-			kb.addButton(btn2, 0);
+			kb.addButton(btnTrue, 0);
+			kb.addButton(btnFalse, 0);
 
 		} else {
 
@@ -221,31 +226,11 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 
 			Collections.shuffle(allButtons);
 
-			// 2 buttons per row
-			int totalRows = calculateButtonRows(allButtons.size());
-
-			for (int row = 0; row < totalRows; row++)
-				kb.addRow();
-
-			for (int row = 0, btnIdx = 0; row < totalRows; row++, btnIdx = btnIdx + 2) {
-				kb.addButton(allButtons.get(btnIdx), row);
-				kb.addButton(allButtons.get(btnIdx + 1), row);
-			}
+			kb.loadButtonsFromList(allButtons, 2);
 
 		}
 
 		return kb.build();
-	}
-
-	private int calculateButtonRows(int buttonsCount) {
-		int rows = 0;
-
-		rows = buttonsCount / 2;
-
-		if (buttonsCount % 2 > 0)
-			++rows;
-
-		return rows;
 	}
 
 	private void handleChosenResult(ChosenInlineResult chosenInlineResult) {
@@ -261,9 +246,6 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 				difficulty = QuestionDifficulty.fromString(chosenResultValues[1]);
 		}
 
-		log.trace(String.format("Chosen question with category [%s] and difficulty [%s]", category.toString(),
-				difficulty.toString()));
-
 		try {
 
 			Question question = fetchQuestion(category, difficulty);
@@ -272,8 +254,8 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 
 				InlineKeyboardMarkup keyboard = getInlineKeyboardFromQuestion(question);
 
-				api.editMessageText(null, null, chosenInlineResult.inlineMessageId, question.question, ParseMode.HTML, null,
-						null);
+				api.editMessageText(null, null, chosenInlineResult.inlineMessageId, HtmlUtils.htmlUnescape(question.question),
+						ParseMode.HTML, null, null);
 
 				api.editMessageReplyMarkup(null, null, chosenInlineResult.inlineMessageId, keyboard);
 
@@ -403,7 +385,7 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 						"SELECT COUNT(1) FROM PUBLIC.QUESTION_DATA WHERE QUESTION_ID = ? AND WINNING_USER_ID IS NULL ;",
 						Integer.class, new Object[] { callbackQuery.inlineMessageId });
 
-				final String user = normalizeUsername(callbackQuery.from);
+				final String user = User.Util.usernameOrName(callbackQuery.from, UserNameFormat.LINK);
 
 				if (count > 0) {
 
@@ -425,17 +407,12 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 
 					api.editMessageReplyMarkup(null, null, callbackQuery.inlineMessageId, null);
 
-					api.editMessageText(null, null, callbackQuery.inlineMessageId, newText, ParseMode.HTML, null, null);
+					api.editMessageText(null, null, callbackQuery.inlineMessageId, HtmlUtils.htmlUnescape(newText),
+							ParseMode.HTML, null, null);
 
 					jdbc.update("UPDATE PUBLIC.QUESTION_DATA SET WINNING_USER_ID = ? WHERE QUESTION_ID = ? ;",
 							new Object[] { callbackQuery.from.id, callbackQuery.inlineMessageId });
 
-				} else {
-					api.editMessageReplyMarkup(null, null, callbackQuery.inlineMessageId, null);
-
-					api.editMessageText(null, null, callbackQuery.inlineMessageId,
-							String.format("Ooops, something wrong happened. (And it's %s's fault)", user), ParseMode.HTML, null,
-							null);
 				}
 
 			}
@@ -446,22 +423,6 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 
 		}
 
-	}
-
-	private String normalizeUsername(User user) {
-		String username = user.username;
-
-		if (username == null || "".equals(username)) {
-			username = user.firstName;
-
-			if (user.lastName != null && !"".equals(user.lastName))
-				username = String.format("%s %s", username, user.lastName);
-
-		} else {
-			username = String.format("@%s", username);
-		}
-
-		return username;
 	}
 
 }

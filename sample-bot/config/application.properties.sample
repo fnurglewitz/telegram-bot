@@ -1,27 +1,19 @@
 app.name = Sample Bot
 spring.application.name= Sample Bot
 bot.token=
+bot.api.updates.timeout=60
 bot.executor.core-pool-size=15
 bot.executor.max-pool-size=15
-pg-logger.save-files=false
-imgur.client-id=
-imgur.commands-file=./imgurcommands.txt
-openweather.api-key=
 spring.main.web-environment=false
 spring.main.show-banner=true
 spring.jmx.enabled=false
+
+logging.config=classpath:logback.xml
 logging.file=samplebot.log
+logging.level.it.pwned.telegram.samplebot.handler=INFO
+logging.level.it.pwned.telegram.bot=INFO
 logging.level.it.pwned.telegram.bot.api.log=INFO
 
-spring.datasource.url=jdbc:postgresql://localhost/bot
-spring.datasource.username=postgres
-spring.datasource.password=
-spring.datasource.driverClassName=org.postgresql.Driver
+spring.datasource.url=jdbc:h2:file:./database/botdb;MULTI_THREADED=1
 
-spring.jpa.generate-ddl=true
-
-shell.auth.simple.user.name=
-shell.auth.simple.user.password=
-shell.command-path-patterns=classpath*:/crash/commands/**
-shell.ssh.enabled=true
-shell.telnet.enabled=false
+flyway.enabled=true

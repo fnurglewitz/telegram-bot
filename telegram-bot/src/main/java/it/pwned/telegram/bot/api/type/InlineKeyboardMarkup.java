@@ -1,6 +1,7 @@
 package it.pwned.telegram.bot.api.type;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -63,6 +64,33 @@ public class InlineKeyboardMarkup extends AbstractKeyboardMarkup {
 			return new InlineKeyboardMarkup(out);
 		}
 
+		public void loadButtonsFromList(List<InlineKeyboardButton> buttons, int buttonsPerRow) {
+
+			keyboard = new ArrayList<ArrayList<InlineKeyboardButton>>();
+
+			int rows = 0;
+
+			rows = buttons.size() / buttonsPerRow;
+
+			if (buttons.size() % buttonsPerRow > 0)
+				++rows;
+
+			for (int row = 0; row < rows; row++) {
+
+				addRow();
+
+				for (int btnIdx = 0; btnIdx < buttonsPerRow; btnIdx++) {
+
+					int currentButtonIndex = ((row) * buttonsPerRow) + btnIdx;
+
+					if (currentButtonIndex < buttons.size())
+						addButton(buttons.get(currentButtonIndex), row);
+
+				}
+
+			}
+		}
+
 		/**
 		 * 
 		 * @return Returns the added row index
@@ -76,7 +104,7 @@ public class InlineKeyboardMarkup extends AbstractKeyboardMarkup {
 		 * Deletes the row with the specified index
 		 * 
 		 * @param index
-		 *            row index
+		 *          row index
 		 */
 		public void deleteRow(int idx) {
 			keyboard.remove(idx);
@@ -86,9 +114,9 @@ public class InlineKeyboardMarkup extends AbstractKeyboardMarkup {
 		 * Adds a InlineKeyboardButton to a specific row
 		 * 
 		 * @param btn
-		 *            The button to add
+		 *          The button to add
 		 * @param idx
-		 *            Index of the row
+		 *          Index of the row
 		 */
 		public void addButton(InlineKeyboardButton btn, int idx) {
 			keyboard.get(idx).add(btn);

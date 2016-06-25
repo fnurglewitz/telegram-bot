@@ -56,4 +56,41 @@ public final class User {
 		this.username = username;
 	}
 
+	public static class Util {
+
+		public static enum UserNameFormat {
+			PLAIN, LINK
+		}
+
+		/**
+		 * Always returns a non-empty string representing the user. Priority is
+		 * given to the username, if null or empty it falls back on the real nameù
+		 * 
+		 * @param user
+		 *          User
+		 * @param format
+		 *          if UserNameFormat.LINK an @ is prepended to the username
+		 * @return A string representing the user
+		 */
+		public static String usernameOrName(User user, UserNameFormat format) {
+
+			String username = user.username;
+
+			if (username == null || "".equals(username)) {
+				username = user.firstName;
+
+				if (user.lastName != null && !"".equals(user.lastName))
+					username = String.format("%s %s", username, user.lastName);
+
+			} else {
+				if (format == UserNameFormat.LINK)
+					username = String.format("@%s", username);
+			}
+
+			return username;
+
+		}
+
+	}
+
 }
