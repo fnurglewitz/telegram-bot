@@ -37,7 +37,7 @@ public interface TelegramBotApi {
 	User getMe() throws TelegramBotApiException;
 
 	/**
-	 * Use this method to receive incoming updates using long polling. An Array of
+	 * Use this method to receive incoming updates using long polling. A List of
 	 * {@link it.pwned.telegram.bot.api.type.Update Update} objects is returned.
 	 * 
 	 * @param offset
@@ -55,7 +55,7 @@ public interface TelegramBotApi {
 	 *          short polling
 	 * @return
 	 */
-	Update[] getUpdates(Integer offset, Integer limit, Integer timeout) throws TelegramBotApiException;
+	List<Update> getUpdates(Integer offset, Integer limit, Integer timeout) throws TelegramBotApiException;
 
 	/**
 	 * Use this method to send text messages.
@@ -609,8 +609,9 @@ public interface TelegramBotApi {
 	 *         Message is returned, otherwise True is returned.
 	 * @throws TelegramBotApiException
 	 */
-	BooleanOrMessage editMessageText(ChatId chatId, Integer messageId, String inlineMessageId, String text, ParseMode parseMode,
-			Boolean disableWebPagePreview, InlineKeyboardMarkup replyMarkup) throws TelegramBotApiException;
+	BooleanOrMessage editMessageText(ChatId chatId, Integer messageId, String inlineMessageId, String text,
+			ParseMode parseMode, Boolean disableWebPagePreview, InlineKeyboardMarkup replyMarkup)
+			throws TelegramBotApiException;
 
 	/**
 	 * Use this method to edit captions of messages sent by the bot or via the bot
@@ -682,11 +683,11 @@ public interface TelegramBotApi {
 	 * @param chatId
 	 *          Unique identifier for the target chat or username of the target
 	 *          supergroup or channel (in the format @channelusername)
-	 * @return On success, returns an Array of ChatMember objects that contains
+	 * @return On success, returns a List of ChatMember objects that contains
 	 *         information about all chat administrators except other bots.
 	 * @throws TelegramBotApiException
 	 */
-	ChatMember[] getChatAdministrators(ChatId chatId) throws TelegramBotApiException;
+	List<ChatMember> getChatAdministrators(ChatId chatId) throws TelegramBotApiException;
 
 	/**
 	 * Use this method to get information about a member of a chat.

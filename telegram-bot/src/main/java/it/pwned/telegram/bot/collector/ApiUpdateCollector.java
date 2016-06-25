@@ -1,6 +1,6 @@
 package it.pwned.telegram.bot.collector;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
 import org.slf4j.Logger;
@@ -36,7 +36,7 @@ public class ApiUpdateCollector implements UpdateCollector {
 
 	private void fetch() {
 
-		Update[] updates = null;
+		List<Update> updates = null;
 
 		try {
 			updates = api.getUpdates(lastUpdate + 1, null, timeout);
@@ -45,9 +45,8 @@ public class ApiUpdateCollector implements UpdateCollector {
 			updates = null;
 		}
 
-		if (updates != null && updates.length > 0) {
-			log.trace(String.format("Fetched %d updates", updates.length));
-			Arrays.sort(updates);
+		if (updates != null && updates.size() > 0) {
+			log.trace(String.format("Fetched %d updates", updates.size()));
 
 			for (Update u : updates) {
 				if (u.updateId > lastUpdate)

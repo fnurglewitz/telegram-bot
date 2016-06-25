@@ -1,6 +1,8 @@
 package it.pwned.telegram.bot.api.type;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -113,7 +115,7 @@ public class Message {
 	 * URLs, bot commands, etc. that appear in the text
 	 */
 	@JsonProperty(JSON_FIELD_ENTITIES)
-	public final MessageEntity[] entities;
+	public final List<MessageEntity> entities;
 
 	/**
 	 * <em>Optional.</em> Message is an audio file, information about the file
@@ -131,7 +133,7 @@ public class Message {
 	 * <em>Optional.</em> Message is a photo, available sizes of the photo
 	 */
 	@JsonProperty(JSON_FIELD_PHOTO)
-	public final PhotoSize[] photo;
+	public final List<PhotoSize> photo;
 
 	/**
 	 * <em>Optional.</em> Message is a sticker, information about the sticker
@@ -202,7 +204,7 @@ public class Message {
 	 * <em>Optional.</em> A chat photo was change to this value
 	 */
 	@JsonProperty(JSON_FIELD_NEW_CHAT_PHOTO)
-	public final PhotoSize[] newChatPhoto;
+	public final List<PhotoSize> newChatPhoto;
 
 	/**
 	 * <em>Optional.</em> Service message: the chat photo was deleted
@@ -375,15 +377,15 @@ public class Message {
 			@JsonProperty(JSON_FIELD_FORWARD_DATE) Integer forwardDate,
 			@JsonProperty(JSON_FIELD_REPLY_TO_MESSAGE) Message replyToMessage,
 			@JsonProperty(JSON_FIELD_EDIT_DATE) Integer editDate, @JsonProperty(JSON_FIELD_TEXT) String text,
-			@JsonProperty(JSON_FIELD_ENTITIES) MessageEntity[] entities, @JsonProperty(JSON_FIELD_AUDIO) Audio audio,
-			@JsonProperty(JSON_FIELD_DOCUMENT) Document document, @JsonProperty(JSON_FIELD_PHOTO) PhotoSize[] photo,
+			@JsonProperty(JSON_FIELD_ENTITIES) List<MessageEntity> entities, @JsonProperty(JSON_FIELD_AUDIO) Audio audio,
+			@JsonProperty(JSON_FIELD_DOCUMENT) Document document, @JsonProperty(JSON_FIELD_PHOTO) List<PhotoSize> photo,
 			@JsonProperty(JSON_FIELD_STICKER) Sticker sticker, @JsonProperty(JSON_FIELD_VIDEO) Video video,
 			@JsonProperty(JSON_FIELD_VOICE) Voice voice, @JsonProperty(JSON_FIELD_CAPTION) String caption,
 			@JsonProperty(JSON_FIELD_CONTACT) Contact contact, @JsonProperty(JSON_FIELD_LOCATION) Location location,
 			@JsonProperty(JSON_FIELD_VENUE) Venue venue, @JsonProperty(JSON_FIELD_NEW_CHAT_MEMBER) User newChatMember,
 			@JsonProperty(JSON_FIELD_LEFT_CHAT_MEMBER) User leftChatMember,
 			@JsonProperty(JSON_FIELD_NEW_CHAT_TITLE) String newChatTitle,
-			@JsonProperty(JSON_FIELD_NEW_CHAT_PHOTO) PhotoSize[] newChatPhoto,
+			@JsonProperty(JSON_FIELD_NEW_CHAT_PHOTO) List<PhotoSize> newChatPhoto,
 			@JsonProperty(JSON_FIELD_DELETE_CHAT_PHOTO) Boolean deleteChatPhoto,
 			@JsonProperty(JSON_FIELD_GROUP_CHAT_CREATED) Boolean groupChatCreated,
 			@JsonProperty(JSON_FIELD_SUPERGROUP_CHAT_CREATED) Boolean supergroupChatCreated,
@@ -403,10 +405,10 @@ public class Message {
 		this.replyToMessage = replyToMessage;
 		this.editDate = editDate;
 		this.text = text;
-		this.entities = entities;
+		this.entities = entities == null ? null : Collections.unmodifiableList(entities);
 		this.audio = audio;
 		this.document = document;
-		this.photo = photo;
+		this.photo = photo == null ? null : Collections.unmodifiableList(photo);
 		this.sticker = sticker;
 		this.video = video;
 		this.voice = voice;
@@ -417,7 +419,7 @@ public class Message {
 		this.newChatMember = newChatMember;
 		this.leftChatMember = leftChatMember;
 		this.newChatTitle = newChatTitle;
-		this.newChatPhoto = newChatPhoto;
+		this.newChatPhoto = newChatPhoto == null ? null : Collections.unmodifiableList(newChatPhoto);
 		this.deleteChatPhoto = deleteChatPhoto;
 		this.groupChatCreated = groupChatCreated;
 		this.supergroupChatCreated = supergroupChatCreated;
@@ -433,7 +435,7 @@ public class Message {
 	 *
 	 */
 	public static class Util {
-		
+
 		private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
 		public static class BotCommand {
@@ -495,39 +497,39 @@ public class Message {
 		public static boolean hasText(Message m) {
 			return m.text != null;
 		}
-		
+
 		public static boolean hasAudio(Message m) {
 			return m.audio != null;
 		}
-		
+
 		public static boolean hasDocument(Message m) {
 			return m.document != null;
 		}
-		
+
 		public static boolean hasPhoto(Message m) {
 			return m.photo != null;
 		}
-		
+
 		public static boolean hasSticker(Message m) {
 			return m.sticker != null;
 		}
-		
+
 		public static boolean hasVideo(Message m) {
 			return m.video != null;
 		}
-		
+
 		public static boolean hasVoice(Message m) {
 			return m.voice != null;
 		}
-		
+
 		public static boolean hasLocation(Message m) {
 			return m.location != null;
 		}
-		
+
 		public static boolean hasVenue(Message m) {
 			return m.venue != null;
 		}
-		
+
 	}
 
 	/**
@@ -546,10 +548,10 @@ public class Message {
 		private Message replyToMessage;
 		private Integer editDate;
 		private String text;
-		private MessageEntity[] entities;
+		private List<MessageEntity> entities;
 		private Audio audio;
 		private Document document;
-		private PhotoSize[] photo;
+		private List<PhotoSize> photo;
 		private Sticker sticker;
 		private Video video;
 		private Voice voice;
@@ -560,7 +562,7 @@ public class Message {
 		private User newChatMember;
 		private User leftChatMember;
 		private String newChatTitle;
-		private PhotoSize[] newChatPhoto;
+		private List<PhotoSize> newChatPhoto;
 		private Boolean deleteChatPhoto;
 		private Boolean groupChatCreated;
 		private Boolean supergroupChatCreated;
@@ -630,7 +632,7 @@ public class Message {
 			return this;
 		}
 
-		public Builder setEntities(MessageEntity[] entities) {
+		public Builder setEntities(List<MessageEntity> entities) {
 			this.entities = entities;
 			return this;
 		}
@@ -645,7 +647,7 @@ public class Message {
 			return this;
 		}
 
-		public Builder setPhoto(PhotoSize[] photo) {
+		public Builder setPhoto(List<PhotoSize> photo) {
 			this.photo = photo;
 			return this;
 		}
@@ -700,7 +702,7 @@ public class Message {
 			return this;
 		}
 
-		public Builder setNewChatPhoto(PhotoSize[] newChatPhoto) {
+		public Builder setNewChatPhoto(List<PhotoSize> newChatPhoto) {
 			this.newChatPhoto = newChatPhoto;
 			return this;
 		}

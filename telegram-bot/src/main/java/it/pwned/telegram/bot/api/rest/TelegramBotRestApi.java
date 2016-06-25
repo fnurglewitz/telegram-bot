@@ -2,6 +2,8 @@ package it.pwned.telegram.bot.api.rest;
 
 import java.net.MalformedURLException;
 import java.security.InvalidParameterException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.core.io.Resource;
@@ -14,12 +16,12 @@ import org.springframework.web.util.UriTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.pwned.telegram.bot.api.TelegramBotApi;
+import it.pwned.telegram.bot.api.type.AbstractKeyboardMarkup;
+import it.pwned.telegram.bot.api.type.BooleanOrMessage;
 import it.pwned.telegram.bot.api.type.Chat;
 import it.pwned.telegram.bot.api.type.ChatAction;
 import it.pwned.telegram.bot.api.type.ChatId;
 import it.pwned.telegram.bot.api.type.ChatMember;
-import it.pwned.telegram.bot.api.type.AbstractKeyboardMarkup;
-import it.pwned.telegram.bot.api.type.BooleanOrMessage;
 import it.pwned.telegram.bot.api.type.InlineKeyboardMarkup;
 import it.pwned.telegram.bot.api.type.Message;
 import it.pwned.telegram.bot.api.type.ParseMode;
@@ -58,7 +60,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Update[] getUpdates(Integer offset, Integer limit, Integer timeout) throws TelegramBotApiException {
+	public List<Update> getUpdates(Integer offset, Integer limit, Integer timeout) throws TelegramBotApiException {
 
 		TelegramBotRestApiCall.Builder<Update[]> builder = new TelegramBotRestApiCall.Builder<Update[]>("getUpdates",
 				apiUriTemplate, mapper, restTemplate, Update[].class);
@@ -66,7 +68,11 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		builder.setParam("offset", offset, false).setParam("limit", limit, false).setParam("timeout", timeout, false);
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
-		return builder.build().call();
+
+		Update[] result = builder.build().call();
+		Arrays.sort(result);
+
+		return Collections.unmodifiableList(Arrays.asList(result));
 	}
 
 	@Override
@@ -415,7 +421,7 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public ChatMember[] getChatAdministrators(ChatId chatId) throws TelegramBotApiException {
+	public List<ChatMember> getChatAdministrators(ChatId chatId) throws TelegramBotApiException {
 
 		TelegramBotRestApiCall.Builder<ChatMember[]> builder = new TelegramBotRestApiCall.Builder<ChatMember[]>(
 				"getChatAdministrators", apiUriTemplate, mapper, restTemplate, ChatMember[].class);
@@ -423,7 +429,9 @@ public class TelegramBotRestApi implements TelegramBotApi {
 		builder.setParam("chat_id", chatId, true);
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
-		return builder.build().call();
+		ChatMember[] result = builder.build().call();
+
+		return Collections.unmodifiableList(Arrays.asList(result));
 	}
 
 	@Override
