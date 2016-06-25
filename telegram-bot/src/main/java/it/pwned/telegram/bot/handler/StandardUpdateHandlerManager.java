@@ -28,10 +28,10 @@ public class StandardUpdateHandlerManager implements UpdateHandlerManager {
 
 		// Collections.sort(handlers, AnnotationAwareOrderComparator.INSTANCE);
 	}
-	
+
 	@Override
 	@InlineHandlerQualifier
-	@Autowired(required=false)
+	@Autowired(required = false)
 	public void setInlineHandler(UpdateHandler handler) {
 		this.inlineHandler = handler;
 	}
@@ -52,7 +52,8 @@ public class StandardUpdateHandlerManager implements UpdateHandlerManager {
 
 		handlers.forEach(h -> {
 			log.info(String.format("Saving state for handler <%>", h.getName()));
-			h.saveState();
+			if (h instanceof StatefulUpdateHandler)
+				((StatefulUpdateHandler) h).saveState();
 		});
 
 	}
@@ -63,7 +64,8 @@ public class StandardUpdateHandlerManager implements UpdateHandlerManager {
 
 		handlers.forEach(h -> {
 			log.info(String.format("Loading state for handler <%s>", h.getName()));
-			h.loadState();
+			if (h instanceof StatefulUpdateHandler)
+				((StatefulUpdateHandler) h).loadState();
 
 			if (h.requiresThread()) {
 				log.info(String.format("Starting thread for handler <%s>", h.getName()));

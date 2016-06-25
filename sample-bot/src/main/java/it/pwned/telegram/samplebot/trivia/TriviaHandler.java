@@ -130,16 +130,6 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 	}
 
 	@Override
-	public void loadState() {
-
-	}
-
-	@Override
-	public void saveState() {
-
-	}
-
-	@Override
 	public void run() {
 
 		while (goOn) {

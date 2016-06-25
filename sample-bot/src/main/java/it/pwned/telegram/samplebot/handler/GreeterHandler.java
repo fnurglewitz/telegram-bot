@@ -59,14 +59,6 @@ public class GreeterHandler implements UpdateHandler {
 	}
 
 	@Override
-	public void loadState() {		
-	}
-
-	@Override
-	public void saveState() {		
-	}
-
-	@Override
 	public String getName() {
 		return "GreeterHandler";
 	}

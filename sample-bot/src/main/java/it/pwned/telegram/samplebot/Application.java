@@ -11,7 +11,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.client.RestTemplate;
 
@@ -28,7 +27,6 @@ import it.pwned.telegram.bot.handler.UpdateHandler;
 import it.pwned.telegram.bot.handler.UpdateHandlerManager;
 import it.pwned.telegram.samplebot.config.HandlerConfig;
 import it.pwned.telegram.samplebot.config.RestConfig;
-import it.pwned.telegram.samplebot.trivia.type.QuestionCategory;
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
 
@@ -72,11 +70,6 @@ public class Application {
 			throws Exception {
 		return new TelegramBot(api, collector, manager);
 	}
-	
-	@Bean 
-	public ResourceLoader prova(ResourceLoader rl) {
-		return rl;
-	}
 
 	public static void main(String args[]) throws BeansException, Exception {
 		SpringApplication app = new SpringApplication(RestConfig.class, Application.class, HandlerConfig.class);
@@ -92,9 +85,9 @@ public class Application {
 				bot.shutdown();
 			}
 		});
-		
+
 		bot.run();
-		
+
 		ctx.close();
 
 		log.info("Bye");
