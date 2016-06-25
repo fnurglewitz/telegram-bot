@@ -8,12 +8,12 @@ import it.pwned.telegram.samplebot.trivia.type.QuestionType;
 public interface OpenTdbApi {
 
 	public Question[] getQuestions(int amount, QuestionCategory category, QuestionDifficulty difficulty,
-			QuestionType type) throws TriviaApiException;
+			QuestionType type) throws OpenTdbApiException;
 
 	public Question[] getQuestions(int amount, QuestionCategory category, QuestionDifficulty difficulty,
-			QuestionType type, String token) throws TriviaApiException;
+			QuestionType type, String token) throws OpenTdbApiException;
 
-	public String requestToken() throws TriviaApiException;
+	public String requestToken() throws OpenTdbApiException;
 
-	public void resetToken(String token) throws TriviaApiException;
+	public void resetToken(String token) throws OpenTdbApiException;
 }

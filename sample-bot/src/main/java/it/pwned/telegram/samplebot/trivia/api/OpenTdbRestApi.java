@@ -10,8 +10,8 @@ import it.pwned.telegram.samplebot.trivia.type.Question;
 import it.pwned.telegram.samplebot.trivia.type.QuestionCategory;
 import it.pwned.telegram.samplebot.trivia.type.QuestionDifficulty;
 import it.pwned.telegram.samplebot.trivia.type.QuestionType;
-import it.pwned.telegram.samplebot.trivia.type.TriviaApiQuestionResponse;
-import it.pwned.telegram.samplebot.trivia.type.TriviaApiTokenResponse;
+import it.pwned.telegram.samplebot.trivia.type.OpenTdbApiQuestionResponse;
+import it.pwned.telegram.samplebot.trivia.type.OpenTdbApiTokenResponse;
 
 public class OpenTdbRestApi implements OpenTdbApi {
 
@@ -25,13 +25,13 @@ public class OpenTdbRestApi implements OpenTdbApi {
 
 	@Override
 	public Question[] getQuestions(int amount, QuestionCategory category, QuestionDifficulty difficulty,
-			QuestionType type) throws TriviaApiException {
+			QuestionType type) throws OpenTdbApiException {
 		return getQuestions(amount, category, difficulty, type, null);
 	}
 
 	@Override
 	public Question[] getQuestions(int amount, QuestionCategory category, QuestionDifficulty difficulty,
-			QuestionType type, String token) throws TriviaApiException {
+			QuestionType type, String token) throws OpenTdbApiException {
 
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
 
@@ -51,23 +51,23 @@ public class OpenTdbRestApi implements OpenTdbApi {
 
 		final String uriString = UriComponentsBuilder.fromHttpUrl(API_URL).queryParams(params).build().toUriString();
 
-		TriviaApiQuestionResponse res = restTemplate
-				.exchange(uriString, HttpMethod.GET, null, TriviaApiQuestionResponse.class).getBody();
+		OpenTdbApiQuestionResponse res = restTemplate
+				.exchange(uriString, HttpMethod.GET, null, OpenTdbApiQuestionResponse.class).getBody();
 
 		return res.results;
 	}
 
 	@Override
-	public String requestToken() throws TriviaApiException {
+	public String requestToken() throws OpenTdbApiException {
 
-		TriviaApiTokenResponse res = restTemplate.exchange("http://www.opentdb.com/api_token.php?command=request",
-				HttpMethod.GET, null, TriviaApiTokenResponse.class).getBody();
+		OpenTdbApiTokenResponse res = restTemplate.exchange("http://www.opentdb.com/api_token.php?command=request",
+				HttpMethod.GET, null, OpenTdbApiTokenResponse.class).getBody();
 
 		return res.token;
 	}
 
 	@Override
-	public void resetToken(String token) throws TriviaApiException {
+	public void resetToken(String token) throws OpenTdbApiException {
 		restTemplate.exchange("http://www.opentdb.com/api_token.php?command=reset&token=" + token, HttpMethod.GET, null,
 				String.class).getBody();
 	}

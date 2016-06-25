@@ -13,8 +13,8 @@ import it.pwned.telegram.bot.api.type.Update;
 import it.pwned.telegram.bot.api.type.User;
 import it.pwned.telegram.bot.handler.InlineHandler;
 import it.pwned.telegram.bot.handler.UpdateHandler;
-import it.pwned.telegram.samplebot.handler.TriviaHandler;
 import it.pwned.telegram.samplebot.handler.UserDataHandler;
+import it.pwned.telegram.samplebot.trivia.TriviaHandler;
 import it.pwned.telegram.samplebot.trivia.api.OpenTdbApi;
 import it.pwned.telegram.samplebot.trivia.api.OpenTdbRestApi;
 

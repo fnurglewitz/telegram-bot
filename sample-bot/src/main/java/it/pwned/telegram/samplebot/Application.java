@@ -28,6 +28,7 @@ import it.pwned.telegram.bot.handler.UpdateHandler;
 import it.pwned.telegram.bot.handler.UpdateHandlerManager;
 import it.pwned.telegram.samplebot.config.HandlerConfig;
 import it.pwned.telegram.samplebot.config.RestConfig;
+import it.pwned.telegram.samplebot.trivia.type.QuestionCategory;
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
 

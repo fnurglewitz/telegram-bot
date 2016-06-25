@@ -69,7 +69,7 @@ public class InlineKeyboardMarkup extends AbstractKeyboardMarkup {
 		 */
 		public int addRow() {
 			keyboard.add(new ArrayList<InlineKeyboardButton>());
-			return rows++;
+			return ++rows;
 		}
 
 		/**

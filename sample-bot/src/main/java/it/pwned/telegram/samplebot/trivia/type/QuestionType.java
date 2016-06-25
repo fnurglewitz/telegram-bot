@@ -35,9 +35,5 @@ public enum QuestionType {
 		}
 
 	}
-	
-	public String toUrlParam() {
-		return (value == "any") ? "" : "&type=" + value;
-	}
 
 }
