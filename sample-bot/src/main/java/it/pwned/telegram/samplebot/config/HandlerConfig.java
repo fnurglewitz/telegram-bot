@@ -5,6 +5,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.client.RestTemplate;
@@ -36,8 +37,8 @@ public class HandlerConfig {
 
 	@Bean
 	@Order(value = 2)
-	public UpdateHandler helpHandler(TelegramBotApi api, ThreadPoolTaskExecutor executor) {
-		return new TriviaHelpHandler(api, executor);
+	public UpdateHandler helpHandler(TelegramBotApi api, ThreadPoolTaskExecutor executor, ResourceLoader loader) {
+		return new TriviaHelpHandler(api, executor, loader);
 	}
 
 	@InlineHandler

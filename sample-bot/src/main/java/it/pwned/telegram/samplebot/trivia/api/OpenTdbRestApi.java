@@ -1,5 +1,7 @@
 package it.pwned.telegram.samplebot.trivia.api;
 
+import java.util.List;
+
 import org.springframework.http.HttpMethod;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -10,6 +12,7 @@ import it.pwned.telegram.samplebot.trivia.type.Question;
 import it.pwned.telegram.samplebot.trivia.type.QuestionCategory;
 import it.pwned.telegram.samplebot.trivia.type.QuestionDifficulty;
 import it.pwned.telegram.samplebot.trivia.type.QuestionType;
+import it.pwned.telegram.samplebot.trivia.type.OpenTdbApiException;
 import it.pwned.telegram.samplebot.trivia.type.OpenTdbApiQuestionResponse;
 import it.pwned.telegram.samplebot.trivia.type.OpenTdbApiTokenResponse;
 
@@ -24,13 +27,13 @@ public class OpenTdbRestApi implements OpenTdbApi {
 	}
 
 	@Override
-	public Question[] getQuestions(int amount, QuestionCategory category, QuestionDifficulty difficulty,
+	public List<Question> getQuestions(int amount, QuestionCategory category, QuestionDifficulty difficulty,
 			QuestionType type) throws OpenTdbApiException {
 		return getQuestions(amount, category, difficulty, type, null);
 	}
 
 	@Override
-	public Question[] getQuestions(int amount, QuestionCategory category, QuestionDifficulty difficulty,
+	public List<Question> getQuestions(int amount, QuestionCategory category, QuestionDifficulty difficulty,
 			QuestionType type, String token) throws OpenTdbApiException {
 
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();

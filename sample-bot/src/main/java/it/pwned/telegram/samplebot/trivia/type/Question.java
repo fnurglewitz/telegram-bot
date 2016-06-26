@@ -1,5 +1,9 @@
 package it.pwned.telegram.samplebot.trivia.type;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public final class Question {
@@ -27,20 +31,20 @@ public final class Question {
 	public final String correctAnswer;
 
 	@JsonProperty(JSON_FIELD_INCORRECT_ANSWERS)
-	public final String[] incorrectAnswers;
+	public final List<String> incorrectAnswers;
 
 	public Question(@JsonProperty(JSON_FIELD_CATEGORY) QuestionCategory category,
 			@JsonProperty(JSON_FIELD_TYPE) QuestionType type,
 			@JsonProperty(JSON_FIELD_DIFFICULTY) QuestionDifficulty difficulty,
 			@JsonProperty(JSON_FIELD_QUESTION) String question, @JsonProperty(JSON_FIELD_CORRECT_ANSWER) String correctAnswer,
-			@JsonProperty(JSON_FIELD_INCORRECT_ANSWERS) String[] incorrectAnswers) {
+			@JsonProperty(JSON_FIELD_INCORRECT_ANSWERS) List<String> incorrectAnswers) {
 
 		this.category = category;
 		this.type = type;
 		this.difficulty = difficulty;
 		this.question = question;
 		this.correctAnswer = correctAnswer;
-		this.incorrectAnswers = incorrectAnswers;
+		this.incorrectAnswers = incorrectAnswers == null ? new ArrayList<String>() : Collections.unmodifiableList(incorrectAnswers);
 
 	}
 

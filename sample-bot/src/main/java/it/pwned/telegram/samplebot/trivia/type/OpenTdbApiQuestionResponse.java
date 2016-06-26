@@ -1,5 +1,8 @@
 package it.pwned.telegram.samplebot.trivia.type;
 
+import java.util.Collections;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class OpenTdbApiQuestionResponse {
@@ -15,15 +18,15 @@ public class OpenTdbApiQuestionResponse {
 	public final String responseMessage;
 
 	@JsonProperty(JSON_FIELD_RESULTS)
-	public final Question[] results;
+	public final List<Question> results;
 
 	public OpenTdbApiQuestionResponse(@JsonProperty(JSON_FIELD_RESPONSE_CODE) OpenTdbResponseCode responseCode,
 			@JsonProperty(JSON_FIELD_RESPONSE_MESSAGE) String responseMessage,
-			@JsonProperty(JSON_FIELD_RESULTS) Question[] results) {
+			@JsonProperty(JSON_FIELD_RESULTS) List<Question> results) {
 
 		this.responseCode = responseCode;
 		this.responseMessage = responseMessage;
-		this.results = results;
+		this.results = Collections.unmodifiableList(results);
 
 	}
 

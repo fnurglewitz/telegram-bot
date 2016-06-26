@@ -40,7 +40,7 @@ import it.pwned.telegram.bot.api.type.inline.InputTextMessageContent;
 import it.pwned.telegram.bot.handler.UpdateHandler;
 import it.pwned.telegram.samplebot.Application;
 import it.pwned.telegram.samplebot.trivia.api.OpenTdbApi;
-import it.pwned.telegram.samplebot.trivia.api.OpenTdbApiException;
+import it.pwned.telegram.samplebot.trivia.type.OpenTdbApiException;
 import it.pwned.telegram.samplebot.trivia.type.Question;
 import it.pwned.telegram.samplebot.trivia.type.QuestionCategory;
 import it.pwned.telegram.samplebot.trivia.type.QuestionDifficulty;
@@ -159,21 +159,23 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 
 	}
 
-	private void handleInlineQuery(InlineQuery q) {
+	private void handleInlineQuery(InlineQuery query) {
 
-		QuestionDifficulty difficulty = QuestionDifficulty.fromString(q.query);
+		QuestionDifficulty difficulty = QuestionDifficulty.fromString(query.query);
 
 		List<InlineQueryResult> results = new LinkedList<InlineQueryResult>();
-		results.add(convertQuestionCategoryToInlineResult(QuestionCategory.ANY, difficulty));
+		results.add(convertQuestionCategoryToInlineResult(query.from, QuestionCategory.ANY, difficulty));
 
 		Collections.shuffle(categoryIndexes, rand);
 		for (int i = 0; i < 3; i++) {
-			results.add(convertQuestionCategoryToInlineResult(categories.get(categoryIndexes.get(i)), difficulty));
+			log.info(String.format("Generating option: %s", categories.get(categoryIndexes.get(i))));
+			results
+					.add(convertQuestionCategoryToInlineResult(query.from, categories.get(categoryIndexes.get(i)), difficulty));
 		}
 
 		try {
 
-			api.answerInlineQuery(q.id, results, 1, null, null, null, null);
+			api.answerInlineQuery(query.id, results, 1, null, null, null, null);
 
 		} catch (TelegramBotApiException e) {
 
@@ -181,10 +183,11 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 
 	}
 
-	private InlineQueryResult convertQuestionCategoryToInlineResult(QuestionCategory category,
+	private InlineQueryResult convertQuestionCategoryToInlineResult(User requestingUser, QuestionCategory category,
 			QuestionDifficulty difficulty) {
 
-		final String resultId = String.format("%s_%s", category.getCode(), difficulty.toString());
+		final String resultId = String.format("%s_%s_%s", Integer.toString(requestingUser.id), category.getCode(),
+				difficulty.toString());
 
 		InlineKeyboardMarkup.Builder kb = new InlineKeyboardMarkup.Builder();
 		kb.addRow();
@@ -199,17 +202,17 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 		return iqr;
 	}
 
-	private InlineKeyboardMarkup getInlineKeyboardFromQuestion(Question q) {
+	private InlineKeyboardMarkup getInlineKeyboardFromQuestion(Question question) {
 
 		InlineKeyboardMarkup.Builder kb = new InlineKeyboardMarkup.Builder();
 
-		if (q.type == QuestionType.BOOLEAN) {
+		if (question.type == QuestionType.BOOLEAN) {
 			kb.addRow();
 
 			InlineKeyboardButton btnTrue = new InlineKeyboardButton("true", null,
-					q.correctAnswer.equals("1") ? "WIN" : "FAIL", null);
+					question.correctAnswer.equals("1") ? "WIN" : "FAIL", null);
 			InlineKeyboardButton btnFalse = new InlineKeyboardButton("false", null,
-					q.correctAnswer.equals("0") ? "WIN" : "FAIL", null);
+					question.correctAnswer.equals("0") ? "WIN" : "FAIL", null);
 
 			kb.addButton(btnTrue, 0);
 			kb.addButton(btnFalse, 0);
@@ -218,11 +221,10 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 
 			ArrayList<InlineKeyboardButton> allButtons = new ArrayList<InlineKeyboardButton>();
 
-			allButtons.add(new InlineKeyboardButton(HtmlUtils.htmlUnescape(q.correctAnswer), null, "WIN", null));
+			allButtons.add(new InlineKeyboardButton(HtmlUtils.htmlUnescape(question.correctAnswer), null, "WIN", null));
 
-			for (int i = 0; i < q.incorrectAnswers.length; i++) {
-				allButtons.add(new InlineKeyboardButton(HtmlUtils.htmlUnescape(q.incorrectAnswers[i]), null, "FAIL", null));
-			}
+			for (String incorrectAnswer : question.incorrectAnswers)
+				allButtons.add(new InlineKeyboardButton(HtmlUtils.htmlUnescape(incorrectAnswer), null, "FAIL", null));
 
 			Collections.shuffle(allButtons);
 
@@ -239,14 +241,24 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 		QuestionDifficulty difficulty = QuestionDifficulty.ANY;
 
 		final String[] chosenResultValues = chosenInlineResult.resultId.split("_");
-		if (chosenResultValues.length >= 1) {
-			category = QuestionCategory.fromCode(chosenResultValues[0]);
 
-			if (chosenResultValues.length > 1)
-				difficulty = QuestionDifficulty.fromString(chosenResultValues[1]);
+		Integer userId = null;
+		try {
+			userId = Integer.parseInt(chosenResultValues[0]);
+		} catch (NumberFormatException ne) {
+			userId = null;
+		}
+
+		if (chosenResultValues.length >= 2) {
+			category = QuestionCategory.fromCode(chosenResultValues[1]);
+
+			if (chosenResultValues.length > 2)
+				difficulty = QuestionDifficulty.fromString(chosenResultValues[2]);
 		}
 
 		try {
+
+			log.info(String.format("Fetching question with category [%s] and difficulty [%s]", category, difficulty));
 
 			Question question = fetchQuestion(category, difficulty);
 
@@ -262,9 +274,10 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 				final String normalizedAnswer = normalizeAnswer(question.correctAnswer);
 				final QuestionCategory normalizedCategory = question.category == null ? category : question.category;
 				final QuestionDifficulty normalizedDifficulty = question.difficulty == null ? difficulty : question.difficulty;
+				final Integer finalUserId = userId;
 
 				jdbc.update(
-						"INSERT INTO PUBLIC.QUESTION_DATA ( QUESTION_ID, CATEGORY, DIFFICULTY, TYPE, QUESTION, ANSWER ) VALUES ( ?, ?, ?, ?, ?, ? );",
+						"INSERT INTO PUBLIC.QUESTION_DATA ( QUESTION_ID, CATEGORY, DIFFICULTY, TYPE, QUESTION, ANSWER, REQUESTING_USER_ID ) VALUES ( ?, ?, ?, ?, ?, ?, ? );",
 
 						new PreparedStatementSetter() {
 
@@ -289,6 +302,12 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 
 								ps.setString(5, question.question);
 								ps.setString(6, normalizedAnswer);
+
+								if (finalUserId != null)
+									ps.setInt(7, finalUserId);
+								else
+									ps.setNull(7, Types.INTEGER);
+
 							}
 
 						});
@@ -323,10 +342,10 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 				token = trivia.requestToken();
 			}
 
-			Question[] results = trivia.getQuestions(1, category, difficulty, QuestionType.ANY, token);
+			List<Question> results = trivia.getQuestions(1, category, difficulty, QuestionType.ANY, token);
 
-			if (results.length >= 1)
-				result = results[0];
+			if (results.size() >= 1)
+				result = results.get(0);
 
 		} catch (OpenTdbApiException e) {
 
@@ -340,10 +359,12 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 
 				case TOKEN_NOT_FOUND:
 					token = trivia.requestToken();
+					result = null;
 					break;
 
 				case TOKEN_EMPTY:
 					trivia.resetToken(token);
+					result = null;
 					break;
 
 				default:
@@ -389,7 +410,8 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 
 				if (count > 0) {
 
-					final String newText = jdbc.query("SELECT QUESTION, ANSWER FROM PUBLIC.QUESTION_DATA WHERE QUESTION_ID = ? ;",
+					final String newText = jdbc.query(
+							"SELECT QUESTION, ANSWER, CATEGORY, DIFFICULTY FROM PUBLIC.QUESTION_DATA WHERE QUESTION_ID = ? ;",
 							new Object[] { callbackQuery.inlineMessageId }, new ResultSetExtractor<String>() {
 
 								@Override
@@ -397,8 +419,13 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 
 									if (rs.next()) {
 
-										return String.format("%s\n<b>Answer: </b>%s\n<b>Winner: </b>%s", rs.getString(1), rs.getString(2),
-												user);
+										final String question = rs.getString(1);
+										final String answer = rs.getString(2);
+										final String category = rs.getString(3);
+										final String difficulty = rs.getString(4);
+
+										return String.format("%s\n<b>Answer: </b>%s\n<b>Category:</b> %s (%s)\n<b>Winner: </b>%s", question,
+												answer, category, difficulty, user);
 									} else
 										return String.format("Ooops, something wrong happened. (And it's %s's fault)", user);
 								}

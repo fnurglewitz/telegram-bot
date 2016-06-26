@@ -1,6 +1,4 @@
-package it.pwned.telegram.samplebot.trivia.api;
-
-import it.pwned.telegram.samplebot.trivia.type.OpenTdbResponseCode;
+package it.pwned.telegram.samplebot.trivia.type;
 
 public class OpenTdbApiException extends Exception {
 
