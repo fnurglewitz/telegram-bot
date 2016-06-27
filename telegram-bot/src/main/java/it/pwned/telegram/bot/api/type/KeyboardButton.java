@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  * 
  */
 @JsonInclude(Include.NON_NULL)
-public class KeyboardButton {
+public class KeyboardButton extends AbstractKeyboardButton {
 
 	private final static String JSON_FIELD_TEXT = "text";
 	private final static String JSON_FIELD_REQUEST_CONTACT = "request_contact";

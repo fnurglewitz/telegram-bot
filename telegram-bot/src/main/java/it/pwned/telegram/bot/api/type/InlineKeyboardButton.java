@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  *
  */
 @JsonInclude(Include.NON_NULL)
-public class InlineKeyboardButton {
+public class InlineKeyboardButton extends AbstractKeyboardButton {
 
 	private final static String JSON_FIELD_TEXT = "text";
 	private final static String JSON_FIELD_URL = "url";

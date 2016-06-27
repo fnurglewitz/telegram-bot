@@ -1,5 +1,6 @@
 package it.pwned.telegram.samplebot.trivia.type;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class OpenTdbApiQuestionResponse {
 
 		this.responseCode = responseCode;
 		this.responseMessage = responseMessage;
-		this.results = Collections.unmodifiableList(results);
+		this.results = results == null ? new ArrayList<Question>() : Collections.unmodifiableList(results);
 
 	}
 

@@ -1,6 +1,7 @@
 package it.pwned.telegram.bot.api.type;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -25,7 +26,7 @@ public final class ReplyKeyboardMarkup extends AbstractKeyboardMarkup {
 	 * {@link KeyboardButton} objects
 	 */
 	@JsonProperty(JSON_FIELD_KEYBOARD)
-	public final KeyboardButton[][] keyboard;
+	public final List<List<KeyboardButton>> keyboard;
 
 	/**
 	 * <em>Optional.</em> Requests clients to resize the keyboard vertically for
@@ -88,7 +89,7 @@ public final class ReplyKeyboardMarkup extends AbstractKeyboardMarkup {
 	 *          replies to the request with a keyboard to select the new language.
 	 *          Other users in the group don’t see the keyboard.
 	 */
-	public ReplyKeyboardMarkup(@JsonProperty(JSON_FIELD_KEYBOARD) KeyboardButton[][] keyboard,
+	public ReplyKeyboardMarkup(@JsonProperty(JSON_FIELD_KEYBOARD) List<List<KeyboardButton>> keyboard,
 			@JsonProperty(JSON_FIELD_RESIZE_KEYBOARD) Boolean resizeKeyboard,
 			@JsonProperty(JSON_FIELD_ONE_TIME_KEYBOARD) Boolean oneTimeKeyboard,
 			@JsonProperty(JSON_FIELD_SELECTIVE) Boolean selective) {
@@ -108,28 +109,21 @@ public final class ReplyKeyboardMarkup extends AbstractKeyboardMarkup {
 		private Boolean oneTimeKeyboard;
 		private Boolean selective;
 
-		private ArrayList<ArrayList<KeyboardButton>> keyboard;
+		private List<List<KeyboardButton>> keyboard;
 		int rows = 0;
 
 		public Builder() {
-			keyboard = new ArrayList<ArrayList<KeyboardButton>>();
+			keyboard = new ArrayList<List<KeyboardButton>>();
 		}
 
 		public ReplyKeyboardMarkup build() {
 
-			// thank you StackOverflow
-			final int listSize = keyboard.size();
-			KeyboardButton[][] out = new KeyboardButton[listSize][];
-			for (int i = 0; i < listSize; i++) {
-				ArrayList<KeyboardButton> sublist = keyboard.get(i);
-				final int sublistSize = sublist.size();
-				out[i] = new KeyboardButton[sublistSize];
-				for (int j = 0; j < sublistSize; j++) {
-					out[i][j] = sublist.get(j);
-				}
-			}
+			List<List<KeyboardButton>> tmp = new ArrayList<List<KeyboardButton>>();
 
-			return new ReplyKeyboardMarkup(out, resizeKeyboard, oneTimeKeyboard, selective);
+			for (List<KeyboardButton> l : keyboard)
+				tmp.add(Collections.unmodifiableList(l));
+
+			return new ReplyKeyboardMarkup(Collections.unmodifiableList(tmp), resizeKeyboard, oneTimeKeyboard, selective);
 		}
 
 		public Builder setResizeKeyboard(Boolean resizeKeyboard) {
@@ -147,31 +141,8 @@ public final class ReplyKeyboardMarkup extends AbstractKeyboardMarkup {
 			return this;
 		}
 
-		public void loadButtonsFromList(List<KeyboardButton> buttons, int buttonsPerRow) {
-
-			keyboard = new ArrayList<ArrayList<KeyboardButton>>();
-
-			int rows = 0;
-
-			rows = buttons.size() / buttonsPerRow;
-
-			if (buttons.size() % buttonsPerRow > 0)
-				++rows;
-
-			for (int row = 0; row < rows; row++) {
-
-				addRow();
-
-				for (int btnIdx = 0; btnIdx < buttonsPerRow; btnIdx++) {
-
-					int currentButtonIndex = ((row) * buttonsPerRow) + btnIdx;
-
-					if (currentButtonIndex < buttons.size())
-						addButton(buttons.get(currentButtonIndex), row);
-
-				}
-
-			}
+		public void loadKeyboardFromButtonList(List<KeyboardButton> buttons, int buttonsPerRow) {
+			keyboard = AbstractKeyboardMarkup.createKeyboardFromButtonList(buttons, buttonsPerRow);
 		}
 
 		/**

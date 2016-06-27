@@ -209,10 +209,10 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 		if (question.type == QuestionType.BOOLEAN) {
 			kb.addRow();
 
-			InlineKeyboardButton btnTrue = new InlineKeyboardButton("true", null,
-					question.correctAnswer.equals("1") ? "WIN" : "FAIL", null);
-			InlineKeyboardButton btnFalse = new InlineKeyboardButton("false", null,
-					question.correctAnswer.equals("0") ? "WIN" : "FAIL", null);
+			InlineKeyboardButton btnTrue = new InlineKeyboardButton("True", null,
+					question.correctAnswer.equals("True") ? "WIN" : "FAIL", null);
+			InlineKeyboardButton btnFalse = new InlineKeyboardButton("False", null,
+					question.correctAnswer.equals("False") ? "WIN" : "FAIL", null);
 
 			kb.addButton(btnTrue, 0);
 			kb.addButton(btnFalse, 0);
@@ -228,7 +228,7 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 
 			Collections.shuffle(allButtons);
 
-			kb.loadButtonsFromList(allButtons, 2);
+			kb.loadKeyboardFromButtonList(allButtons, 2);
 
 		}
 
@@ -271,7 +271,6 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 
 				api.editMessageReplyMarkup(null, null, chosenInlineResult.inlineMessageId, keyboard);
 
-				final String normalizedAnswer = normalizeAnswer(question.correctAnswer);
 				final QuestionCategory normalizedCategory = question.category == null ? category : question.category;
 				final QuestionDifficulty normalizedDifficulty = question.difficulty == null ? difficulty : question.difficulty;
 				final Integer finalUserId = userId;
@@ -301,7 +300,7 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 									ps.setNull(4, Types.VARCHAR);
 
 								ps.setString(5, question.question);
-								ps.setString(6, normalizedAnswer);
+								ps.setString(6, question.correctAnswer);
 
 								if (finalUserId != null)
 									ps.setInt(7, finalUserId);
@@ -380,17 +379,6 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 		return result;
 	}
 
-	private String normalizeAnswer(String answer) {
-
-		if ("0".equals(answer))
-			answer = "false";
-
-		if ("1".equals(answer))
-			answer = "true";
-
-		return answer;
-	}
-
 	private void handleCallbackQuery(CallbackQuery callbackQuery) {
 
 		if ("ignore".equals(callbackQuery.data))
@@ -400,6 +388,17 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 
 			if ("FAIL".equals(callbackQuery.data)) {
 				api.answerCallbackQuery(callbackQuery.id, "You failed!", false);
+
+				final Integer count = jdbc.update(
+						"UPDATE PUBLIC.QUESTION_FAILER SET FAIL_COUNT = FAIL_COUNT+1 WHERE QUESTION_ID = ? AND USER_ID = ? ;",
+						new Object[] { callbackQuery.inlineMessageId, callbackQuery.from.id });
+
+				if (count == 0) {
+
+					jdbc.update("INSERT INTO PUBLIC.QUESTION_FAILER ( QUESTION_ID, USER_ID, FAIL_COUNT ) VALUES ( ?, ?, 1 ) ;",
+							new Object[] { callbackQuery.inlineMessageId, callbackQuery.from.id });
+				}
+
 			} else {
 
 				final Integer count = jdbc.queryForObject(
@@ -409,6 +408,39 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 				final String user = User.Util.usernameOrName(callbackQuery.from, UserNameFormat.LINK);
 
 				if (count > 0) {
+
+					final String failerList = jdbc.query(
+						// @formatter:off
+						"SELECT " +
+						"COALESCE('@' || U.USERNAME, U.FIRST_NAME || COALESCE(' ' || U.LAST_NAME,''), 'Anon') " +
+						"|| ' (' || CAST(FAIL_COUNT AS VARCHAR(100)) || ')' AS FAILER " +
+						"FROM PUBLIC.QUESTION_FAILER QF INNER JOIN PUBLIC.USER U ON QF.USER_ID = U.USER_ID " +
+						"WHERE QF.QUESTION_ID = ? " +
+						"ORDER BY FAIL_COUNT DESC " +
+						"LIMIT 3"
+						// @formatter:on
+							, new Object[] { callbackQuery.inlineMessageId }, new ResultSetExtractor<String>() {
+
+								@Override
+								public String extractData(ResultSet rs) throws SQLException, DataAccessException {
+
+									StringBuilder builder = new StringBuilder("<b>Top Failers:</b>\n");
+
+									int count = 0;
+									while (rs.next()) {
+										builder.append(rs.getString(1));
+										builder.append('\n');
+										++count;
+									}
+
+									if (count == 0)
+										return "";
+									else
+										return builder.toString();
+
+								}
+
+							});
 
 					final String newText = jdbc.query(
 							"SELECT QUESTION, ANSWER, CATEGORY, DIFFICULTY FROM PUBLIC.QUESTION_DATA WHERE QUESTION_ID = ? ;",
@@ -424,8 +456,8 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 										final String category = rs.getString(3);
 										final String difficulty = rs.getString(4);
 
-										return String.format("%s\n<b>Answer: </b>%s\n<b>Category:</b> %s (%s)\n<b>Winner: </b>%s", question,
-												answer, category, difficulty, user);
+										return String.format("%s\n<b>Answer: </b>%s\n<b>Category:</b> %s (%s)\n<b>Winner: </b>%s\n%s",
+												question, answer, category, difficulty, user, failerList);
 									} else
 										return String.format("Ooops, something wrong happened. (And it's %s's fault)", user);
 								}

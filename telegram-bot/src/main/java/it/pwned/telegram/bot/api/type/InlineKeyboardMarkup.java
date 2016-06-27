@@ -1,6 +1,7 @@
 package it.pwned.telegram.bot.api.type;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -22,7 +23,7 @@ public class InlineKeyboardMarkup extends AbstractKeyboardMarkup {
 	 * {@link InlineKeyboardButton} objects
 	 */
 	@JsonProperty(JSON_FIELD_INLINE_KEYBOARD)
-	public final InlineKeyboardButton[][] inlineKeyboard;
+	public final List<List<InlineKeyboardButton>> inlineKeyboard;
 
 	/**
 	 * Array of button rows, each represented by an Array of
@@ -30,7 +31,8 @@ public class InlineKeyboardMarkup extends AbstractKeyboardMarkup {
 	 * 
 	 * @param inlineKeyboard
 	 */
-	public InlineKeyboardMarkup(@JsonProperty(JSON_FIELD_INLINE_KEYBOARD) InlineKeyboardButton[][] inlineKeyboard) {
+	public InlineKeyboardMarkup(
+			@JsonProperty(JSON_FIELD_INLINE_KEYBOARD) List<List<InlineKeyboardButton>> inlineKeyboard) {
 		this.inlineKeyboard = inlineKeyboard;
 	}
 
@@ -40,55 +42,25 @@ public class InlineKeyboardMarkup extends AbstractKeyboardMarkup {
 	 */
 	public static class Builder {
 
-		private ArrayList<ArrayList<InlineKeyboardButton>> keyboard;
+		private List<List<InlineKeyboardButton>> keyboard;
 		int rows = 0;
 
 		public Builder() {
-			keyboard = new ArrayList<ArrayList<InlineKeyboardButton>>();
+			keyboard = new ArrayList<List<InlineKeyboardButton>>();
 		}
 
 		public InlineKeyboardMarkup build() {
 
-			// thank you StackOverflow
-			final int listSize = keyboard.size();
-			InlineKeyboardButton[][] out = new InlineKeyboardButton[listSize][];
-			for (int i = 0; i < listSize; i++) {
-				ArrayList<InlineKeyboardButton> sublist = keyboard.get(i);
-				final int sublistSize = sublist.size();
-				out[i] = new InlineKeyboardButton[sublistSize];
-				for (int j = 0; j < sublistSize; j++) {
-					out[i][j] = sublist.get(j);
-				}
-			}
+			List<List<InlineKeyboardButton>> tmp = new ArrayList<List<InlineKeyboardButton>>();
 
-			return new InlineKeyboardMarkup(out);
+			for (List<InlineKeyboardButton> l : keyboard)
+				tmp.add(Collections.unmodifiableList(l));
+
+			return new InlineKeyboardMarkup(Collections.unmodifiableList(tmp));
 		}
 
-		public void loadButtonsFromList(List<InlineKeyboardButton> buttons, int buttonsPerRow) {
-
-			keyboard = new ArrayList<ArrayList<InlineKeyboardButton>>();
-
-			int rows = 0;
-
-			rows = buttons.size() / buttonsPerRow;
-
-			if (buttons.size() % buttonsPerRow > 0)
-				++rows;
-
-			for (int row = 0; row < rows; row++) {
-
-				addRow();
-
-				for (int btnIdx = 0; btnIdx < buttonsPerRow; btnIdx++) {
-
-					int currentButtonIndex = ((row) * buttonsPerRow) + btnIdx;
-
-					if (currentButtonIndex < buttons.size())
-						addButton(buttons.get(currentButtonIndex), row);
-
-				}
-
-			}
+		public void loadKeyboardFromButtonList(List<InlineKeyboardButton> buttons, int buttonsPerRow) {
+			keyboard = AbstractKeyboardMarkup.createKeyboardFromButtonList(buttons, buttonsPerRow);
 		}
 
 		/**

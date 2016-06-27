@@ -1,5 +1,9 @@
 package it.pwned.telegram.bot.api.type;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import it.pwned.telegram.bot.api.type.PhotoSize;
@@ -23,7 +27,7 @@ public final class UserProfilePhotos {
 	 * Requested profile pictures (in up to 4 sizes each)
 	 */
 	@JsonProperty(JSON_FIELD_PHOTOS)
-	public final PhotoSize[][] photos;
+	public final List<List<PhotoSize>> photos;
 
 	/**
 	 * 
@@ -33,9 +37,16 @@ public final class UserProfilePhotos {
 	 *          Requested profile pictures (in up to 4 sizes each)
 	 */
 	public UserProfilePhotos(@JsonProperty(JSON_FIELD_TOTAL_COUNT) Integer totalCount,
-			@JsonProperty(JSON_FIELD_PHOTOS) PhotoSize[][] photos) {
+			@JsonProperty(JSON_FIELD_PHOTOS) List<List<PhotoSize>> photos) {
 		this.totalCount = totalCount;
-		this.photos = photos;
+
+		List<List<PhotoSize>> tmp = new ArrayList<List<PhotoSize>>();
+
+		for (List<PhotoSize> l : photos)
+			tmp.add(Collections.unmodifiableList(l));
+
+		this.photos = Collections.unmodifiableList(tmp);
+
 	}
 
 }
