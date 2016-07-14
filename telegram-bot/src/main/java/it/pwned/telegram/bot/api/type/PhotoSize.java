@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * {@link Sticker} thumbnail.
  *
  */
-public final class PhotoSize {
+public final class PhotoSize implements Comparable<PhotoSize> {
 
 	private final static String JSON_FIELD_FILE_ID = "file_id";
 	private final static String JSON_FIELD_WIDTH = "width";
@@ -55,5 +55,13 @@ public final class PhotoSize {
 		this.width = width;
 		this.height = height;
 		this.fileSize = fileSize;
+	}
+
+	@Override
+	public int compareTo(PhotoSize other) {
+		Integer thisImage = this.width * this.height;
+		Integer thatImage = other.width * other.height;
+
+		return thisImage.compareTo(thatImage);
 	}
 }

@@ -529,6 +529,10 @@ public class Message {
 		public static boolean hasVenue(Message m) {
 			return m.venue != null;
 		}
+		
+		public static boolean isForward(Message m) {
+			return m.forwardFrom != null || m.forwardFromChat != null;
+		}
 
 	}
 

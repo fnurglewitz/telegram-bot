@@ -38,8 +38,14 @@ public final class Location {
 
 	public static class Util {
 
+		/**
+		 * 6372.8 km is an approximation of the radius of the average circumference
+		 */
 		private static final double earthRadius = 6372.8;
 
+		/**
+		 * https://rosettacode.org/wiki/Haversine_formula
+		 */
 		private static double haversine(double lat1, double lon1, double lat2, double lon2) {
 			double dLat = Math.toRadians(lat2 - lat1);
 			double dLon = Math.toRadians(lon2 - lon1);
