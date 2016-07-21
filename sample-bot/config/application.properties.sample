@@ -10,7 +10,7 @@ spring.jmx.enabled=false
 
 logging.config=classpath:logback.xml
 logging.file=samplebot.log
-logging.level.it.pwned.telegram.samplebot.handler=INFO
+logging.level.it.pwned.telegram.samplebot.trivia=INFO
 logging.level.it.pwned.telegram.bot=INFO
 logging.level.it.pwned.telegram.bot.api.log=INFO
 

@@ -6,9 +6,9 @@ public interface UpdateHandlerManager {
 
 	public void setInlineHandler(UpdateHandler handler);
 	
-	public void init();
+	public void initManager();
 
-	public void shutdown();
+	public void shutdownManager();
 
 	public void dispatch(Update u);
 

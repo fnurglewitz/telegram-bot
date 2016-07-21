@@ -45,10 +45,10 @@ public final class TelegramBot {
 
 		log.info(String.format("Bot %s(%d) initialization successful", username, id));
 
-		manager.init();
+		manager.initManager();
 
 		Update u = null;
-
+		
 		while (goOn || u != null) {
 
 			u = collector.next(goOn);
@@ -58,7 +58,7 @@ public final class TelegramBot {
 
 		}
 
-		manager.shutdown();
+		manager.shutdownManager();
 
 	}
 
