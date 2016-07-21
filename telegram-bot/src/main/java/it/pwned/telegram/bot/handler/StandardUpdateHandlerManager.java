@@ -13,6 +13,11 @@ import it.pwned.telegram.bot.api.type.Update;
 
 //import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
+/**
+ * Manages Message dispatching and initialization/shutdown of all the update
+ * handlers
+ *
+ */
 public class StandardUpdateHandlerManager implements UpdateHandlerManager {
 
 	private static final Logger log = LoggerFactory.getLogger(StandardUpdateHandlerManager.class);
