@@ -20,3 +20,4 @@ sample-bot/commands_help.txt
 sample-bot/config/application.properties
 *.db
 swag-bot/
+blight-bot/
