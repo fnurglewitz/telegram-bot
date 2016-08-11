@@ -1,4 +1,4 @@
-package it.pwned.telegram.bot.api.log;
+package it.pwned.telegram.bot.api.rest.log;
 
 import java.io.IOException;
 
