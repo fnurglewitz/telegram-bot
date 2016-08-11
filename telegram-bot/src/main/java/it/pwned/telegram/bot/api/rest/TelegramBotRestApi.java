@@ -5,11 +5,14 @@ import java.security.InvalidParameterException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriTemplate;
 
@@ -40,11 +43,24 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	private final UriTemplate apiUriTemplate;
 	private final UriTemplate fileUriTemplate;
 
-	public TelegramBotRestApi(String token, ObjectMapper mapper, RestTemplate restTemplate) {
-		this.mapper = mapper;
+	public TelegramBotRestApi(String token, RestTemplate restTemplate) {
+		this.mapper = getObjectMapperFromRestTemplate(restTemplate);
 		this.restTemplate = restTemplate;
 		this.apiUriTemplate = new UriTemplate("https://api.telegram.org/bot" + token + "/{method}");
 		this.fileUriTemplate = new UriTemplate("https://api.telegram.org/file/bot" + token + "/{file_path}");
+	}
+
+	private ObjectMapper getObjectMapperFromRestTemplate(RestTemplate rest) {
+
+		Optional<HttpMessageConverter<?>> maybeConverter = rest.getMessageConverters().stream().filter((c) -> {
+			return c.getClass() == MappingJackson2HttpMessageConverter.class;
+		}).findFirst();
+
+		if (maybeConverter.isPresent())
+			return ((MappingJackson2HttpMessageConverter) maybeConverter.get()).getObjectMapper();
+		else
+			return new ObjectMapper(); // this is bad
+
 	}
 
 	@Override

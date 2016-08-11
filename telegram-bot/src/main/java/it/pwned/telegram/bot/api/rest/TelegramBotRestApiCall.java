@@ -2,6 +2,7 @@ package it.pwned.telegram.bot.api.rest;
 
 import java.io.IOException;
 import java.security.InvalidParameterException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +35,16 @@ public class TelegramBotRestApiCall<T> {
 
 	private final RestTemplate rest;
 
+	/*
+	 * For anyone wondering why this map exists:
+	 * http://stackoverflow.com/questions/21987295/using-spring-resttemplate-in-generic-method-with-generic-parameter
+	 * 
+	 * ParameterizedTypeReference uses Class#getGenericSuperclass which states:
+	 * Returns the Type representing the direct superclass of the entity (class,
+	 * interface, primitive type or void) represented by this Class. If the
+	 * superclass is a parameterized type, the Type object returned must
+	 * accurately reflect the actual type parameters used in the source code.
+	 */
 	@SuppressWarnings("rawtypes")
 	private static final Map<Class, ParameterizedTypeReference> typeRefs = initializeParameterizedTypeReferences();
 
@@ -79,7 +90,7 @@ public class TelegramBotRestApiCall<T> {
 		tmp.put(String.class, new ParameterizedTypeReference<Response<String>>() {
 		});
 
-		return tmp;
+		return Collections.unmodifiableMap(tmp);
 	}
 
 	private final ObjectMapper mapper;
@@ -87,12 +98,10 @@ public class TelegramBotRestApiCall<T> {
 	private final UriTemplate uriTemplate;
 	private final HttpMethod httpMethod;
 	private final HttpEntity<?> entity;
-	@SuppressWarnings("rawtypes")
-	private final Class payloadType;
+	private final Class<T> payloadType;
 
-	@SuppressWarnings("rawtypes")
 	private TelegramBotRestApiCall(String method, UriTemplate uriTemplate, ObjectMapper mapper, RestTemplate rest,
-			HttpMethod httpMethod, HttpEntity<?> entity, Class payloadType) {
+			HttpMethod httpMethod, HttpEntity<?> entity, Class<T> payloadType) {
 		this.method = method;
 		this.uriTemplate = uriTemplate;
 		this.httpMethod = httpMethod;
@@ -107,19 +116,27 @@ public class TelegramBotRestApiCall<T> {
 
 		Response<T> res = null;
 
+		ParameterizedTypeReference<Response<T>> typeRef = typeRefs.get(payloadType);
+
+		if (typeRef == null)
+			throw new UnsupportedOperationException("Missing payload type reference in TelegramBotRestApiCall.typeRefs map.");
+
 		try {
-			res = (Response<T>) rest.exchange(uriTemplate.expand(method), httpMethod, entity, typeRefs.get(payloadType))
-					.getBody();
+			res = (Response<T>) rest.exchange(uriTemplate.expand(method), httpMethod, entity, typeRef).getBody();
 		} catch (HttpStatusCodeException he) {
 			Integer statusCode = null;
 
 			try {
-				res = mapper.readValue(he.getResponseBodyAsString(), Response.class);
-				statusCode = he.getStatusCode() != null ? he.getStatusCode().value() : null;
-			} catch (IOException e) {
-			}
 
-			throw new TelegramBotApiException(he, statusCode);
+				// check if the api sent a valid Response object
+				res = mapper.readValue(he.getResponseBodyAsString(), Response.class);
+
+			} catch (IOException e) {
+				// the response is not deserializable as a telegram bot api Response
+				// object
+				statusCode = he.getStatusCode() != null ? he.getStatusCode().value() : null;
+				throw new TelegramBotApiException(he, statusCode);
+			}
 
 		} catch (RestClientException e) {
 			throw new TelegramBotApiException(e);
@@ -139,14 +156,13 @@ public class TelegramBotRestApiCall<T> {
 		private final UriTemplate uriTemplate;
 		private final MultiValueMap<String, Object> body = new LinkedMultiValueMap<String, Object>();
 		private final HttpHeaders headers = new HttpHeaders();
-		@SuppressWarnings("rawtypes")
-		private final Class payloadType;
+		private final Class<T> payloadType;
 
 		private HttpMethod httpMethod;
 		private HttpEntity<?> entity;
 
-		@SuppressWarnings("rawtypes")
-		public Builder(String method, UriTemplate uriTemplate, ObjectMapper mapper, RestTemplate rest, Class payloadType) {
+		public Builder(String method, UriTemplate uriTemplate, ObjectMapper mapper, RestTemplate rest,
+				Class<T> payloadType) {
 			this.method = method;
 			this.uriTemplate = uriTemplate;
 			this.mapper = mapper;
