@@ -18,6 +18,7 @@ import it.pwned.telegram.bot.api.type.TelegramBotApiException;
 import it.pwned.telegram.bot.api.type.Update;
 import it.pwned.telegram.bot.api.type.User;
 import it.pwned.telegram.bot.api.type.UserProfilePhotos;
+import it.pwned.telegram.bot.api.type.game.GameHighScore;
 import it.pwned.telegram.bot.api.type.inline.InlineQueryResult;
 
 /**
@@ -223,6 +224,8 @@ public interface TelegramBotApi {
 	 *          Audio file to send. You can either pass a file_id as String to
 	 *          resend an audio that is already on the Telegram servers, or upload
 	 *          a new audio file using multipart/form-data.
+	 * @param caption
+	 *          Optional. Audio caption, 0-200 characters
 	 * @param duration
 	 *          Optional. Duration of the audio in seconds
 	 * @param performer
@@ -243,7 +246,7 @@ public interface TelegramBotApi {
 	 *         Message} is returned.
 	 * @throws TelegramBotApiException
 	 */
-	Message sendAudio(ChatId chatId, Resource audio, Integer duration, String performer, String title,
+	Message sendAudio(ChatId chatId, Resource audio, String caption, Integer duration, String performer, String title,
 			Boolean disableNotification, Integer replyToMessageId, AbstractKeyboardMarkup replyMarkup)
 			throws TelegramBotApiException;
 
@@ -358,6 +361,8 @@ public interface TelegramBotApi {
 	 *          Audio file to send. You can either pass a file_id as String to
 	 *          resend an audio that is already on the Telegram servers, or upload
 	 *          a new audio file using multipart/form-data.
+	 * @param caption
+	 *          Optional. Voice message caption, 0-200 characters
 	 * @param duration
 	 *          Optional. Duration of sent audio in seconds
 	 * @param disableNotification
@@ -374,7 +379,7 @@ public interface TelegramBotApi {
 	 *         Message} is returned.
 	 * @throws TelegramBotApiException
 	 */
-	Message sendVoice(ChatId chatId, Resource voice, Integer duration, Boolean disableNotification,
+	Message sendVoice(ChatId chatId, Resource voice, String caption, Integer duration, Boolean disableNotification,
 			Integer replyToMessageId, AbstractKeyboardMarkup replyMarkup) throws TelegramBotApiException;
 
 	/**
@@ -576,10 +581,20 @@ public interface TelegramBotApi {
 	 * @param showAlert
 	 *          Optional. If true, an alert will be shown by the client instead of
 	 *          a notification at the top of the chat screen. Defaults to false.
+	 * @param url
+	 *          URL that will be opened by the user's client. If you have created
+	 *          a {@link it.pwned.telegram.bot.api.type.game.Game Game} and
+	 *          accepted the conditions via @Botfather, specify the URL that opens
+	 *          your game – note that this will only work if the query comes from
+	 *          a callbackGame button.
+	 * 
+	 *          Otherwise, you may use links like telegram.me/your_bot?start=XXXX
+	 *          that open your bot with a parameter.
 	 * @return On success, True is returned.
 	 * @throws TelegramBotApiException
 	 */
-	Boolean answerCallbackQuery(String callbackQueryId, String text, Boolean showAlert) throws TelegramBotApiException;
+	Boolean answerCallbackQuery(String callbackQueryId, String text, Boolean showAlert, String url)
+			throws TelegramBotApiException;
 
 	/**
 	 * Use this method to edit text messages sent by the bot or via the bot (for
@@ -712,5 +727,85 @@ public interface TelegramBotApi {
 	 * @throws TelegramBotApiException
 	 */
 	int getChatMembersCount(ChatId chatId) throws TelegramBotApiException;
+
+	/**
+	 * Use this method to send a game. On success, the sent Message is returned.
+	 * 
+	 * @param chatId
+	 *          Unique identifier for the target chat or username of the target
+	 *          channel (in the format @channelusername)
+	 * @param gameShortName
+	 *          Short name of the game, serves as the unique identifier for the
+	 *          game. Set up your games via Botfather.
+	 * @param disableNotification
+	 *          Sends the message silently. iOS users will not receive a
+	 *          notification, Android users will receive a notification with no
+	 *          sound.
+	 * @param replyToMessageId
+	 *          If the message is a reply, ID of the original message
+	 * @param replyMarkup
+	 *          Additional interface options. A JSON-serialized object for an
+	 *          inline keyboard, custom reply keyboard, instructions to hide reply
+	 *          keyboard or to force a reply from the user.
+	 * @return On success, the sent {@link it.pwned.telegram.bot.api.type.Message
+	 *         Message} is returned.
+	 * @throws TelegramBotApiException
+	 */
+	Message sendGame(ChatId chatId, String gameShortName, Boolean disableNotification, Integer replyToMessageId,
+			AbstractKeyboardMarkup replyMarkup) throws TelegramBotApiException;
+
+	/**
+	 * Use this method to set the score of the specified user in a game. On
+	 * success, if the message was sent by the bot, returns the edited Message,
+	 * otherwise returns True. Returns an error, if the new score is not greater
+	 * than the user's current score in the chat.
+	 * 
+	 * @param userId
+	 *          User identifier
+	 * @param score
+	 *          New score, must be positive
+	 * @param chatId
+	 *          Required if inlineMessageId is not specified. Unique identifier
+	 *          for the target chat (or username of the target channel in the
+	 *          format @channelusername)
+	 * @param messageId
+	 *          Required if inlineMessageId is not specified. Unique identifier of
+	 *          the sent message
+	 * @param inlineMessageId
+	 *          Required if chatId and messageId are not specified. Identifier of
+	 *          the inline message
+	 * @param editMessage
+	 *          Pass True, if the game message should be automatically edited to
+	 *          include the current scoreboard
+	 * @return Returns the edited Message, otherwise returns True. Returns an
+	 *         error, if the new score is not greater than the user's current
+	 *         score in the chat.
+	 * @throws TelegramBotApiException
+	 */
+	BooleanOrMessage setGameScore(int userId, int score, ChatId chatId, Integer messageId, String inlineMessageId,
+			Boolean editMessage) throws TelegramBotApiException;
+
+	/**
+	 * Use this method to get data for high score tables. Will return the score of
+	 * the specified user and several of his neighbors in a game. On success,
+	 * returns an Array of GameHighScore objects.
+	 * 
+	 * @param userId
+	 *          Target user id
+	 * @param chatId
+	 *          Required if inlineMessageId is not specified. Unique identifier
+	 *          for the target chat (or username of the target channel in the
+	 *          format @channelusername)
+	 * @param messageId
+	 *          Required if inlineMessageId is not specified. Unique identifier of
+	 *          the sent message
+	 * @param inlineMessageId
+	 *          Required if chatId and messageId are not specified. Identifier of
+	 *          the inline message
+	 * @return On success, returns an Array of GameHighScore objects.
+	 * @throws TelegramBotApiException
+	 */
+	List<GameHighScore> getGameHighScores(int userId, ChatId chatId, Integer messageId, String inlineMessageId)
+			throws TelegramBotApiException;
 
 }

@@ -6,6 +6,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import it.pwned.telegram.bot.api.type.game.Game;
+
 /**
  * This class represents a message.
  *
@@ -25,6 +27,7 @@ public class Message {
 	private final static String JSON_FIELD_ENTITIES = "entities";
 	private final static String JSON_FIELD_AUDIO = "audio";
 	private final static String JSON_FIELD_DOCUMENT = "document";
+	private final static String JSON_FIELD_GAME = "game";
 	private final static String JSON_FIELD_PHOTO = "photo";
 	private final static String JSON_FIELD_STICKER = "sticker";
 	private final static String JSON_FIELD_VIDEO = "video";
@@ -128,6 +131,12 @@ public class Message {
 	 */
 	@JsonProperty(JSON_FIELD_DOCUMENT)
 	public final Document document;
+
+	/**
+	 * <em>Optional.</em> Message is a game, information about the game
+	 */
+	@JsonProperty(JSON_FIELD_GAME)
+	public final Game game;
 
 	/**
 	 * <em>Optional.</em> Message is a photo, available sizes of the photo
@@ -303,6 +312,8 @@ public class Message {
 	 * @param document
 	 *          <em>Optional.</em> Message is a general file, information about
 	 *          the file
+	 * @param game
+	 *          <em>Optional.</em> Message is a game, information about the game
 	 * @param photo
 	 *          <em>Optional.</em> Message is a photo, available sizes of the
 	 *          photo
@@ -378,11 +389,12 @@ public class Message {
 			@JsonProperty(JSON_FIELD_REPLY_TO_MESSAGE) Message replyToMessage,
 			@JsonProperty(JSON_FIELD_EDIT_DATE) Integer editDate, @JsonProperty(JSON_FIELD_TEXT) String text,
 			@JsonProperty(JSON_FIELD_ENTITIES) List<MessageEntity> entities, @JsonProperty(JSON_FIELD_AUDIO) Audio audio,
-			@JsonProperty(JSON_FIELD_DOCUMENT) Document document, @JsonProperty(JSON_FIELD_PHOTO) List<PhotoSize> photo,
-			@JsonProperty(JSON_FIELD_STICKER) Sticker sticker, @JsonProperty(JSON_FIELD_VIDEO) Video video,
-			@JsonProperty(JSON_FIELD_VOICE) Voice voice, @JsonProperty(JSON_FIELD_CAPTION) String caption,
-			@JsonProperty(JSON_FIELD_CONTACT) Contact contact, @JsonProperty(JSON_FIELD_LOCATION) Location location,
-			@JsonProperty(JSON_FIELD_VENUE) Venue venue, @JsonProperty(JSON_FIELD_NEW_CHAT_MEMBER) User newChatMember,
+			@JsonProperty(JSON_FIELD_DOCUMENT) Document document, @JsonProperty(JSON_FIELD_GAME) Game game,
+			@JsonProperty(JSON_FIELD_PHOTO) List<PhotoSize> photo, @JsonProperty(JSON_FIELD_STICKER) Sticker sticker,
+			@JsonProperty(JSON_FIELD_VIDEO) Video video, @JsonProperty(JSON_FIELD_VOICE) Voice voice,
+			@JsonProperty(JSON_FIELD_CAPTION) String caption, @JsonProperty(JSON_FIELD_CONTACT) Contact contact,
+			@JsonProperty(JSON_FIELD_LOCATION) Location location, @JsonProperty(JSON_FIELD_VENUE) Venue venue,
+			@JsonProperty(JSON_FIELD_NEW_CHAT_MEMBER) User newChatMember,
 			@JsonProperty(JSON_FIELD_LEFT_CHAT_MEMBER) User leftChatMember,
 			@JsonProperty(JSON_FIELD_NEW_CHAT_TITLE) String newChatTitle,
 			@JsonProperty(JSON_FIELD_NEW_CHAT_PHOTO) List<PhotoSize> newChatPhoto,
@@ -408,6 +420,7 @@ public class Message {
 		this.entities = entities == null ? null : Collections.unmodifiableList(entities);
 		this.audio = audio;
 		this.document = document;
+		this.game = game;
 		this.photo = photo == null ? null : Collections.unmodifiableList(photo);
 		this.sticker = sticker;
 		this.video = video;
@@ -529,7 +542,7 @@ public class Message {
 		public static boolean hasVenue(Message m) {
 			return m.venue != null;
 		}
-		
+
 		public static boolean isForward(Message m) {
 			return m.forwardFrom != null || m.forwardFromChat != null;
 		}
@@ -555,6 +568,7 @@ public class Message {
 		private List<MessageEntity> entities;
 		private Audio audio;
 		private Document document;
+		private Game game;
 		private List<PhotoSize> photo;
 		private Sticker sticker;
 		private Video video;
@@ -581,8 +595,8 @@ public class Message {
 
 		public Message build() {
 			return new Message(messageId, from, date, chat, forwardFrom, forwardFromChat, forwardDate, replyToMessage,
-					editDate, text, entities, audio, document, photo, sticker, video, voice, caption, contact, location, venue,
-					newChatMember, leftChatMember, newChatTitle, newChatPhoto, deleteChatPhoto, groupChatCreated,
+					editDate, text, entities, audio, document, game, photo, sticker, video, voice, caption, contact, location,
+					venue, newChatMember, leftChatMember, newChatTitle, newChatPhoto, deleteChatPhoto, groupChatCreated,
 					supergroupChatCreated, channelChatCreated, migrateToChatId, migrateFromChatId, pinnedMessage);
 		}
 
@@ -648,6 +662,11 @@ public class Message {
 
 		public Builder setDocument(Document document) {
 			this.document = document;
+			return this;
+		}
+
+		public Builder setGame(Game game) {
+			this.game = game;
 			return this;
 		}
 

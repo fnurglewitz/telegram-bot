@@ -20,6 +20,7 @@ public class InlineQueryResultAudio extends InlineQueryResult {
 	private final static String JSON_FIELD_ID = "id";
 	private final static String JSON_FIELD_AUDIO_URL = "audio_url";
 	private final static String JSON_FIELD_TITLE = "title";
+	private final static String JSON_FIELD_CAPTION = "caption";
 	private final static String JSON_FIELD_PERFORMER = "performer";
 	private final static String JSON_FIELD_AUDIO_DURATION = "audio_duration";
 	private final static String JSON_FIELD_REPLY_MARKUP = "reply_markup";
@@ -50,6 +51,12 @@ public class InlineQueryResultAudio extends InlineQueryResult {
 	public final String title;
 
 	/**
+	 * <em>Optional.</em> Caption, 0-200 characters
+	 */
+	@JsonProperty(JSON_FIELD_CAPTION)
+	public final String caption;
+
+	/**
 	 * <em>Optional.</em> Performer
 	 */
 	@JsonProperty(JSON_FIELD_PERFORMER)
@@ -76,30 +83,33 @@ public class InlineQueryResultAudio extends InlineQueryResult {
 	/**
 	 * 
 	 * @param id
-	 *            Unique identifier for this result, 1-64 bytes
+	 *          Unique identifier for this result, 1-64 bytes
 	 * @param audioUrl
-	 *            A valid URL for the audio file
+	 *          A valid URL for the audio file
 	 * @param title
-	 *            Title
+	 *          Title
+	 * @param caption
+	 *          <em>Optional.</em> Caption, 0-200 characters
 	 * @param performer
-	 *            <em>Optional.</em> Performer
+	 *          <em>Optional.</em> Performer
 	 * @param audioDuration
-	 *            <em>Optional.</em> Audio duration in seconds
+	 *          <em>Optional.</em> Audio duration in seconds
 	 * @param replyMarkup
-	 *            <em>Optional.</em> Inline keyboard attached to the message
+	 *          <em>Optional.</em> Inline keyboard attached to the message
 	 * @param inputMessageContent
-	 *            <em>Optional.</em> Content of the message to be sent instead
-	 *            of the audio
+	 *          <em>Optional.</em> Content of the message to be sent instead of
+	 *          the audio
 	 */
 	public InlineQueryResultAudio(@JsonProperty(JSON_FIELD_ID) String id,
 			@JsonProperty(JSON_FIELD_AUDIO_URL) String audioUrl, @JsonProperty(JSON_FIELD_TITLE) String title,
-			@JsonProperty(JSON_FIELD_PERFORMER) String performer,
+			@JsonProperty(JSON_FIELD_CAPTION) String caption, @JsonProperty(JSON_FIELD_PERFORMER) String performer,
 			@JsonProperty(JSON_FIELD_AUDIO_DURATION) Integer audioDuration,
 			@JsonProperty(JSON_FIELD_REPLY_MARKUP) InlineKeyboardMarkup replyMarkup,
 			@JsonProperty(JSON_FIELD_INPUT_MESSAGE_CONTENT) InputMessageContent inputMessageContent) {
 		this.id = id;
 		this.audioUrl = audioUrl;
 		this.title = title;
+		this.caption = caption;
 		this.performer = performer;
 		this.audioDuration = audioDuration;
 		this.replyMarkup = replyMarkup;

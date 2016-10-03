@@ -33,6 +33,7 @@ import it.pwned.telegram.bot.api.type.TelegramFile;
 import it.pwned.telegram.bot.api.type.Update;
 import it.pwned.telegram.bot.api.type.User;
 import it.pwned.telegram.bot.api.type.UserProfilePhotos;
+import it.pwned.telegram.bot.api.type.game.GameHighScore;
 import it.pwned.telegram.bot.api.type.inline.InlineQueryResult;
 
 public class TelegramBotRestApi implements TelegramBotApi {
@@ -202,15 +203,15 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Message sendAudio(ChatId chatId, Resource audio, Integer duration, String performer, String title,
-			Boolean disableNotification, Integer replyToMessageId, AbstractKeyboardMarkup replyMarkup)
+	public Message sendAudio(ChatId chatId, Resource audio, String caption, Integer duration, String performer,
+			String title, Boolean disableNotification, Integer replyToMessageId, AbstractKeyboardMarkup replyMarkup)
 			throws TelegramBotApiException {
 
 		TelegramBotRestApiCall.Builder<Message> builder = new TelegramBotRestApiCall.Builder<Message>("sendAudio",
 				apiUriTemplate, mapper, restTemplate, Message.class);
 
-		builder.setParam("chat_id", chatId, true).setParam("audio", audio, true).setParam("duration", duration, false)
-				.setParam("performer", performer, false).setParam("title", title, false)
+		builder.setParam("chat_id", chatId, true).setParam("audio", audio, true).setParam("caption", caption, false)
+				.setParam("duration", duration, false).setParam("performer", performer, false).setParam("title", title, false)
 				.setParam("disable_notification", disableNotification, false)
 				.setParam("reply_to_message_id", replyToMessageId, false).setParam("reply_markup", replyMarkup, false);
 
@@ -266,14 +267,14 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Message sendVoice(ChatId chatId, Resource voice, Integer duration, Boolean disableNotification,
+	public Message sendVoice(ChatId chatId, Resource voice, String caption, Integer duration, Boolean disableNotification,
 			Integer replyToMessageId, AbstractKeyboardMarkup replyMarkup) throws TelegramBotApiException {
 
 		TelegramBotRestApiCall.Builder<Message> builder = new TelegramBotRestApiCall.Builder<Message>("sendVoice",
 				apiUriTemplate, mapper, restTemplate, Message.class);
 
-		builder.setParam("chat_id", chatId, true).setParam("voice", voice, true).setParam("duration", duration, false)
-				.setParam("disable_notification", disableNotification, false)
+		builder.setParam("chat_id", chatId, true).setParam("voice", voice, true).setParam("caption", caption, false)
+				.setParam("duration", duration, false).setParam("disable_notification", disableNotification, false)
 				.setParam("reply_to_message_id", replyToMessageId, false).setParam("reply_markup", replyMarkup, false);
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
@@ -356,14 +357,14 @@ public class TelegramBotRestApi implements TelegramBotApi {
 	}
 
 	@Override
-	public Boolean answerCallbackQuery(String callbackQueryId, String text, Boolean showAlert)
+	public Boolean answerCallbackQuery(String callbackQueryId, String text, Boolean showAlert, String url)
 			throws TelegramBotApiException {
 
 		TelegramBotRestApiCall.Builder<Boolean> builder = new TelegramBotRestApiCall.Builder<Boolean>("answerCallbackQuery",
 				apiUriTemplate, mapper, restTemplate, Boolean.class);
 
-		builder.setParam("callback_query_id", callbackQueryId, true).setParam("text", text, false).setParam("show_alert",
-				showAlert, false);
+		builder.setParam("callback_query_id", callbackQueryId, true).setParam("text", text, false)
+				.setParam("show_alert", showAlert, false).setParam("url", url, false);
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
 		return builder.build().call();
@@ -484,6 +485,53 @@ public class TelegramBotRestApi implements TelegramBotApi {
 
 		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
 		return builder.build().call();
+	}
+
+	@Override
+	public Message sendGame(ChatId chatId, String gameShortName, Boolean disableNotification, Integer replyToMessageId,
+			AbstractKeyboardMarkup replyMarkup) throws TelegramBotApiException {
+
+		TelegramBotRestApiCall.Builder<Message> builder = new TelegramBotRestApiCall.Builder<Message>("sendGame",
+				apiUriTemplate, mapper, restTemplate, Message.class);
+
+		builder.setParam("chat_id", chatId, true).setParam("game_short_name", gameShortName, true)
+				.setParam("disable_notification", disableNotification, false)
+				.setParam("reply_to_message_id", replyToMessageId, false).setParam("reply_markup", replyMarkup, false);
+
+		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
+		return builder.build().call();
+	}
+
+	@Override
+	public BooleanOrMessage setGameScore(int userId, int score, ChatId chatId, Integer messageId, String inlineMessageId,
+			Boolean editMessage) throws TelegramBotApiException {
+
+		TelegramBotRestApiCall.Builder<BooleanOrMessage> builder = new TelegramBotRestApiCall.Builder<BooleanOrMessage>(
+				"setGameScore", apiUriTemplate, mapper, restTemplate, BooleanOrMessage.class);
+
+		builder.setParam("user_id", userId, true).setParam("score", score, true).setParam("chat_id", chatId, false)
+				.setParam("message_id", messageId, false).setParam("inline_message_id", inlineMessageId, false)
+				.setParam("edit_message", editMessage, false);
+
+		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
+		return builder.build().call();
+	}
+
+	@Override
+	public List<GameHighScore> getGameHighScores(int userId, ChatId chatId, Integer messageId, String inlineMessageId)
+			throws TelegramBotApiException {
+
+		TelegramBotRestApiCall.Builder<GameHighScore[]> builder = new TelegramBotRestApiCall.Builder<GameHighScore[]>(
+				"getGameHighScores", apiUriTemplate, mapper, restTemplate, GameHighScore[].class);
+
+		builder.setParam("user_id", userId, true).setParam("chat_id", chatId, false)
+				.setParam("message_id", messageId, false).setParam("inline_message_id", inlineMessageId, false);
+
+		builder.setContentType(MediaType.MULTIPART_FORM_DATA);
+		GameHighScore[] result = builder.build().call();
+
+		return Collections.unmodifiableList(Arrays.asList(result));
+
 	}
 
 }

@@ -191,7 +191,7 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 
 		InlineKeyboardMarkup.Builder kb = new InlineKeyboardMarkup.Builder();
 		kb.addRow();
-		kb.addButton(new InlineKeyboardButton("Loading question...", null, "ignore", null), 0);
+		kb.addButton(new InlineKeyboardButton("Loading question...", null, "ignore", null, null, null), 0);
 		InlineKeyboardMarkup keyboard = kb.build();
 
 		InlineQueryResultPhoto iqr = new InlineQueryResultPhoto(resultId, categoryImages.get(category),
@@ -210,9 +210,9 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 			kb.addRow();
 
 			InlineKeyboardButton btnTrue = new InlineKeyboardButton("True", null,
-					question.correctAnswer.equals("True") ? "WIN" : "FAIL", null);
+					question.correctAnswer.equals("True") ? "WIN" : "FAIL", null, null, null);
 			InlineKeyboardButton btnFalse = new InlineKeyboardButton("False", null,
-					question.correctAnswer.equals("False") ? "WIN" : "FAIL", null);
+					question.correctAnswer.equals("False") ? "WIN" : "FAIL", null, null, null);
 
 			kb.addButton(btnTrue, 0);
 			kb.addButton(btnFalse, 0);
@@ -221,10 +221,10 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 
 			ArrayList<InlineKeyboardButton> allButtons = new ArrayList<InlineKeyboardButton>();
 
-			allButtons.add(new InlineKeyboardButton(HtmlUtils.htmlUnescape(question.correctAnswer), null, "WIN", null));
+			allButtons.add(new InlineKeyboardButton(HtmlUtils.htmlUnescape(question.correctAnswer), null, "WIN", null, null, null));
 
 			for (String incorrectAnswer : question.incorrectAnswers)
-				allButtons.add(new InlineKeyboardButton(HtmlUtils.htmlUnescape(incorrectAnswer), null, "FAIL", null));
+				allButtons.add(new InlineKeyboardButton(HtmlUtils.htmlUnescape(incorrectAnswer), null, "FAIL", null, null, null));
 
 			Collections.shuffle(allButtons);
 
@@ -387,7 +387,7 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 		try {
 
 			if ("FAIL".equals(callbackQuery.data)) {
-				api.answerCallbackQuery(callbackQuery.id, "You failed!", false);
+				api.answerCallbackQuery(callbackQuery.id, "You failed!", false, null);
 
 				final Integer count = jdbc.update(
 						"UPDATE PUBLIC.QUESTION_FAILER SET FAIL_COUNT = FAIL_COUNT+1 WHERE QUESTION_ID = ? AND USER_ID = ? ;",
