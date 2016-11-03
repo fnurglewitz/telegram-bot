@@ -2,6 +2,8 @@ package it.pwned.telegram.samplebot.handler;
 
 import java.util.concurrent.BlockingQueue;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -10,6 +12,8 @@ import it.pwned.telegram.bot.api.type.User;
 import it.pwned.telegram.bot.handler.UpdateHandler;
 
 public class UserDataHandler implements UpdateHandler, Runnable {
+	
+	private static final Logger log = LoggerFactory.getLogger(UserDataHandler.class);
 
 	private final JdbcTemplate jdbc;
 	private final BlockingQueue<User> userQueue;
@@ -68,10 +72,12 @@ public class UserDataHandler implements UpdateHandler, Runnable {
 						new Object[] { u.firstName, u.lastName, u.username, u.id });
 
 				if (count <= 0) {
-					// insert
+					
 					jdbc.update("INSERT INTO PUBLIC.USER ( USER_ID, FIRST_NAME, LAST_NAME, USERNAME ) VALUES ( ?, ?, ?, ? );",
 							new Object[] { u.id, u.firstName, u.lastName, u.username });
 				}
+				
+				//log.trace(String.format("", User.Util.usernameOrName(u, UserNameFormat.PLAIN)));
 
 				if (Thread.currentThread().isInterrupted())
 					throw new InterruptedException();
@@ -79,7 +85,7 @@ public class UserDataHandler implements UpdateHandler, Runnable {
 			} catch (InterruptedException e) {
 				goOn = false;
 			} catch (DataAccessException de) {
-
+				log.error("Could not save user data");
 			}
 
 		}

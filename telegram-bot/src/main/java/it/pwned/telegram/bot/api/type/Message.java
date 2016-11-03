@@ -2,6 +2,7 @@ package it.pwned.telegram.bot.api.type;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -545,6 +546,23 @@ public class Message {
 
 		public static boolean isForward(Message m) {
 			return m.forwardFrom != null || m.forwardFromChat != null;
+		}
+			
+		public static List<String> getEntitiesByType(Message m, MessageEntityType t) {
+			
+			List<String> entities = new LinkedList<String>();
+			
+			if(Util.hasText(m) && m.entities != null && m.entities.size() > 0) {
+				
+				for(MessageEntity ent : m.entities) {
+					
+					if(ent.type == t) {
+						entities.add(m.text.substring(ent.offset, ent.offset+ent.length));						
+					}
+				}
+			}
+			
+			return entities;
 		}
 
 	}

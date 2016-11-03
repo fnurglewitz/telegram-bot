@@ -42,7 +42,7 @@ public class StandardUpdateHandlerManager implements UpdateHandlerManager {
 	}
 
 	@Override
-	public void shutdownManager() {
+	public void shutdownHandlers() {
 		log.info("Shutting down handlers");
 
 		handlerThreads.forEach((h, t) -> {
@@ -64,7 +64,7 @@ public class StandardUpdateHandlerManager implements UpdateHandlerManager {
 	}
 
 	@Override
-	public void initManager() {
+	public void initHandlers() {
 		log.info("Initializing handlers");
 
 		handlers.forEach(h -> {

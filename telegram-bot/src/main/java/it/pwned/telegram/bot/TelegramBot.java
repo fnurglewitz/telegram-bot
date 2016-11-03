@@ -45,7 +45,7 @@ public final class TelegramBot {
 
 		log.info(String.format("Bot %s(%d) initialization successful", username, id));
 
-		manager.initManager();
+		manager.initHandlers();
 
 		Update u = null;
 		
@@ -58,7 +58,7 @@ public final class TelegramBot {
 
 		}
 
-		manager.shutdownManager();
+		manager.shutdownHandlers();
 
 	}
 
