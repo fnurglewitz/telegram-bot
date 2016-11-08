@@ -3,6 +3,7 @@ package it.pwned.telegram.samplebot.trivia.api;
 import java.util.List;
 
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -18,7 +19,7 @@ import it.pwned.telegram.samplebot.trivia.type.OpenTdbApiTokenResponse;
 
 public class OpenTdbRestApi implements OpenTdbApi {
 
-	private static final String API_URL = "http://www.opentdb.com/api.php";
+	private static final String API_URL = "https://opentdb.com/api.php";
 
 	private final RestTemplate restTemplate;
 
@@ -63,7 +64,7 @@ public class OpenTdbRestApi implements OpenTdbApi {
 	@Override
 	public String requestToken() throws OpenTdbApiException {
 
-		OpenTdbApiTokenResponse res = restTemplate.exchange("http://www.opentdb.com/api_token.php?command=request",
+		OpenTdbApiTokenResponse res = restTemplate.exchange("https://opentdb.com/api_token.php?command=request",
 				HttpMethod.GET, null, OpenTdbApiTokenResponse.class).getBody();
 
 		return res.token;
@@ -71,8 +72,9 @@ public class OpenTdbRestApi implements OpenTdbApi {
 
 	@Override
 	public void resetToken(String token) throws OpenTdbApiException {
-		restTemplate.exchange("http://www.opentdb.com/api_token.php?command=reset&token=" + token, HttpMethod.GET, null,
-				String.class).getBody();
+		restTemplate
+				.exchange("https://opentdb.com/api_token.php?command=reset&token=" + token, HttpMethod.GET, null, String.class)
+				.getBody();
 	}
 
 }
