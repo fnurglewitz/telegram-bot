@@ -6,7 +6,8 @@ import java.util.concurrent.BlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.pwned.telegram.bot.api.TelegramBotApi;
+import it.pwned.telegram.bot.api.ApiClient;
+import it.pwned.telegram.bot.api.method.GetUpdates;
 import it.pwned.telegram.bot.api.type.TelegramBotApiException;
 import it.pwned.telegram.bot.api.type.Update;
 
@@ -14,16 +15,18 @@ public class ApiUpdateCollector implements UpdateCollector {
 
 	private static final Logger log = LoggerFactory.getLogger(ApiUpdateCollector.class);
 
-	private final TelegramBotApi api;
+	private final ApiClient client;
 	private final BlockingQueue<Update> updateQueue;
-	private final Integer timeout;
+	private final GetUpdates request;
 
-	private int lastUpdate = -1;
-
-	public ApiUpdateCollector(TelegramBotApi api, BlockingQueue<Update> updateQueue, Integer timeout) {
-		this.api = api;
+	public ApiUpdateCollector(ApiClient client, BlockingQueue<Update> updateQueue, Integer timeout) {
+		this.client = client;
 		this.updateQueue = updateQueue;
-		this.timeout = timeout;
+
+		this.request = new GetUpdates();
+
+		request.setOffset(-1);
+		request.setTimeout(timeout);
 	}
 
 	@Override
@@ -39,7 +42,8 @@ public class ApiUpdateCollector implements UpdateCollector {
 		List<Update> updates = null;
 
 		try {
-			updates = api.getUpdates(lastUpdate + 1, null, timeout);
+			request.incrementOffset();
+			updates = client.call(request);
 		} catch (TelegramBotApiException ae) {
 			log.error("Could not fetch updates", ae);
 			updates = null;
@@ -49,8 +53,8 @@ public class ApiUpdateCollector implements UpdateCollector {
 			log.trace(String.format("Fetched %d updates", updates.size()));
 
 			for (Update u : updates) {
-				if (u.updateId > lastUpdate)
-					lastUpdate = u.updateId;
+				if (u.updateId > request.getOffset())
+					request.setOffset(u.updateId);
 
 				try {
 					this.updateQueue.put(u);

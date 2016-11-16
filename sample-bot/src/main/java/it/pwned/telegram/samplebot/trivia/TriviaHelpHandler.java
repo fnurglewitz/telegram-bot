@@ -8,7 +8,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import it.pwned.telegram.bot.api.TelegramBotApi;
+import it.pwned.telegram.bot.api.ApiClient;
+import it.pwned.telegram.bot.api.method.SendMessage;
 import it.pwned.telegram.bot.api.type.ChatId;
 import it.pwned.telegram.bot.api.type.Message;
 import it.pwned.telegram.bot.api.type.ParseMode;
@@ -19,12 +20,12 @@ import it.pwned.telegram.bot.handler.UpdateHandler;
 
 public class TriviaHelpHandler implements UpdateHandler, StatefulUpdateHandler {
 
-	private final TelegramBotApi api;
+	private final ApiClient client;
 	private final ThreadPoolTaskExecutor executor;
 	private final String helpText;
 
-	public TriviaHelpHandler(TelegramBotApi api, ThreadPoolTaskExecutor executor, ResourceLoader loader) {
-		this.api = api;
+	public TriviaHelpHandler(ApiClient client, ThreadPoolTaskExecutor executor, ResourceLoader loader) {
+		this.client = client;
 		this.executor = executor;
 
 		Resource helpFile = loader.getResource("classpath:help.txt");
@@ -33,7 +34,6 @@ public class TriviaHelpHandler implements UpdateHandler, StatefulUpdateHandler {
 		try {
 			tmpHelpText = IOUtils.toString(helpFile.getInputStream(), Charset.forName("UTF-8"));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			tmpHelpText = "Could not load help text";
 		}
 		this.helpText = tmpHelpText;
@@ -50,8 +50,11 @@ public class TriviaHelpHandler implements UpdateHandler, StatefulUpdateHandler {
 				executor.submit(() -> {
 
 					try {
-						api.sendMessage(new ChatId(u.message.chat.id), helpText, ParseMode.MARKDOWN, null, null,
-								u.message.messageId, null);
+						SendMessage helpMessage = new SendMessage(new ChatId(u.message.chat.id), helpText);
+						helpMessage.setParseMode(ParseMode.MARKDOWN);
+						helpMessage.setReplyToMessageId(u.message.messageId);
+
+						client.call(helpMessage);
 					} catch (TelegramBotApiException e) {
 					}
 

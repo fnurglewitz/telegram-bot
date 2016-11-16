@@ -3,7 +3,8 @@ package it.pwned.telegram.bot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.pwned.telegram.bot.api.TelegramBotApi;
+import it.pwned.telegram.bot.api.ApiClient;
+import it.pwned.telegram.bot.api.method.GetMe;
 import it.pwned.telegram.bot.api.type.TelegramBotApiException;
 import it.pwned.telegram.bot.api.type.Update;
 import it.pwned.telegram.bot.api.type.User;
@@ -17,14 +18,14 @@ public final class TelegramBot {
 	public Integer id;
 	public String username;
 
-	private final TelegramBotApi api;
+	private final ApiClient client;
 	private final UpdateCollector collector;
 	private final UpdateHandlerManager manager;
 
 	private volatile boolean goOn = true;
 
-	public TelegramBot(TelegramBotApi api, UpdateCollector collector, UpdateHandlerManager manager) {
-		this.api = api;
+	public TelegramBot(ApiClient client, UpdateCollector collector, UpdateHandlerManager manager) {
+		this.client = client;
 		this.collector = collector;
 		this.manager = manager;
 	}
@@ -38,7 +39,7 @@ public final class TelegramBot {
 
 	public void run() throws InterruptedException, TelegramBotApiException {
 
-		User me = api.getMe();
+		User me = client.call(new GetMe());
 
 		this.id = me.id;
 		this.username = me.username;
@@ -48,7 +49,7 @@ public final class TelegramBot {
 		manager.initHandlers();
 
 		Update u = null;
-		
+
 		while (goOn || u != null) {
 
 			u = collector.next(goOn);

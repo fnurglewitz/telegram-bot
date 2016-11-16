@@ -15,8 +15,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.client.RestTemplate;
 
 import it.pwned.telegram.bot.TelegramBot;
-import it.pwned.telegram.bot.api.TelegramBotApi;
-import it.pwned.telegram.bot.api.rest.TelegramBotRestApi;
+import it.pwned.telegram.bot.api.ApiClient;
+import it.pwned.telegram.bot.api.rest.TelegramBotRestApiClient;
 import it.pwned.telegram.bot.api.type.Update;
 import it.pwned.telegram.bot.collector.ApiUpdateCollector;
 import it.pwned.telegram.bot.collector.UpdateCollector;
@@ -47,14 +47,14 @@ public class Application {
 	}
 
 	@Bean
-	public TelegramBotApi telegramBotApi(@Value("${bot.token}") String token, RestTemplate rest) {
-		return new TelegramBotRestApi(token, rest);
+	public ApiClient telegramBotApiClient(@Value("${bot.token}") String token, RestTemplate rest) {
+		return new TelegramBotRestApiClient(token, rest);
 	}
 
 	@Bean
-	public UpdateCollector updateCollector(TelegramBotApi api, @Value("${bot.api.updates.timeout:60}") Integer timeout) {
+	public UpdateCollector updateCollector(ApiClient client, @Value("${bot.api.updates.timeout:60}") Integer timeout) {
 		LinkedBlockingQueue<Update> updateQueue = new LinkedBlockingQueue<Update>();
-		ApiUpdateCollector collector = new ApiUpdateCollector(api, updateQueue, timeout);
+		ApiUpdateCollector collector = new ApiUpdateCollector(client, updateQueue, timeout);
 		return collector;
 	}
 
@@ -64,9 +64,9 @@ public class Application {
 	}
 
 	@Bean
-	public TelegramBot telegramBot(TelegramBotApi api, UpdateCollector collector, UpdateHandlerManager manager)
+	public TelegramBot telegramBot(ApiClient client, UpdateCollector collector, UpdateHandlerManager manager)
 			throws Exception {
-		return new TelegramBot(api, collector, manager);
+		return new TelegramBot(client, collector, manager);
 	}
 
 	public static void main(String args[]) throws BeansException, Exception {
@@ -75,7 +75,6 @@ public class Application {
 		ConfigurableApplicationContext ctx = app.run(args);
 
 		TelegramBot bot = ctx.getBean(TelegramBot.class);
-		// TelegramBotApi api = ctx.getBean(TelegramBotApi.class);
 
 		Signal.handle(new Signal("INT"), new SignalHandler() {
 			@Override

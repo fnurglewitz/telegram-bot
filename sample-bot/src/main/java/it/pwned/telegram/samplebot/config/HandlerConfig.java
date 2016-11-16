@@ -10,7 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.client.RestTemplate;
 
-import it.pwned.telegram.bot.api.TelegramBotApi;
+import it.pwned.telegram.bot.api.ApiClient;
 import it.pwned.telegram.bot.api.type.Update;
 import it.pwned.telegram.bot.api.type.User;
 import it.pwned.telegram.bot.handler.InlineHandler;
@@ -37,14 +37,14 @@ public class HandlerConfig {
 
 	@Bean
 	@Order(value = 2)
-	public UpdateHandler helpHandler(TelegramBotApi api, ThreadPoolTaskExecutor executor, ResourceLoader loader) {
-		return new TriviaHelpHandler(api, executor, loader);
+	public UpdateHandler helpHandler(ApiClient client, ThreadPoolTaskExecutor executor, ResourceLoader loader) {
+		return new TriviaHelpHandler(client, executor, loader);
 	}
 
 	@InlineHandler
-	public UpdateHandler trivia(TelegramBotApi api, OpenTdbApi trivia, JdbcTemplate jdbc) {
+	public UpdateHandler trivia(ApiClient client, OpenTdbApi trivia, JdbcTemplate jdbc) {
 		LinkedBlockingQueue<Update> updateQueue = new LinkedBlockingQueue<Update>();
-		TriviaHandler handler = new TriviaHandler(api, trivia, updateQueue, jdbc) {
+		TriviaHandler handler = new TriviaHandler(client, trivia, updateQueue, jdbc) {
 			@Override
 			public String getName() {
 				return "TriviaHandler";
