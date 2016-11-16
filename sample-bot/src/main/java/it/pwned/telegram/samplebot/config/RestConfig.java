@@ -58,8 +58,7 @@ public class RestConfig {
 
 		TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> true;
 
-		SSLContext sslContext = SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy)
-				.build();
+		SSLContext sslContext = SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy).build();
 
 		SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext);
 
@@ -69,7 +68,10 @@ public class RestConfig {
 
 		requestFactory.setHttpClient(httpClient);
 		requestFactory.setConnectTimeout(10000);
-		requestFactory.setReadTimeout(10000);
+
+		// the read timeout must be set to 0, otherwise it will interfere with the
+		// long polling on the GetUpdates call
+		requestFactory.setReadTimeout(0);
 
 		ClientHttpRequestInterceptor ri = new LoggingRequestInterceptor();
 		List<ClientHttpRequestInterceptor> ris = new ArrayList<ClientHttpRequestInterceptor>();
