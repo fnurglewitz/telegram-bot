@@ -1,7 +1,5 @@
 package it.pwned.telegram.bot.api.method;
 
-import java.security.InvalidParameterException;
-
 import org.springframework.http.HttpMethod;
 
 import it.pwned.telegram.bot.api.AbstractApiMethod;
@@ -21,100 +19,104 @@ import it.pwned.telegram.bot.api.type.ParseMode;
 public final class SendMessage extends AbstractApiMethod<Message> {
 
 	@ApiMethodParameter("chat_id")
-	private ChatId chatId;
+	public final ChatId chatId;
 
 	@ApiMethodParameter("text")
-	private String text;
+	public final String text;
 
 	@ApiMethodParameter("parse_mode")
-	private ParseMode parseMode;
+	public final ParseMode parseMode;
 
 	@ApiMethodParameter("disable_web_page_preview")
-	private Boolean disableWebPagePreview;
+	public final Boolean disableWebPagePreview;
 
 	@ApiMethodParameter("disable_notification")
-	private Boolean disableNotification;
+	public final Boolean disableNotification;
 
 	@ApiMethodParameter("reply_to_message_id")
-	private Integer replyToMessageId;
+	public final Integer replyToMessageId;
 
 	@ApiMethodParameter("reply_markup")
-	private AbstractKeyboardMarkup replyMarkup;
+	public final AbstractKeyboardMarkup replyMarkup;
 
-	public SendMessage(ChatId chatId, String text) {
+	public SendMessage(ChatId chatId, String text, ParseMode parseMode, Boolean disableWebPagePreview,
+			Boolean disableNotification, Integer replyToMessageId, AbstractKeyboardMarkup replyMarkup) {
 		super();
 
-		setChatId(chatId);
-		setText(text);
-	}
-
-	public SendMessage setChatId(ChatId chatId) {
-		if (chatId == null)
-			throw new InvalidParameterException("chatId cannot be null");
-
-		this.chatId = chatId;
-		return this;
-	}
-
-	public SendMessage setText(String text) {
-		if (text == null)
-			throw new InvalidParameterException("text cannot be null");
-
-		this.text = text;
-		return this;
-	}
-
-	public SendMessage setParseMode(ParseMode parseMode) {
+		this.chatId = validateChatId(chatId);
+		this.text = validateText(text);
 		this.parseMode = parseMode;
-		return this;
-	}
-
-	public SendMessage setDisableWebPagePreview(Boolean disableWebPagePreview) {
 		this.disableWebPagePreview = disableWebPagePreview;
-		return this;
-	}
-
-	public SendMessage setDisableNotification(Boolean disableNotification) {
 		this.disableNotification = disableNotification;
-		return this;
-	}
-
-	public SendMessage setReplyToMessageId(Integer replyToMessageId) {
 		this.replyToMessageId = replyToMessageId;
-		return this;
-	}
-
-	public SendMessage setReplyMarkup(AbstractKeyboardMarkup replyMarkup) {
 		this.replyMarkup = replyMarkup;
-		return this;
 	}
 
-	public ChatId getChatId() {
-		return this.chatId;
+	private static ChatId validateChatId(ChatId chatId) {
+		if (chatId == null)
+			throw new IllegalArgumentException("chatId cannot be null");
+
+		return chatId;
 	}
 
-	public String getText() {
-		return this.text;
+	private static String validateText(String text) {
+		if (text == null || "".equals(text))
+			throw new IllegalArgumentException("text cannot be null or empty");
+
+		return text;
 	}
 
-	public ParseMode getParseMode() {
-		return this.parseMode;
-	}
+	public static class Builder {
 
-	public Boolean getDisableWebPagePreview() {
-		return this.disableWebPagePreview;
-	}
+		private ChatId chatId;
 
-	public Boolean getDisableNotification() {
-		return this.disableNotification;
-	}
+		private String text;
 
-	public Integer getReplyToMessageId() {
-		return this.replyToMessageId;
-	}
+		private ParseMode parseMode;
 
-	public AbstractKeyboardMarkup getReplyMarkup() {
-		return this.replyMarkup;
+		private Boolean disableWebPagePreview;
+
+		private Boolean disableNotification;
+
+		private Integer replyToMessageId;
+
+		private AbstractKeyboardMarkup replyMarkup;
+
+		public Builder(ChatId chatId, String text) {
+			this.chatId = validateChatId(chatId);
+			this.text = validateText(text);
+		}
+
+		public SendMessage build() {
+			return new SendMessage(chatId, text, parseMode, disableWebPagePreview, disableNotification, replyToMessageId,
+					replyMarkup);
+		}
+
+		public Builder parseMode(ParseMode parseMode) {
+			this.parseMode = parseMode;
+			return this;
+		}
+
+		public Builder disableWebPagePreview(Boolean disableWebPagePreview) {
+			this.disableWebPagePreview = disableWebPagePreview;
+			return this;
+		}
+
+		public Builder disableNotification(Boolean disableNotification) {
+			this.disableNotification = disableNotification;
+			return this;
+		}
+
+		public Builder replyToMessageId(Integer replyToMessageId) {
+			this.replyToMessageId = replyToMessageId;
+			return this;
+		}
+
+		public Builder replyMarkup(AbstractKeyboardMarkup replyMarkup) {
+			this.replyMarkup = replyMarkup;
+			return this;
+		}
+
 	}
 
 }

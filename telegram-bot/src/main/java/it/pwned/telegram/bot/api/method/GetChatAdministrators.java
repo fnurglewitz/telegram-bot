@@ -1,6 +1,5 @@
 package it.pwned.telegram.bot.api.method;
 
-import java.security.InvalidParameterException;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,24 +20,15 @@ import it.pwned.telegram.bot.api.type.ChatMember;
 public final class GetChatAdministrators extends AbstractApiMethod<List<ChatMember>> {
 
 	@ApiMethodParameter("chat_id")
-	private ChatId chatId;
+	public final ChatId chatId;
 
 	public GetChatAdministrators(ChatId chatId) {
 		super();
 		
-		setChatId(chatId);
-	}
-
-	public GetChatAdministrators setChatId(ChatId chatId) {
 		if (chatId == null)
-			throw new InvalidParameterException("chatId cannot be null");
+			throw new IllegalArgumentException("chatId cannot be null");
 
 		this.chatId = chatId;
-		return this;
-	}
-	
-	public ChatId getChatId() {
-		return this.chatId;
 	}
 
 	@Override

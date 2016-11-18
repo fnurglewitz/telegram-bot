@@ -1,7 +1,5 @@
 package it.pwned.telegram.bot.api.method;
 
-import java.security.InvalidParameterException;
-
 import org.springframework.http.HttpMethod;
 
 import it.pwned.telegram.bot.api.AbstractApiMethod;
@@ -17,63 +15,73 @@ import it.pwned.telegram.bot.api.method.enums.MethodMediaType;
 public class AnswerCallbackQuery extends AbstractApiMethod<Boolean> {
 
 	@ApiMethodParameter("callback_query_id")
-	private String callbackQueryId;
+	public final String callbackQueryId;
 
 	@ApiMethodParameter("text")
-	private String text;
+	public final String text;
 
 	@ApiMethodParameter("show_alert")
-	private Boolean showAlert;
+	public final Boolean showAlert;
 
 	@ApiMethodParameter("url")
-	private String url;
+	public final String url;
 
-	public AnswerCallbackQuery(String callbackQueryId) {
+	public AnswerCallbackQuery(String callbackQueryId, String text, Boolean showAlert, String url) {
 		super();
 
-		setCallbackQueryId(callbackQueryId);
-	}
-
-	public AnswerCallbackQuery setCallbackQueryId(String callbackQueryId) {
-		if (callbackQueryId == null)
-			throw new InvalidParameterException("callbackQueryId cannot be null");
-
-		this.callbackQueryId = callbackQueryId;
-		return this;
-	}
-
-	public AnswerCallbackQuery setText(String text) {
-		if (text != null && text.length() > 200)
-			throw new InvalidParameterException("text length exceeding maximum value (200)");
-
-		this.text = text;
-		return this;
-	}
-
-	public AnswerCallbackQuery setShowAlert(Boolean showAlert) {
+		this.callbackQueryId = validateCallbackQueryId(callbackQueryId);
+		this.text = validateText(text);
 		this.showAlert = showAlert;
-		return this;
-	}
-
-	public AnswerCallbackQuery setUrl(String url) {
 		this.url = url;
-		return this;
 	}
 
-	public String getCallbackQueryId() {
-		return this.callbackQueryId;
+	private static String validateCallbackQueryId(String callbackQueryId) {
+		if (callbackQueryId == null)
+			throw new IllegalArgumentException("callbackQueryId cannot be null");
+
+		return callbackQueryId;
 	}
 
-	public String getText() {
-		return this.text;
+	public static String validateText(String text) {
+		if (text != null && text.length() > 200)
+			throw new IllegalArgumentException("text length exceeding maximum value (200)");
+
+		return text;
 	}
 
-	public Boolean getShowAlert() {
-		return this.showAlert;
-	}
+	public static class Builder {
 
-	public String getUrl() {
-		return this.url;
+		private String callbackQueryId;
+
+		private String text;
+
+		private Boolean showAlert;
+
+		private String url;
+
+		public Builder(String callbackQueryId) {
+			this.callbackQueryId = validateCallbackQueryId(callbackQueryId);
+		}
+
+		public AnswerCallbackQuery build() {
+			return new AnswerCallbackQuery(callbackQueryId, text, showAlert, url);
+		}
+
+		public Builder text(String text) {
+			this.text = validateText(text);
+			return this;
+		}
+
+		public Builder showAlert(Boolean showAlert) {
+			this.showAlert = showAlert;
+			return this;
+		}
+
+		public Builder url(String url) {
+			this.url = url;
+			return this;
+		}
+
 	}
 
 }

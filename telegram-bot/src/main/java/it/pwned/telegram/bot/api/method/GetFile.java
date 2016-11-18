@@ -1,7 +1,5 @@
 package it.pwned.telegram.bot.api.method;
 
-import java.security.InvalidParameterException;
-
 import org.springframework.http.HttpMethod;
 
 import it.pwned.telegram.bot.api.AbstractApiMethod;
@@ -18,24 +16,15 @@ import it.pwned.telegram.bot.api.type.TelegramFile;
 public final class GetFile extends AbstractApiMethod<TelegramFile> {
 
 	@ApiMethodParameter("file_id")
-	private String fileId;
+	public final String fileId;
 
 	public GetFile(String fileId) {
 		super();
-
-		setFileId(fileId);
-	}
-
-	public GetFile setFileId(String fileId) {
-		if (fileId == null)
-			throw new InvalidParameterException("fileId cannot be null");
+		
+		if (fileId == null || "".equals(fileId))
+			throw new IllegalArgumentException("fileId cannot be null or empty");
 
 		this.fileId = fileId;
-		return this;
-	}
-
-	public String getFileId() {
-		return this.fileId;
 	}
 
 }

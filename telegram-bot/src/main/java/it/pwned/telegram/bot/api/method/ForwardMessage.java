@@ -1,7 +1,5 @@
 package it.pwned.telegram.bot.api.method;
 
-import java.security.InvalidParameterException;
-
 import org.springframework.http.HttpMethod;
 
 import it.pwned.telegram.bot.api.AbstractApiMethod;
@@ -19,68 +17,49 @@ import it.pwned.telegram.bot.api.type.Message;
 public final class ForwardMessage extends AbstractApiMethod<Message> {
 
 	@ApiMethodParameter("chat_id")
-	private ChatId chatId;
+	public final ChatId chatId;
 
 	@ApiMethodParameter("from_chat_id")
-	private ChatId fromChatId;
+	public final ChatId fromChatId;
 
 	@ApiMethodParameter("disable_notification")
-	private Boolean disableNotification;
+	public final Boolean disableNotification;
 
 	@ApiMethodParameter("message_id")
-	private Integer messageId;
+	public final Integer messageId;
 
 	public ForwardMessage(ChatId chatId, ChatId fromChatId, Integer messageId) {
+		this(chatId, fromChatId, messageId, null);
+	}
+
+	public ForwardMessage(ChatId chatId, ChatId fromChatId, Integer messageId, Boolean disableNotification) {
 		super();
 
-		setChatId(chatId);
-		setFromChatId(fromChatId);
-		setMessageId(messageId);
-	}
-
-	public ForwardMessage setChatId(ChatId chatId) {
-		if (chatId == null)
-			throw new InvalidParameterException("chatId cannot be null");
-
-		this.chatId = chatId;
-		return this;
-	}
-
-	public ForwardMessage setFromChatId(ChatId fromChatId) {
-		if (fromChatId == null)
-			throw new InvalidParameterException("fromChatId cannot be null");
-
-		this.fromChatId = fromChatId;
-		return this;
-	}
-
-	public ForwardMessage setDisableNotification(Boolean disableNotification) {
+		this.chatId = validateChatId(chatId);
+		this.fromChatId = validateFromChatId(fromChatId);
+		this.messageId = validateMessageId(messageId);
 		this.disableNotification = disableNotification;
-		return this;
 	}
 
-	public ForwardMessage setMessageId(Integer messageId) {
+	private static ChatId validateChatId(ChatId chatId) {
+		if (chatId == null)
+			throw new IllegalArgumentException("chatId cannot be null");
+
+		return chatId;
+	}
+
+	private static ChatId validateFromChatId(ChatId fromChatId) {
+		if (fromChatId == null)
+			throw new IllegalArgumentException("fromChatId cannot be null");
+
+		return fromChatId;
+	}
+
+	private static Integer validateMessageId(Integer messageId) {
 		if (messageId == null)
-			throw new InvalidParameterException("messageId cannot be null");
+			throw new IllegalArgumentException("messageId cannot be null");
 
-		this.messageId = messageId;
-		return this;
-	}
-
-	public ChatId getChatId() {
-		return this.chatId;
-	}
-
-	public ChatId getFromChatId() {
-		return this.fromChatId;
-	}
-
-	public Boolean getDisableNotification() {
-		return this.disableNotification;
-	}
-
-	public Integer getMessageId() {
-		return this.messageId;
+		return messageId;
 	}
 
 }

@@ -19,48 +19,28 @@ import it.pwned.telegram.bot.api.type.Update;
 public final class GetUpdates extends AbstractApiMethod<List<Update>> {
 
 	@ApiMethodParameter("offset")
-	private Integer offset;
+	public final Integer offset;
 
 	@ApiMethodParameter("limit")
-	private Integer limit;
+	public final Integer limit;
 
 	@ApiMethodParameter("timeout")
-	private Integer timeout;
+	public final Integer timeout;
 
 	public GetUpdates() {
 		super();
+
+		this.offset = null;
+		this.limit = null;
+		this.timeout = null;
 	}
 
-	public GetUpdates setOffset(Integer offset) {
+	public GetUpdates(Integer offset, Integer limit, Integer timeout) {
+		super();
+
 		this.offset = offset;
-		return this;
-	}
-
-	public GetUpdates setLimit(Integer limit) {
 		this.limit = limit;
-		return this;
-	}
-
-	public GetUpdates setTimeout(Integer timeout) {
 		this.timeout = timeout;
-		return this;
-	}
-
-	public Integer getOffset() {
-		return this.offset;
-	}
-
-	public Integer getLimit() {
-		return this.limit;
-	}
-
-	public Integer getTimeout() {
-		return this.timeout;
-	}
-
-	public void incrementOffset() {
-		if (offset != null)
-			offset += 1;
 	}
 
 	public List<Update> map(List<Update> input) {

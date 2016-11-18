@@ -8,18 +8,20 @@ import org.springframework.http.MediaType;
  */
 public class ChatId implements MultipartDataEntity {
 
-	private Long longValue = null;
-	private String stringValue = null;
+	private final Long longValue;
+	private final String stringValue;
 
 	public ChatId(long chatId) {
 		longValue = chatId;
+		stringValue = null;
 	}
 
 	public ChatId(String chatId) {
-		if (chatId == null)
-			throw new IllegalArgumentException("ChatId cannot be null");
+		if (chatId == null || "".equals(chatId))
+			throw new IllegalArgumentException("ChatId cannot be null or empty");
 
 		stringValue = chatId;
+		longValue = null;
 	}
 
 	@Override

@@ -18,24 +18,15 @@ import it.pwned.telegram.bot.api.type.ChatId;
 public final class GetChatMembersCount extends AbstractApiMethod<Integer> {
 
 	@ApiMethodParameter("chat_id")
-	private ChatId chatId;
+	public final ChatId chatId;
 
 	public GetChatMembersCount(ChatId chatId) {
 		super();
 
-		setChatId(chatId);
-	}
-
-	public GetChatMembersCount setChatId(ChatId chatId) {
 		if (chatId == null)
 			throw new InvalidParameterException("chatId cannot be null");
 
 		this.chatId = chatId;
-		return this;
-	}
-
-	public ChatId getChatId() {
-		return this.chatId;
 	}
 
 }
