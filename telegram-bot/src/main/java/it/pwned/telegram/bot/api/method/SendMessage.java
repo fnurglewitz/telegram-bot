@@ -39,6 +39,10 @@ public final class SendMessage extends AbstractApiMethod<Message> {
 	@ApiMethodParameter("reply_markup")
 	public final AbstractKeyboardMarkup replyMarkup;
 
+	public SendMessage(ChatId chatId, String text) {
+		this(chatId, text, null, null, null, null, null);
+	}
+
 	public SendMessage(ChatId chatId, String text, ParseMode parseMode, Boolean disableWebPagePreview,
 			Boolean disableNotification, Integer replyToMessageId, AbstractKeyboardMarkup replyMarkup) {
 		super();
@@ -88,8 +92,8 @@ public final class SendMessage extends AbstractApiMethod<Message> {
 		}
 
 		public SendMessage build() {
-			return new SendMessage(chatId, text, parseMode, disableWebPagePreview, disableNotification, replyToMessageId,
-					replyMarkup);
+			return new SendMessage(chatId, text, parseMode, disableWebPagePreview, disableNotification,
+					replyToMessageId, replyMarkup);
 		}
 
 		public Builder parseMode(ParseMode parseMode) {

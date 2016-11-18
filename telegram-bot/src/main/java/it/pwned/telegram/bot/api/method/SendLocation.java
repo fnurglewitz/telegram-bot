@@ -1,7 +1,5 @@
 package it.pwned.telegram.bot.api.method;
 
-import java.security.InvalidParameterException;
-
 import org.springframework.http.HttpMethod;
 
 import it.pwned.telegram.bot.api.AbstractApiMethod;
@@ -20,86 +18,44 @@ import it.pwned.telegram.bot.api.type.Message;
 public final class SendLocation extends AbstractApiMethod<Message> {
 
 	@ApiMethodParameter("chat_id")
-	private ChatId chatId;
+	public final ChatId chatId;
 
 	@ApiMethodParameter("latitude")
-	private Float latitude;
+	public final Float latitude;
 
 	@ApiMethodParameter("longitude")
-	private Float longitude;
+	public final Float longitude;
 
 	@ApiMethodParameter("disable_notification")
-	private Boolean disableNotification;
+	public final Boolean disableNotification;
 
 	@ApiMethodParameter("reply_to_message_id")
-	private Integer replyToMessageId;
+	public final Integer replyToMessageId;
 
 	@ApiMethodParameter("reply_markup")
-	private AbstractKeyboardMarkup replyMarkup;
+	public final AbstractKeyboardMarkup replyMarkup;
 
 	public SendLocation(ChatId chatId, float latitude, float longitude) {
+		this(chatId, latitude, longitude, null, null, null);
+	}
+
+	public SendLocation(ChatId chatId, float latitude, float longitude, Boolean disableNotification,
+			Integer replyToMessageId, AbstractKeyboardMarkup replyMarkup) {
 		super();
 
-		setChatId(chatId);
+		this.chatId = validateChatId(chatId);
 		this.latitude = latitude;
 		this.longitude = longitude;
-	}
-
-	public SendLocation setChatId(ChatId chatId) {
-		if (chatId == null)
-			throw new InvalidParameterException("chatId cannot be null");
-
-		this.chatId = chatId;
-		return this;
-	}
-
-	public SendLocation setLatitude(float latitude) {
-		this.latitude = latitude;
-		return this;
-	}
-
-	public SendLocation setLongitude(float longitude) {
-		this.longitude = longitude;
-		return this;
-	}
-
-	public SendLocation setDisableNotification(Boolean disableNotification) {
 		this.disableNotification = disableNotification;
-		return this;
-	}
-
-	public SendLocation setReplyToMessageId(Integer replyToMessageId) {
 		this.replyToMessageId = replyToMessageId;
-		return this;
-	}
-
-	public SendLocation setReplyMarkup(AbstractKeyboardMarkup replyMarkup) {
 		this.replyMarkup = replyMarkup;
-		return this;
 	}
 
-	public ChatId getChatId() {
-		return this.chatId;
-	}
+	private static ChatId validateChatId(ChatId chatId) {
+		if (chatId == null)
+			throw new IllegalArgumentException("chatId cannot be null");
 
-	public float getLatitude() {
-		return this.latitude;
-	}
-
-	public float getLongitude() {
-		return this.longitude;
-	}
-
-	public Boolean getDisableNotification() {
-		return this.disableNotification;
-	}
-
-	public Integer getReplyToMessageId() {
-		return this.replyToMessageId;
-	}
-
-	public AbstractKeyboardMarkup getReplyMarkup() {
-		return this.replyMarkup;
+		return chatId;
 	}
 
 }

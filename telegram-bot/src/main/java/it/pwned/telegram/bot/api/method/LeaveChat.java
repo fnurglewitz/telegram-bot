@@ -1,7 +1,5 @@
 package it.pwned.telegram.bot.api.method;
 
-import java.security.InvalidParameterException;
-
 import org.springframework.http.HttpMethod;
 
 import it.pwned.telegram.bot.api.AbstractApiMethod;
@@ -18,24 +16,19 @@ import it.pwned.telegram.bot.api.type.ChatId;
 public final class LeaveChat extends AbstractApiMethod<Boolean> {
 
 	@ApiMethodParameter("chat_id")
-	private ChatId chatId;
+	public final ChatId chatId;
 
 	public LeaveChat(ChatId chatId) {
 		super();
 
-		setChatId(chatId);
+		this.chatId = validateChatId(chatId);
 	}
 
-	public LeaveChat setChatId(ChatId chatId) {
+	private static ChatId validateChatId(ChatId chatId) {
 		if (chatId == null)
-			throw new InvalidParameterException("chatId cannot be null");
+			throw new IllegalArgumentException("chatId cannot be null");
 
-		this.chatId = chatId;
-		return this;
-	}
-
-	public ChatId getChatId() {
-		return this.chatId;
+		return chatId;
 	}
 
 }

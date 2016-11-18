@@ -18,47 +18,31 @@ import it.pwned.telegram.bot.api.type.UserProfilePhotos;
 public final class GetUserProfilePhotos extends AbstractApiMethod<UserProfilePhotos> {
 
 	@ApiMethodParameter("user_id")
-	private Integer userId;
+	public final Integer userId;
 
 	@ApiMethodParameter("offset")
-	private Integer offset;
+	public final Integer offset;
 
 	@ApiMethodParameter("limit")
-	private Integer limit;
+	public final Integer limit;
 
 	public GetUserProfilePhotos(Integer userId) {
-		super();
-
-		setUserId(userId);
+		this(userId, null, null);
 	}
 
-	public GetUserProfilePhotos setUserId(Integer userId) {
+	public GetUserProfilePhotos(Integer userId, Integer offset, Integer limit) {
+		super();
+
+		this.userId = validateUserId(userId);
+		this.offset = offset;
+		this.limit = limit;
+	}
+
+	private static Integer validateUserId(Integer userId) {
 		if (userId == null)
 			throw new InvalidParameterException("userId cannot be null");
 
-		this.userId = userId;
-		return this;
+		return userId;
 	}
 
-	public GetUserProfilePhotos setOffset(Integer offset) {
-		this.offset = offset;
-		return this;
-	}
-
-	public GetUserProfilePhotos setLimit(Integer limit) {
-		this.limit = limit;
-		return this;
-	}
-
-	public Integer getUserId() {
-		return this.userId;
-	}
-
-	public Integer getOffset() {
-		return this.offset;
-	}
-
-	public Integer getLimit() {
-		return this.limit;
-	}
 }

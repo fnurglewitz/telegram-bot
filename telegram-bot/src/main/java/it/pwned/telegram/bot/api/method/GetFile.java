@@ -20,11 +20,15 @@ public final class GetFile extends AbstractApiMethod<TelegramFile> {
 
 	public GetFile(String fileId) {
 		super();
-		
+
+		this.fileId = validateFileId(fileId);
+	}
+
+	private static String validateFileId(String fileId) {
 		if (fileId == null || "".equals(fileId))
 			throw new IllegalArgumentException("fileId cannot be null or empty");
 
-		this.fileId = fileId;
+		return fileId;
 	}
 
 }

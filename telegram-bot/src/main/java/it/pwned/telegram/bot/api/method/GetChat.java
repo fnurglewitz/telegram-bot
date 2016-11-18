@@ -21,11 +21,15 @@ public final class GetChat extends AbstractApiMethod<Chat> {
 
 	public GetChat(ChatId chatId) {
 		super();
-		
+
+		this.chatId = validateChatId(chatId);
+	}
+
+	private static ChatId validateChatId(ChatId chatId) {
 		if (chatId == null)
 			throw new IllegalArgumentException("chatId cannot be null");
 
-		this.chatId = chatId;
+		return chatId;
 	}
 
 }

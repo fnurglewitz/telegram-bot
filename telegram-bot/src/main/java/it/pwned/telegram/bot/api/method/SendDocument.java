@@ -1,7 +1,5 @@
 package it.pwned.telegram.bot.api.method;
 
-import java.security.InvalidParameterException;
-
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
 
@@ -21,93 +19,104 @@ import it.pwned.telegram.bot.api.type.Message;
 public final class SendDocument extends AbstractApiMethod<Message> {
 
 	@ApiMethodParameter("chat_id")
-	private ChatId chatId;
+	public final ChatId chatId;
 
 	@ApiMethodParameter("document")
-	private Resource document;
+	public final Resource document;
 
 	@ApiMethodParameter("caption")
-	private String caption;
+	public final String caption;
 
 	@ApiMethodParameter("disable_notification")
-	private Boolean disableNotification;
+	public final Boolean disableNotification;
 
 	@ApiMethodParameter("reply_to_message_id")
-	private Integer replyToMessageId;
+	public final Integer replyToMessageId;
 
 	@ApiMethodParameter("reply_markup")
-	private AbstractKeyboardMarkup replyMarkup;
+	public final AbstractKeyboardMarkup replyMarkup;
 
 	public SendDocument(ChatId chatId, Resource document) {
+		this(chatId, document, null, null, null, null);
+	}
+
+	public SendDocument(ChatId chatId, Resource document, String caption, Boolean disableNotification,
+			Integer replyToMessageId, AbstractKeyboardMarkup replyMarkup) {
 		super();
 
-		setChatId(chatId);
-		setDocument(document);
+		this.chatId = validateChatId(chatId);
+		this.document = validateDocument(document);
+		this.caption = validateCaption(caption);
+		this.disableNotification = disableNotification;
+		this.replyToMessageId = replyToMessageId;
+		this.replyMarkup = replyMarkup;
 	}
 
-	public SendDocument setChatId(ChatId chatId) {
+	private static ChatId validateChatId(ChatId chatId) {
 		if (chatId == null)
-			throw new InvalidParameterException("chatId cannot be null");
+			throw new IllegalArgumentException("chatId cannot be null");
 
-		this.chatId = chatId;
-		return this;
+		return chatId;
 	}
 
-	public SendDocument setDocument(Resource document) {
+	private static Resource validateDocument(Resource document) {
 		// TODO: check max file size (50MB)
 
 		if (document == null)
-			throw new InvalidParameterException("document cannot be null");
+			throw new IllegalArgumentException("document cannot be null");
 
-		this.document = document;
-		return this;
+		return document;
 	}
 
-	public SendDocument setCaption(String caption) {
+	private static String validateCaption(String caption) {
 		if (caption != null && caption.length() > 200)
-			throw new InvalidParameterException("caption length exceeding maximum value (200)");
+			throw new IllegalArgumentException("caption length exceeding maximum value (200)");
 
-		this.caption = caption;
-		return this;
+		return caption;
 	}
 
-	public SendDocument setDisableNotification(Boolean disableNotification) {
-		this.disableNotification = disableNotification;
-		return this;
-	}
+	public static class Builder {
 
-	public SendDocument setReplyToMessageId(Integer replyToMessageId) {
-		this.replyToMessageId = replyToMessageId;
-		return this;
-	}
+		private ChatId chatId;
 
-	public SendDocument setReplyMarkup(AbstractKeyboardMarkup replyMarkup) {
-		this.replyMarkup = replyMarkup;
-		return this;
-	}
+		private Resource document;
 
-	public ChatId getChatId() {
-		return this.chatId;
-	}
+		private String caption;
 
-	public Resource getDocument() {
-		return this.document;
-	}
+		private Boolean disableNotification;
 
-	public String getCaption() {
-		return this.caption;
-	}
+		private Integer replyToMessageId;
 
-	public Boolean getDisableNotification() {
-		return this.disableNotification;
-	}
+		private AbstractKeyboardMarkup replyMarkup;
 
-	public Integer getReplyToMessageId() {
-		return this.replyToMessageId;
-	}
+		public Builder(ChatId chatId, Resource document) {
+			this.chatId = validateChatId(chatId);
+			this.document = validateDocument(document);
+		}
 
-	public AbstractKeyboardMarkup getReplyMarkup() {
-		return this.replyMarkup;
-	}
+		public SendDocument build() {
+			return new SendDocument(chatId, document, caption, disableNotification, replyToMessageId, replyMarkup);
+		}
 
+		public Builder caption(String caption) {
+			this.caption = validateCaption(caption);
+			return this;
+		}
+
+		public Builder disableNotification(Boolean disableNotification) {
+			this.disableNotification = disableNotification;
+			return this;
+		}
+
+		public Builder replyToMessageId(Integer replyToMessageId) {
+			this.replyToMessageId = replyToMessageId;
+			return this;
+		}
+
+		public Builder replyMarkup(AbstractKeyboardMarkup replyMarkup) {
+			this.replyMarkup = replyMarkup;
+			return this;
+		}
+
+	}
 }

@@ -1,7 +1,5 @@
 package it.pwned.telegram.bot.api.method;
 
-import java.security.InvalidParameterException;
-
 import org.springframework.http.HttpMethod;
 
 import it.pwned.telegram.bot.api.AbstractApiMethod;
@@ -22,40 +20,30 @@ import it.pwned.telegram.bot.api.type.ChatId;
 public final class SendChatAction extends AbstractApiMethod<Boolean> {
 
 	@ApiMethodParameter("chat_id")
-	private ChatId chatId;
+	public final ChatId chatId;
 
 	@ApiMethodParameter("action")
-	private ChatAction action;
+	public final ChatAction action;
 
 	public SendChatAction(ChatId chatId, ChatAction action) {
 		super();
 
-		setChatId(chatId);
-		setChatAction(action);
+		this.chatId = validateChatId(chatId);
+		this.action = validateChatAction(action);
 	}
 
-	public SendChatAction setChatId(ChatId chatId) {
+	private static ChatId validateChatId(ChatId chatId) {
 		if (chatId == null)
-			throw new InvalidParameterException("chatId cannot be null");
+			throw new IllegalArgumentException("chatId cannot be null");
 
-		this.chatId = chatId;
-		return this;
+		return chatId;
 	}
 
-	public SendChatAction setChatAction(ChatAction action) {
+	public ChatAction validateChatAction(ChatAction action) {
 		if (action == null)
-			throw new InvalidParameterException("action cannot be null");
+			throw new IllegalArgumentException("action cannot be null");
 
-		this.action = action;
-		return this;
-	}
-
-	public ChatId getChatId() {
-		return this.chatId;
-	}
-
-	public ChatAction getChatAction() {
-		return this.action;
+		return action;
 	}
 
 }

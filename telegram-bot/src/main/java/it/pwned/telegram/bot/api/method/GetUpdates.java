@@ -28,11 +28,7 @@ public final class GetUpdates extends AbstractApiMethod<List<Update>> {
 	public final Integer timeout;
 
 	public GetUpdates() {
-		super();
-
-		this.offset = null;
-		this.limit = null;
-		this.timeout = null;
+		this(null, null, null);
 	}
 
 	public GetUpdates(Integer offset, Integer limit, Integer timeout) {
@@ -41,6 +37,12 @@ public final class GetUpdates extends AbstractApiMethod<List<Update>> {
 		this.offset = offset;
 		this.limit = limit;
 		this.timeout = timeout;
+	}
+
+	public static GetUpdates nextUpdate(GetUpdates prev) {
+		final Integer oldOffset = prev.offset == null ? 0 : prev.offset;
+
+		return new GetUpdates(oldOffset + 1, prev.limit, prev.timeout);
 	}
 
 	public List<Update> map(List<Update> input) {

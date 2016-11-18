@@ -1,7 +1,5 @@
 package it.pwned.telegram.bot.api.method;
 
-import java.security.InvalidParameterException;
-
 import org.springframework.http.HttpMethod;
 
 import it.pwned.telegram.bot.api.AbstractApiMethod;
@@ -20,104 +18,111 @@ import it.pwned.telegram.bot.api.type.Message;
 public final class SendContact extends AbstractApiMethod<Message> {
 
 	@ApiMethodParameter("chat_id")
-	private ChatId chatId;
+	public final ChatId chatId;
 
 	@ApiMethodParameter("phone_number")
-	private String phoneNumber;
+	public final String phoneNumber;
 
 	@ApiMethodParameter("first_name")
-	private String firstName;
+	public final String firstName;
 
 	@ApiMethodParameter("last_name")
-	private String lastName;
+	public final String lastName;
 
 	@ApiMethodParameter("disable_notification")
-	private Boolean disableNotification;
+	public final Boolean disableNotification;
 
 	@ApiMethodParameter("reply_to_message_id")
-	private Integer replyToMessageId;
+	public final Integer replyToMessageId;
 
 	@ApiMethodParameter("reply_markup")
-	private AbstractKeyboardMarkup replyMarkup;
+	public final AbstractKeyboardMarkup replyMarkup;
 
 	public SendContact(ChatId chatId, String phoneNumber, String firstName) {
+		this(chatId, phoneNumber, firstName, null, null, null, null);
+	}
+
+	public SendContact(ChatId chatId, String phoneNumber, String firstName, String lastName,
+			Boolean disableNotification, Integer replyToMessageId, AbstractKeyboardMarkup replyMarkup) {
 		super();
 
-		setChatId(chatId);
-		setPhoneNumber(phoneNumber);
-		setFirstName(firstName);
-	}
-
-	public SendContact setChatId(ChatId chatId) {
-		if (chatId == null)
-			throw new InvalidParameterException("chatId cannot be null");
-
-		this.chatId = chatId;
-		return this;
-	}
-
-	public SendContact setPhoneNumber(String phoneNumber) {
-		if (phoneNumber == null)
-			throw new InvalidParameterException("phoneNumber cannot be null");
-
-		this.phoneNumber = phoneNumber;
-		return this;
-	}
-
-	public SendContact setFirstName(String firstName) {
-		if (firstName == null)
-			throw new InvalidParameterException("firstName cannot be null");
-
-		this.firstName = firstName;
-		return this;
-	}
-
-	public SendContact setLastName(String lastName) {
+		this.chatId = validateChatId(chatId);
+		this.phoneNumber = validatePhoneNumber(phoneNumber);
+		this.firstName = validateFirstName(firstName);
 		this.lastName = lastName;
-		return this;
-	}
-
-	public SendContact setDisableNotification(Boolean disableNotification) {
 		this.disableNotification = disableNotification;
-		return this;
-	}
-
-	public SendContact setReplyToMessageId(Integer replyToMessageId) {
 		this.replyToMessageId = replyToMessageId;
-		return this;
-	}
-
-	public SendContact setReplyMarkup(AbstractKeyboardMarkup replyMarkup) {
 		this.replyMarkup = replyMarkup;
-		return this;
 	}
 
-	public ChatId getChatId() {
-		return this.chatId;
+	private static ChatId validateChatId(ChatId chatId) {
+		if (chatId == null)
+			throw new IllegalArgumentException("chatId cannot be null");
+
+		return chatId;
 	}
 
-	public String getPhoneNumber() {
-		return this.phoneNumber;
+	private static String validatePhoneNumber(String phoneNumber) {
+		if (phoneNumber == null)
+			throw new IllegalArgumentException("phoneNumber cannot be null");
+
+		return phoneNumber;
 	}
 
-	public String getFirstName() {
-		return this.firstName;
+	private static String validateFirstName(String firstName) {
+		if (firstName == null)
+			throw new IllegalArgumentException("firstName cannot be null");
+
+		return firstName;
 	}
 
-	public String getLastName() {
-		return this.lastName;
-	}
+	public static class Builder {
 
-	public Boolean getDisableNotification() {
-		return this.disableNotification;
-	}
+		private ChatId chatId;
 
-	public Integer getReplyToMessageId() {
-		return this.replyToMessageId;
-	}
+		private String phoneNumber;
 
-	public AbstractKeyboardMarkup getReplyMarkup() {
-		return this.replyMarkup;
+		private String firstName;
+
+		private String lastName;
+
+		private Boolean disableNotification;
+
+		private Integer replyToMessageId;
+
+		private AbstractKeyboardMarkup replyMarkup;
+
+		public Builder(ChatId chatId, String phoneNumber, String firstName) {
+			this.chatId = validateChatId(chatId);
+			this.phoneNumber = validatePhoneNumber(phoneNumber);
+			this.firstName = validateFirstName(firstName);
+		}
+
+		public SendContact build() {
+			return new SendContact(chatId, phoneNumber, firstName, lastName, disableNotification, replyToMessageId,
+					replyMarkup);
+		}
+
+		public Builder setLastName(String lastName) {
+			this.lastName = lastName;
+			return this;
+		}
+
+		public Builder setDisableNotification(Boolean disableNotification) {
+			this.disableNotification = disableNotification;
+			return this;
+		}
+
+		public Builder setReplyToMessageId(Integer replyToMessageId) {
+			this.replyToMessageId = replyToMessageId;
+			return this;
+		}
+
+		public Builder setReplyMarkup(AbstractKeyboardMarkup replyMarkup) {
+			this.replyMarkup = replyMarkup;
+			return this;
+		}
+
 	}
 
 }

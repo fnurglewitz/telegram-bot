@@ -24,11 +24,15 @@ public final class GetChatAdministrators extends AbstractApiMethod<List<ChatMemb
 
 	public GetChatAdministrators(ChatId chatId) {
 		super();
-		
+
+		this.chatId = validateChatId(chatId);
+	}
+
+	private static ChatId validateChatId(ChatId chatId) {
 		if (chatId == null)
 			throw new IllegalArgumentException("chatId cannot be null");
 
-		this.chatId = chatId;
+		return chatId;
 	}
 
 	@Override

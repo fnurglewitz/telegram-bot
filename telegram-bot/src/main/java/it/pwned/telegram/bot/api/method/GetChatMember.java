@@ -25,14 +25,22 @@ public final class GetChatMember extends AbstractApiMethod<ChatMember> {
 	public GetChatMember(ChatId chatId, Integer userId) {
 		super();
 
+		this.chatId = validateChatId(chatId);
+		this.userId = validateUserId(userId);
+	}
+
+	private static ChatId validateChatId(ChatId chatId) {
 		if (chatId == null)
 			throw new IllegalArgumentException("chatId cannot be null");
 
+		return chatId;
+	}
+
+	private static Integer validateUserId(Integer userId) {
 		if (userId == null)
 			throw new IllegalArgumentException("userId cannot be null");
 
-		this.chatId = chatId;
-		this.userId = userId;
+		return userId;
 	}
 
 }

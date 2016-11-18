@@ -1,7 +1,5 @@
 package it.pwned.telegram.bot.api.method;
 
-import java.security.InvalidParameterException;
-
 import org.springframework.http.HttpMethod;
 
 import it.pwned.telegram.bot.api.AbstractApiMethod;
@@ -23,10 +21,14 @@ public final class GetChatMembersCount extends AbstractApiMethod<Integer> {
 	public GetChatMembersCount(ChatId chatId) {
 		super();
 
-		if (chatId == null)
-			throw new InvalidParameterException("chatId cannot be null");
+		this.chatId = validateChatId(chatId);
+	}
 
-		this.chatId = chatId;
+	private static ChatId validateChatId(ChatId chatId) {
+		if (chatId == null)
+			throw new IllegalArgumentException("chatId cannot be null");
+
+		return chatId;
 	}
 
 }

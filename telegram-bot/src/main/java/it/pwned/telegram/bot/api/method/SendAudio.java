@@ -1,7 +1,5 @@
 package it.pwned.telegram.bot.api.method;
 
-import java.security.InvalidParameterException;
-
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
 
@@ -21,130 +19,139 @@ import it.pwned.telegram.bot.api.type.Message;
 public final class SendAudio extends AbstractApiMethod<Message> {
 
 	@ApiMethodParameter("chat_id")
-	private ChatId chatId;
+	public final ChatId chatId;
 
 	@ApiMethodParameter("audio")
-	private Resource audio;
+	public final Resource audio;
 
 	@ApiMethodParameter("caption")
-	private String caption;
+	public final String caption;
 
 	@ApiMethodParameter("duration")
-	private Integer duration;
+	public final Integer duration;
 
 	@ApiMethodParameter("performer")
-	private String performer;
+	public final String performer;
 
 	@ApiMethodParameter("title")
-	private String title;
+	public final String title;
 
 	@ApiMethodParameter("disable_notification")
-	private Boolean disableNotification;
+	public final Boolean disableNotification;
 
 	@ApiMethodParameter("reply_to_message_id")
-	private Integer replyToMessageId;
+	public final Integer replyToMessageId;
 
 	@ApiMethodParameter("reply_markup")
-	private AbstractKeyboardMarkup replyMarkup;
+	public final AbstractKeyboardMarkup replyMarkup;
 
 	public SendAudio(ChatId chatId, Resource audio) {
+		this(chatId, audio, null, null, null, null, null, null, null);
+	}
+
+	public SendAudio(ChatId chatId, Resource audio, String caption, Integer duration, String performer, String title,
+			Boolean disableNotification, Integer replyToMessageId, AbstractKeyboardMarkup replyMarkup) {
 		super();
 
-		setChatId(chatId);
-		setAudio(audio);
+		this.chatId = validateChatId(chatId);
+		this.audio = validateAudio(audio);
+		this.caption = validateCaption(caption);
+		this.duration = duration;
+		this.performer = performer;
+		this.title = title;
+		this.disableNotification = disableNotification;
+		this.replyToMessageId = replyToMessageId;
+		this.replyMarkup = replyMarkup;
 	}
 
-	public SendAudio setChatId(ChatId chatId) {
+	private static ChatId validateChatId(ChatId chatId) {
 		if (chatId == null)
-			throw new InvalidParameterException("chatId cannot be null");
+			throw new IllegalArgumentException("chatId cannot be null");
 
-		this.chatId = chatId;
-		return this;
+		return chatId;
 	}
 
-	public SendAudio setAudio(Resource audio) {
+	private static Resource validateAudio(Resource audio) {
 		// TODO: check max size (50MB)
 		// TODO: check file format (must be mp3)
 
 		if (audio == null)
-			throw new InvalidParameterException("audio cannot be null");
+			throw new IllegalArgumentException("audio cannot be null");
 
-		this.audio = audio;
-		return this;
+		return audio;
 	}
 
-	public SendAudio setCaption(String caption) {
+	private static String validateCaption(String caption) {
 		if (caption != null && caption.length() > 200)
-			throw new InvalidParameterException("caption length exceeding maximum value (200)");
+			throw new IllegalArgumentException("caption length exceeding maximum value (200)");
 
-		this.caption = caption;
-		return this;
+		return caption;
 	}
 
-	public SendAudio setDuration(Integer duration) {
-		this.duration = duration;
-		return this;
-	}
+	public static class Builder {
 
-	public SendAudio setPerformer(String performer) {
-		this.performer = performer;
-		return this;
-	}
+		private ChatId chatId;
 
-	public SendAudio setTitle(String title) {
-		this.title = title;
-		return this;
-	}
+		private Resource audio;
 
-	public SendAudio setDisableNotification(Boolean disableNotification) {
-		this.disableNotification = disableNotification;
-		return this;
-	}
+		private String caption;
 
-	public SendAudio setReplyToMessageId(Integer replyToMessageId) {
-		this.replyToMessageId = replyToMessageId;
-		return this;
-	}
+		private Integer duration;
 
-	public SendAudio setReplyMarkup(AbstractKeyboardMarkup replyMarkup) {
-		this.replyMarkup = replyMarkup;
-		return this;
-	}
+		private String performer;
 
-	public ChatId getChatId() {
-		return this.chatId;
-	}
+		private String title;
 
-	public Resource getAudio() {
-		return this.audio;
-	}
+		private Boolean disableNotification;
 
-	public String getCaption() {
-		return this.caption;
-	}
+		private Integer replyToMessageId;
 
-	public Integer getDuration() {
-		return this.duration;
-	}
+		private AbstractKeyboardMarkup replyMarkup;
 
-	public String getPerformer() {
-		return this.performer;
-	}
+		public Builder(ChatId chatId, Resource audio) {
+			this.chatId = validateChatId(chatId);
+			this.audio = validateAudio(audio);
+		}
 
-	public String getTitle() {
-		return this.title;
-	}
+		public SendAudio build() {
+			return new SendAudio(chatId, audio, caption, duration, performer, title, disableNotification,
+					replyToMessageId, replyMarkup);
+		}
 
-	public Boolean getDisableNotification() {
-		return this.disableNotification;
-	}
+		public Builder caption(String caption) {
+			this.caption = validateCaption(caption);
+			return this;
+		}
 
-	public Integer getReplyToMessageId() {
-		return this.replyToMessageId;
-	}
+		public Builder duration(Integer duration) {
+			this.duration = duration;
+			return this;
+		}
 
-	public AbstractKeyboardMarkup getReplyMarkup() {
-		return this.replyMarkup;
-	}
+		public Builder performer(String performer) {
+			this.performer = performer;
+			return this;
+		}
 
+		public Builder title(String title) {
+			this.title = title;
+			return this;
+		}
+
+		public Builder disableNotification(Boolean disableNotification) {
+			this.disableNotification = disableNotification;
+			return this;
+		}
+
+		public Builder replyToMessageId(Integer replyToMessageId) {
+			this.replyToMessageId = replyToMessageId;
+			return this;
+		}
+
+		public Builder replyMarkup(AbstractKeyboardMarkup replyMarkup) {
+			this.replyMarkup = replyMarkup;
+			return this;
+		}
+
+	}
 }
