@@ -1,7 +1,5 @@
 package it.pwned.telegram.bot.api.method;
 
-import java.security.InvalidParameterException;
-
 import org.springframework.http.HttpMethod;
 
 import it.pwned.telegram.bot.api.AbstractApiMethod;
@@ -20,130 +18,125 @@ import it.pwned.telegram.bot.api.type.Message;
 public final class SendVenue extends AbstractApiMethod<Message> {
 
 	@ApiMethodParameter("chat_id")
-	private ChatId chatId;
+	public final ChatId chatId;
 
 	@ApiMethodParameter("latitude")
-	private Float latitude;
+	public final Float latitude;
 
 	@ApiMethodParameter("longitude")
-	private Float longitude;
+	public final Float longitude;
 
 	@ApiMethodParameter("title")
-	private String title;
+	public final String title;
 
 	@ApiMethodParameter("address")
-	private String address;
+	public final String address;
 
 	@ApiMethodParameter("foursquare_id")
-	private String foursquareId;
+	public final String foursquareId;
 
 	@ApiMethodParameter("disable_notification")
-	private Boolean disableNotification;
+	public final Boolean disableNotification;
 
 	@ApiMethodParameter("reply_to_message_id")
-	private Integer replyToMessageId;
+	public final Integer replyToMessageId;
 
 	@ApiMethodParameter("reply_markup")
-	private AbstractKeyboardMarkup replyMarkup;
+	public final AbstractKeyboardMarkup replyMarkup;
 
 	public SendVenue(ChatId chatId, float latitude, float longitude, String title, String address) {
+		this(chatId, latitude, longitude, title, address, null, null, null, null);
+	}
+
+	public SendVenue(ChatId chatId, float latitude, float longitude, String title, String address, String foursquareId,
+			Boolean disableNotification, Integer replyToMessageId, AbstractKeyboardMarkup replyMarkup) {
 		super();
 
-		setChatId(chatId);
+		this.chatId = validateChatId(chatId);
 		this.latitude = latitude;
 		this.longitude = longitude;
-		setTitle(title);
-		setAddress(address);
-	}
-
-	public SendVenue setChatId(ChatId chatId) {
-		if (chatId == null)
-			throw new InvalidParameterException("chatId cannot be null");
-
-		this.chatId = chatId;
-		return this;
-	}
-
-	public SendVenue setLatitude(float latitude) {
-		this.latitude = latitude;
-		return this;
-	}
-
-	public SendVenue setLongitude(float longitude) {
-		this.longitude = longitude;
-		return this;
-	}
-
-	public SendVenue setTitle(String title) {
-		if (title == null)
-			throw new InvalidParameterException("title cannot be null");
-
-		this.title = title;
-		return this;
-	}
-
-	public SendVenue setAddress(String address) {
-		if (address == null)
-			throw new InvalidParameterException("address cannot be null");
-
-		this.address = address;
-		return this;
-	}
-
-	public SendVenue setFoursquareId(String foursquareId) {
+		this.title = validateTitle(title);
+		this.address = validateAddress(address);
 		this.foursquareId = foursquareId;
-		return this;
-	}
-
-	public SendVenue setDisableNotification(Boolean disableNotification) {
 		this.disableNotification = disableNotification;
-		return this;
-	}
-
-	public SendVenue setReplyToMessageId(Integer replyToMessageId) {
 		this.replyToMessageId = replyToMessageId;
-		return this;
-	}
-
-	public SendVenue setReplyMarkup(AbstractKeyboardMarkup replyMarkup) {
 		this.replyMarkup = replyMarkup;
-		return this;
 	}
 
-	public ChatId getChatId() {
-		return this.chatId;
+	private static ChatId validateChatId(ChatId chatId) {
+		if (chatId == null)
+			throw new IllegalArgumentException("chatId cannot be null");
+
+		return chatId;
 	}
 
-	public float getLatitude() {
-		return this.latitude;
+	private static String validateTitle(String title) {
+		if (title == null)
+			throw new IllegalArgumentException("title cannot be null");
+
+		return title;
 	}
 
-	public float getLongitude() {
-		return this.longitude;
+	private static String validateAddress(String address) {
+		if (address == null)
+			throw new IllegalArgumentException("address cannot be null");
+
+		return address;
 	}
 
-	public String getTitle() {
-		return this.title;
-	}
+	public static class Builder {
 
-	public String getAddress() {
-		return this.address;
-	}
+		private ChatId chatId;
 
-	public String getFoursquareId() {
-		return this.foursquareId;
-	}
+		private Float latitude;
 
-	public Boolean getDisableNotification() {
-		return this.disableNotification;
-	}
+		private Float longitude;
 
-	public Integer getReplyToMessageId() {
-		return this.replyToMessageId;
-	}
+		private String title;
 
-	public AbstractKeyboardMarkup getReplyMarkup() {
-		return this.replyMarkup;
+		private String address;
+
+		private String foursquareId;
+
+		private Boolean disableNotification;
+
+		private Integer replyToMessageId;
+
+		private AbstractKeyboardMarkup replyMarkup;
+
+		public Builder(ChatId chatId, float latitude, float longitude, String title, String address) {
+			this.chatId = validateChatId(chatId);
+			this.latitude = latitude;
+			this.longitude = longitude;
+			this.title = validateTitle(title);
+			this.address = validateAddress(address);
+		}
+
+		public SendVenue build() {
+			return new SendVenue(chatId, latitude, longitude, title, address, foursquareId, disableNotification,
+					replyToMessageId, replyMarkup);
+		}
+
+		public Builder foursquareId(String foursquareId) {
+			this.foursquareId = foursquareId;
+			return this;
+		}
+
+		public Builder disableNotification(Boolean disableNotification) {
+			this.disableNotification = disableNotification;
+			return this;
+		}
+
+		public Builder replyToMessageId(Integer replyToMessageId) {
+			this.replyToMessageId = replyToMessageId;
+			return this;
+		}
+
+		public Builder replyMarkup(AbstractKeyboardMarkup replyMarkup) {
+			this.replyMarkup = replyMarkup;
+			return this;
+		}
+
 	}
 
 }

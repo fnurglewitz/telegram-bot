@@ -26,8 +26,8 @@ import org.springframework.web.util.HtmlUtils;
 import it.pwned.telegram.bot.api.ApiClient;
 import it.pwned.telegram.bot.api.method.AnswerCallbackQuery;
 import it.pwned.telegram.bot.api.method.inline.AnswerInlineQuery;
-import it.pwned.telegram.bot.api.method.inline.EditMessageReplyMarkup;
-import it.pwned.telegram.bot.api.method.inline.EditMessageText;
+import it.pwned.telegram.bot.api.method.update.EditMessageReplyMarkup;
+import it.pwned.telegram.bot.api.method.update.EditMessageText;
 import it.pwned.telegram.bot.api.type.CallbackQuery;
 import it.pwned.telegram.bot.api.type.InlineKeyboardButton;
 import it.pwned.telegram.bot.api.type.InlineKeyboardMarkup;
@@ -178,12 +178,7 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 		}
 
 		try {
-
-			AnswerInlineQuery aiq = new AnswerInlineQuery(query.id, results);
-			aiq.setCacheTime(1);
-
-			client.call(aiq);
-
+			client.call(new AnswerInlineQuery(query.id, results, 1, null, null, null, null));
 		} catch (TelegramBotApiException e) {
 
 		}
@@ -275,15 +270,9 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 
 				InlineKeyboardMarkup keyboard = getInlineKeyboardFromQuestion(question);
 
-				EditMessageText emt = new EditMessageText(chosenInlineResult.inlineMessageId,
-						HtmlUtils.htmlUnescape(question.question));
-				emt.setParseMode(ParseMode.HTML);
-
-				EditMessageReplyMarkup emm = new EditMessageReplyMarkup(chosenInlineResult.inlineMessageId);
-				emm.setReplyMarkup(keyboard);
-
-				client.call(emt);
-				client.call(emm);
+				client.call(new EditMessageText(chosenInlineResult.inlineMessageId, HtmlUtils.htmlUnescape(question.question),
+						ParseMode.HTML, null, null));
+				client.call(new EditMessageReplyMarkup(chosenInlineResult.inlineMessageId, keyboard));
 
 				final QuestionCategory normalizedCategory = question.category == null ? category : question.category;
 				final QuestionDifficulty normalizedDifficulty = question.difficulty == null ? difficulty : question.difficulty;
@@ -331,12 +320,8 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 
 				log.warn(errorMessage);
 
-				EditMessageReplyMarkup emm = new EditMessageReplyMarkup(chosenInlineResult.inlineMessageId);
-				EditMessageText emt = new EditMessageText(chosenInlineResult.inlineMessageId, errorMessage);
-				emt.setParseMode(ParseMode.HTML);
-
-				client.call(emm);
-				client.call(emt);
+				client.call(new EditMessageReplyMarkup(chosenInlineResult.inlineMessageId, null));
+				client.call(new EditMessageText(chosenInlineResult.inlineMessageId, errorMessage, ParseMode.HTML, null, null));
 			}
 
 		} catch (TelegramBotApiException te) {
@@ -405,11 +390,7 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 
 			if ("FAIL".equals(callbackQuery.data)) {
 
-				AnswerCallbackQuery acq = new AnswerCallbackQuery(callbackQuery.id);
-				acq.setText("You failed!");
-				acq.setShowAlert(false);
-
-				client.call(acq);
+				client.call(new AnswerCallbackQuery(callbackQuery.id, "You failed!", false, null));
 
 				final Integer count = jdbc.update(
 						"UPDATE PUBLIC.QUESTION_FAILER SET FAIL_COUNT = FAIL_COUNT+1 WHERE QUESTION_ID = ? AND USER_ID = ? ;",
@@ -486,12 +467,9 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 
 							});
 
-					EditMessageReplyMarkup emm = new EditMessageReplyMarkup(callbackQuery.inlineMessageId);
-					EditMessageText emt = new EditMessageText(callbackQuery.inlineMessageId, HtmlUtils.htmlUnescape(newText));
-					emt.setParseMode(ParseMode.HTML);
-
-					client.call(emm);
-					client.call(emt);
+					client.call(new EditMessageReplyMarkup(callbackQuery.inlineMessageId, null));
+					client.call(new EditMessageText(callbackQuery.inlineMessageId, HtmlUtils.htmlUnescape(newText),
+							ParseMode.HTML, null, null));
 
 					jdbc.update("UPDATE PUBLIC.QUESTION_DATA SET WINNING_USER_ID = ? WHERE QUESTION_ID = ? ;",
 							new Object[] { callbackQuery.from.id, callbackQuery.inlineMessageId });

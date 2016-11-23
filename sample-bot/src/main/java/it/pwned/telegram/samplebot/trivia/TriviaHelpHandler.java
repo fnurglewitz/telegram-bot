@@ -50,11 +50,11 @@ public class TriviaHelpHandler implements UpdateHandler, StatefulUpdateHandler {
 				executor.submit(() -> {
 
 					try {
-						SendMessage helpMessage = new SendMessage(new ChatId(u.message.chat.id), helpText);
-						helpMessage.setParseMode(ParseMode.MARKDOWN);
-						helpMessage.setReplyToMessageId(u.message.messageId);
+						final SendMessage helpMessage = new SendMessage.Builder(new ChatId(u.message.chat.id), helpText)
+								.parseMode(ParseMode.MARKDOWN).replyToMessageId(u.message.messageId).build();
 
 						client.call(helpMessage);
+
 					} catch (TelegramBotApiException e) {
 					}
 

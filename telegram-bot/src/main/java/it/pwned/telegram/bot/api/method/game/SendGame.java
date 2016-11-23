@@ -20,76 +20,47 @@ import it.pwned.telegram.bot.api.type.Message;
 public final class SendGame extends AbstractApiMethod<Message> {
 
 	@ApiMethodParameter("chat_id")
-	private ChatId chatId;
+	public final ChatId chatId;
 
 	@ApiMethodParameter("game_short_name")
-	private String gameShortName;
+	public final String gameShortName;
 
 	@ApiMethodParameter("disable_notification")
-	private Boolean disableNotification;
+	public final Boolean disableNotification;
 
 	@ApiMethodParameter("reply_to_message_id")
-	private Integer replyToMessageId;
+	public final Integer replyToMessageId;
 
 	@ApiMethodParameter("reply_markup")
-	private InlineKeyboardMarkup replyMarkup;
+	public final InlineKeyboardMarkup replyMarkup;
 
 	public SendGame(ChatId chatId, String gameShortName) {
+		this(chatId, gameShortName, null, null, null);
+	}
+
+	public SendGame(ChatId chatId, String gameShortName, Boolean disableNotification, Integer replyToMessageId,
+			InlineKeyboardMarkup replyMarkup) {
 		super();
 
-		setChatId(chatId);
-		setGameShortName(gameShortName);
+		this.chatId = validateChatId(chatId);
+		this.gameShortName = validateGameShortName(gameShortName);
+		this.disableNotification = disableNotification;
+		this.replyToMessageId = replyToMessageId;
+		this.replyMarkup = replyMarkup;
 	}
 
-	public SendGame setChatId(ChatId chatId) {
+	private static ChatId validateChatId(ChatId chatId) {
 		if (chatId == null)
-			throw new InvalidParameterException("chatId cannot be null");
+			throw new IllegalArgumentException("chatId cannot be null");
 
-		this.chatId = chatId;
-		return this;
+		return chatId;
 	}
 
-	public SendGame setGameShortName(String gameShortName) {
+	private static String validateGameShortName(String gameShortName) {
 		if (gameShortName == null)
 			throw new InvalidParameterException("gameShortName cannot be null");
 
-		this.gameShortName = gameShortName;
-		return this;
-	}
-
-	public SendGame setDisableNotification(Boolean disableNotification) {
-		this.disableNotification = disableNotification;
-		return this;
-	}
-
-	public SendGame setReplyToMessageId(Integer replyToMessageId) {
-		this.replyToMessageId = replyToMessageId;
-		return this;
-	}
-
-	public SendGame setReplyMarkup(InlineKeyboardMarkup replyMarkup) {
-		this.replyMarkup = replyMarkup;
-		return this;
-	}
-
-	public ChatId getChatId() {
-		return this.chatId;
-	}
-
-	public String getGameShortName() {
-		return this.gameShortName;
-	}
-
-	public Boolean getDisableNotification() {
-		return this.disableNotification;
-	}
-
-	public Integer getReplyToMessageId() {
-		return this.replyToMessageId;
-	}
-
-	public InlineKeyboardMarkup getReplyMarkup() {
-		return this.replyMarkup;
+		return gameShortName;
 	}
 
 }

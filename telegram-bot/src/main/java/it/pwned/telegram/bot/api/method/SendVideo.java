@@ -1,7 +1,5 @@
 package it.pwned.telegram.bot.api.method;
 
-import java.security.InvalidParameterException;
-
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
 
@@ -21,130 +19,142 @@ import it.pwned.telegram.bot.api.type.Message;
 public final class SendVideo extends AbstractApiMethod<Message> {
 
 	@ApiMethodParameter("chat_id")
-	private ChatId chatId;
+	public final ChatId chatId;
 
 	@ApiMethodParameter("video")
-	private Resource video;
+	public final Resource video;
 
 	@ApiMethodParameter("duration")
-	private Integer duration;
+	public final Integer duration;
 
 	@ApiMethodParameter("width")
-	private Integer width;
+	public final Integer width;
 
 	@ApiMethodParameter("height")
-	private Integer height;
+	public final Integer height;
 
 	@ApiMethodParameter("caption")
-	private String caption;
+	public final String caption;
 
 	@ApiMethodParameter("disable_notification")
-	private Boolean disableNotification;
+	public final Boolean disableNotification;
 
 	@ApiMethodParameter("reply_to_message_id")
-	private Integer replyToMessageId;
+	public final Integer replyToMessageId;
 
 	@ApiMethodParameter("reply_markup")
-	private AbstractKeyboardMarkup replyMarkup;
+	public final AbstractKeyboardMarkup replyMarkup;
 
 	public SendVideo(ChatId chatId, Resource video) {
+		this(chatId, video, null, null, null, null, null, null, null);
+	}
+
+	public SendVideo(ChatId chatId, Resource video, String caption) {
+		this(chatId, video, null, null, null, caption, null, null, null);
+	}
+
+	public SendVideo(ChatId chatId, Resource video, Integer duration, Integer width, Integer height, String caption,
+			Boolean disableNotification, Integer replyToMessageId, AbstractKeyboardMarkup replyMarkup) {
 		super();
 
-		setChatId(chatId);
-		setVideo(video);
+		this.chatId = validateChatId(chatId);
+		this.video = validateVideo(video);
+		this.duration = duration;
+		this.width = width;
+		this.height = height;
+		this.caption = validateCaption(caption);
+		this.disableNotification = disableNotification;
+		this.replyToMessageId = replyToMessageId;
+		this.replyMarkup = replyMarkup;
 	}
 
-	public SendVideo setChatId(ChatId chatId) {
+	private static ChatId validateChatId(ChatId chatId) {
 		if (chatId == null)
-			throw new InvalidParameterException("chatId cannot be null");
+			throw new IllegalArgumentException("chatId cannot be null");
 
-		this.chatId = chatId;
-		return this;
+		return chatId;
 	}
 
-	public SendVideo setVideo(Resource video) {
+	private static Resource validateVideo(Resource video) {
 		// TODO: check max size (50MB)
 		// TODO: check file format (must be mp4)
 
 		if (video == null)
-			throw new InvalidParameterException("video cannot be null");
+			throw new IllegalArgumentException("video cannot be null");
 
-		this.video = video;
-		return this;
+		return video;
 	}
 
-	public SendVideo setDuration(Integer duration) {
-		this.duration = duration;
-		return this;
-	}
-
-	public SendVideo setWidth(Integer width) {
-		this.width = width;
-		return this;
-	}
-
-	public SendVideo setHeight(Integer height) {
-		this.height = height;
-		return this;
-	}
-
-	public SendVideo setCaption(String caption) {
+	private static String validateCaption(String caption) {
 		if (caption != null && caption.length() > 200)
-			throw new InvalidParameterException("caption length exceeding maximum value (200)");
+			throw new IllegalArgumentException("caption length exceeding maximum value (200)");
 
-		this.caption = caption;
-		return this;
+		return caption;
 	}
 
-	public SendVideo setDisableNotification(Boolean disableNotification) {
-		this.disableNotification = disableNotification;
-		return this;
-	}
+	public static class Builder {
 
-	public SendVideo setReplyToMessageId(Integer replyToMessageId) {
-		this.replyToMessageId = replyToMessageId;
-		return this;
-	}
+		private ChatId chatId;
 
-	public SendVideo setReplyMarkup(AbstractKeyboardMarkup replyMarkup) {
-		this.replyMarkup = replyMarkup;
-		return this;
-	}
+		private Resource video;
 
-	public ChatId getChatId() {
-		return this.chatId;
-	}
+		private Integer duration;
 
-	public Resource getVideo() {
-		return this.video;
-	}
+		private Integer width;
 
-	public Integer getWidth() {
-		return this.width;
-	}
+		private Integer height;
 
-	public Integer getHeight() {
-		return this.height;
-	}
+		private String caption;
 
-	public Integer getDuration() {
-		return this.duration;
-	}
+		private Boolean disableNotification;
 
-	public String getCaption() {
-		return this.caption;
-	}
+		private Integer replyToMessageId;
 
-	public Boolean getDisableNotification() {
-		return this.disableNotification;
-	}
+		private AbstractKeyboardMarkup replyMarkup;
 
-	public Integer getReplyToMessageId() {
-		return this.replyToMessageId;
-	}
+		public Builder(ChatId chatId, Resource video) {
+			this.chatId = validateChatId(chatId);
+			this.video = validateVideo(video);
+		}
 
-	public AbstractKeyboardMarkup getReplyMarkup() {
-		return this.replyMarkup;
-	}
+		public SendVideo build() {
+			return new SendVideo(chatId, video, duration, width, height, caption, disableNotification, replyToMessageId,
+					replyMarkup);
+		}
 
+		public Builder duration(Integer duration) {
+			this.duration = duration;
+			return this;
+		}
+
+		public Builder width(Integer width) {
+			this.width = width;
+			return this;
+		}
+
+		public Builder height(Integer height) {
+			this.height = height;
+			return this;
+		}
+
+		public Builder caption(String caption) {
+			this.caption = validateCaption(caption);
+			return this;
+		}
+
+		public Builder disableNotification(Boolean disableNotification) {
+			this.disableNotification = disableNotification;
+			return this;
+		}
+
+		public Builder replyToMessageId(Integer replyToMessageId) {
+			this.replyToMessageId = replyToMessageId;
+			return this;
+		}
+
+		public Builder setReplyMarkup(AbstractKeyboardMarkup replyMarkup) {
+			this.replyMarkup = replyMarkup;
+			return this;
+		}
+	}
 }

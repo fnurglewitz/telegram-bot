@@ -1,6 +1,7 @@
 package it.pwned.telegram.bot.api.method.inline;
 
-import java.security.InvalidParameterException;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.springframework.http.HttpMethod;
@@ -19,112 +20,123 @@ import it.pwned.telegram.bot.api.type.inline.InlineQueryResult;
 public final class AnswerInlineQuery extends AbstractApiMethod<Boolean> {
 
 	@ApiMethodParameter("inline_query_id")
-	private String inlineQueryId;
+	public final String inlineQueryId;
 
 	@ApiMethodParameter("results")
-	private List<InlineQueryResult> results;
+	public final List<InlineQueryResult> results;
 
 	@ApiMethodParameter("cache_time")
-	private Integer cacheTime;
+	public final Integer cacheTime;
 
 	@ApiMethodParameter("is_personal")
-	private Boolean isPersonal;
+	public final Boolean isPersonal;
 
 	@ApiMethodParameter("next_offset")
-	private String nextOffset;
+	public final String nextOffset;
 
 	@ApiMethodParameter("switch_pm_text")
-	private String switchPmText;
+	public final String switchPmText;
 
 	@ApiMethodParameter("switch_pm_parameter")
-	private String switchPmParameter;
+	public final String switchPmParameter;
 
 	public AnswerInlineQuery(String inlineQueryId, List<InlineQueryResult> results) {
+		this(inlineQueryId, results, null, null, null, null, null);
+	}
+
+	public AnswerInlineQuery(String inlineQueryId, List<InlineQueryResult> results, Integer cacheTime, Boolean isPersonal,
+			String nextOffset, String switchPmText, String switchPmParameter) {
 		super();
 
-		setInlineQueryId(inlineQueryId);
-		setResults(results);
+		this.inlineQueryId = validateInlineQueryId(inlineQueryId);
+		this.results = validateResults(results);
+		this.cacheTime = cacheTime;
+		this.isPersonal = isPersonal;
+		this.nextOffset = nextOffset;
+		this.switchPmText = switchPmText;
+		this.switchPmParameter = switchPmParameter;
 	}
 
-	public AnswerInlineQuery setInlineQueryId(String inlineQueryId) {
+	private static String validateInlineQueryId(String inlineQueryId) {
 		if (inlineQueryId == null)
-			throw new InvalidParameterException("inlineQueryId cannot be null");
+			throw new IllegalArgumentException("inlineQueryId cannot be null");
 
-		this.inlineQueryId = inlineQueryId;
-		return this;
+		return inlineQueryId;
 	}
 
-	public AnswerInlineQuery setResults(List<InlineQueryResult> results) {
+	private static List<InlineQueryResult> validateResults(List<InlineQueryResult> results) {
 		if (results == null)
-			throw new InvalidParameterException("results cannot be null");
+			throw new IllegalArgumentException("results cannot be null");
 
 		if (results.size() > 50)
-			throw new InvalidParameterException("max results size: 50");
+			throw new IllegalArgumentException("max results size: 50");
 
-		this.results = results;
-		return this;
+		return Collections.unmodifiableList(results);
 	}
 
-	public AnswerInlineQuery setCacheTime(Integer cacheTime) {
-		this.cacheTime = cacheTime;
-		return this;
-	}
+	public static class Builder {
 
-	public AnswerInlineQuery setIsPersonal(Boolean isPersonal) {
-		this.isPersonal = isPersonal;
-		return this;
-	}
+		private String inlineQueryId;
 
-	public AnswerInlineQuery setNextOffset(String nextOffset) {
-		this.nextOffset = nextOffset;
-		return this;
-	}
+		private List<InlineQueryResult> results;
 
-	public AnswerInlineQuery setSwitchPmText(String switchPmText) {
-		this.switchPmText = switchPmText;
-		return this;
-	}
+		private Integer cacheTime;
 
-	public AnswerInlineQuery setSwitchPmParameter(String switchPmParameter) {
-		this.switchPmParameter = switchPmParameter;
-		return this;
-	}
+		private Boolean isPersonal;
 
-	public String getInlineQueryId() {
-		return this.inlineQueryId;
-	}
+		private String nextOffset;
 
-	public List<InlineQueryResult> getResults() {
-		return this.results;
-	}
+		private String switchPmText;
 
-	public Integer getCacheTime() {
-		return this.cacheTime;
-	}
+		private String switchPmParameter;
 
-	public Boolean getIsPersonal() {
-		return this.isPersonal;
-	}
+		public Builder(String inlineQueryId) {
+			this.inlineQueryId = validateInlineQueryId(inlineQueryId);
+			this.results = new LinkedList<InlineQueryResult>();
+		}
 
-	public String getNextOffset() {
-		return this.nextOffset;
-	}
+		public AnswerInlineQuery build() {
+			validateResults(results);
 
-	public String getSwitchPmText() {
-		return this.switchPmText;
-	}
+			return new AnswerInlineQuery(inlineQueryId, results, cacheTime, isPersonal, nextOffset, switchPmText,
+					switchPmParameter);
+		}
 
-	public String getSwitchPmParameter() {
-		return this.switchPmParameter;
-	}
+		public Builder cacheTime(Integer cacheTime) {
+			this.cacheTime = cacheTime;
+			return this;
+		}
 
-	public void addResult(InlineQueryResult result) {
-		if (result == null)
-			throw new InvalidParameterException("result cannot be null");
+		public Builder isPersonal(Boolean isPersonal) {
+			this.isPersonal = isPersonal;
+			return this;
+		}
 
-		if (results.size() >= 50)
-			throw new InvalidParameterException("max results size: 50");
+		public Builder nextOffset(String nextOffset) {
+			this.nextOffset = nextOffset;
+			return this;
+		}
 
-		this.results.add(result);
+		public Builder switchPmText(String switchPmText) {
+			this.switchPmText = switchPmText;
+			return this;
+		}
+
+		public Builder switchPmParameter(String switchPmParameter) {
+			this.switchPmParameter = switchPmParameter;
+			return this;
+		}
+
+		public Builder addResult(InlineQueryResult result) {
+			if (result == null)
+				throw new IllegalArgumentException("result cannot be null");
+
+			if (results.size() >= 50)
+				throw new IllegalArgumentException("max results size: 50");
+
+			this.results.add(result);
+
+			return this;
+		}
 	}
 }

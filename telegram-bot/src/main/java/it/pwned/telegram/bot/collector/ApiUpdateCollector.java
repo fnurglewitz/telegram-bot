@@ -17,16 +17,16 @@ public class ApiUpdateCollector implements UpdateCollector {
 
 	private final ApiClient client;
 	private final BlockingQueue<Update> updateQueue;
-	private final GetUpdates request;
+	private final Integer timeout;
+
+	private Integer lastOffset;
 
 	public ApiUpdateCollector(ApiClient client, BlockingQueue<Update> updateQueue, Integer timeout) {
 		this.client = client;
 		this.updateQueue = updateQueue;
 
-		this.request = new GetUpdates();
-
-		request.setOffset(-1);
-		request.setTimeout(timeout);
+		lastOffset = -1;
+		this.timeout = timeout;
 	}
 
 	@Override
@@ -42,8 +42,7 @@ public class ApiUpdateCollector implements UpdateCollector {
 		List<Update> updates = null;
 
 		try {
-			request.incrementOffset();
-			updates = client.call(request);
+			updates = client.call(new GetUpdates(lastOffset++, null, timeout));
 		} catch (TelegramBotApiException ae) {
 			log.error("Could not fetch updates", ae);
 			updates = null;
@@ -53,8 +52,8 @@ public class ApiUpdateCollector implements UpdateCollector {
 			log.trace(String.format("Fetched %d updates", updates.size()));
 
 			for (Update u : updates) {
-				if (u.updateId > request.getOffset())
-					request.setOffset(u.updateId);
+				if (u.updateId > lastOffset)
+					lastOffset = u.updateId;
 
 				try {
 					this.updateQueue.put(u);

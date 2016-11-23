@@ -1,6 +1,5 @@
 package it.pwned.telegram.bot.api.method.game;
 
-import java.security.InvalidParameterException;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,76 +20,61 @@ import it.pwned.telegram.bot.api.type.game.GameHighScore;
 public final class GetGameHighScores extends AbstractApiMethod<List<GameHighScore>> {
 
 	@ApiMethodParameter("user_id")
-	private Integer userId;
+	public final Integer userId;
 
 	@ApiMethodParameter("chat_id")
-	private ChatId chatId;
+	public final ChatId chatId;
 
 	@ApiMethodParameter("message_id")
-	private Integer messageId;
+	public final Integer messageId;
 
 	@ApiMethodParameter("inline_message_id")
-	private String inlineMessageId;
+	public final String inlineMessageId;
 
 	public GetGameHighScores(Integer userId, ChatId chatId, Integer messageId) {
 		super();
 
-		setUserId(userId);
-		setChatIdAndMessageId(chatId, messageId);
+		this.userId = validateUserId(userId);
+		this.chatId = validateChatId(chatId);
+		this.messageId = validateMessageId(messageId);
+		this.inlineMessageId = null;
 	}
 
 	public GetGameHighScores(Integer userId, String inlineMessageId) {
 		super();
 
-		setUserId(userId);
-		setInlineMessageId(inlineMessageId);
-	}
-
-	public GetGameHighScores setUserId(Integer userId) {
-		if (userId == null)
-			throw new InvalidParameterException("userId cannot be null");
-
-		this.userId = userId;
-		return this;
-	}
-
-	public GetGameHighScores setChatIdAndMessageId(ChatId chatId, Integer messageId) {
-		if (chatId == null)
-			throw new InvalidParameterException("chatId cannot be null");
-
-		if (messageId == null)
-			throw new InvalidParameterException("messageId cannot be null");
-
-		this.chatId = chatId;
-		this.messageId = messageId;
-		this.inlineMessageId = null;
-		return this;
-	}
-
-	public GetGameHighScores setInlineMessageId(String inlineMessageId) {
-		if (inlineMessageId == null)
-			throw new InvalidParameterException("inlineMessageId cannot be null");
-
-		this.inlineMessageId = inlineMessageId;
+		this.userId = validateUserId(userId);
+		this.inlineMessageId = validateInlineMessageId(inlineMessageId);
 		this.chatId = null;
 		this.messageId = null;
-		return this;
 	}
 
-	public Integer getUserId() {
-		return this.userId;
+	private static Integer validateUserId(Integer userId) {
+		if (userId == null)
+			throw new IllegalArgumentException("userId cannot be null");
+
+		return userId;
 	}
 
-	public ChatId getChatId() {
-		return this.chatId;
+	private static ChatId validateChatId(ChatId chatId) {
+		if (chatId == null)
+			throw new IllegalArgumentException("chatId cannot be null");
+
+		return chatId;
 	}
 
-	public Integer getMessageId() {
-		return this.messageId;
+	private static Integer validateMessageId(Integer messageId) {
+		if (messageId == null)
+			throw new IllegalArgumentException("messageId cannot be null");
+
+		return messageId;
 	}
 
-	public String getInlineMessageId() {
-		return this.inlineMessageId;
+	private static String validateInlineMessageId(String inlineMessageId) {
+		if (inlineMessageId == null)
+			throw new IllegalArgumentException("inlineMessageId cannot be null");
+
+		return inlineMessageId;
 	}
 
 	@Override

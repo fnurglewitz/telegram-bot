@@ -1,7 +1,5 @@
 package it.pwned.telegram.bot.api.method;
 
-import java.security.InvalidParameterException;
-
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
 
@@ -21,106 +19,121 @@ import it.pwned.telegram.bot.api.type.Message;
 public final class SendVoice extends AbstractApiMethod<Message> {
 
 	@ApiMethodParameter("chat_id")
-	private ChatId chatId;
+	public final ChatId chatId;
 
 	@ApiMethodParameter("voice")
-	private Resource voice;
+	public final Resource voice;
 
 	@ApiMethodParameter("caption")
-	private String caption;
+	public final String caption;
 
 	@ApiMethodParameter("duration")
-	private Integer duration;
+	public final Integer duration;
 
 	@ApiMethodParameter("disable_notification")
-	private Boolean disableNotification;
+	public final Boolean disableNotification;
 
 	@ApiMethodParameter("reply_to_message_id")
-	private Integer replyToMessageId;
+	public final Integer replyToMessageId;
 
 	@ApiMethodParameter("reply_markup")
-	private AbstractKeyboardMarkup replyMarkup;
+	public final AbstractKeyboardMarkup replyMarkup;
 
 	public SendVoice(ChatId chatId, Resource voice) {
+		this(chatId, voice, null, null, null, null, null);
+	}
+
+	public SendVoice(ChatId chatId, Resource voice, String caption) {
+		this(chatId, voice, caption, null, null, null, null);
+	}
+
+	public SendVoice(ChatId chatId, Resource voice, String caption, Integer duration, Boolean disableNotification,
+			Integer replyToMessageId, AbstractKeyboardMarkup replyMarkup) {
 		super();
 
-		setChatId(chatId);
-		setVoice(voice);
+		this.chatId = validateChatId(chatId);
+		this.voice = validateVoice(voice);
+		this.caption = validateCaption(caption);
+		this.duration = duration;
+		this.disableNotification = disableNotification;
+		this.replyToMessageId = replyToMessageId;
+		this.replyMarkup = replyMarkup;
 	}
 
-	public SendVoice setChatId(ChatId chatId) {
+	private static ChatId validateChatId(ChatId chatId) {
 		if (chatId == null)
-			throw new InvalidParameterException("chatId cannot be null");
+			throw new IllegalArgumentException("chatId cannot be null");
 
-		this.chatId = chatId;
-		return this;
+		return chatId;
 	}
 
-	public SendVoice setVoice(Resource voice) {
+	private static Resource validateVoice(Resource voice) {
 		// TODO: check max size (50MB)
 		// TODO: check file format (must be ogg encoded with OPUS)
 
 		if (voice == null)
-			throw new InvalidParameterException("voice cannot be null");
+			throw new IllegalArgumentException("voice cannot be null");
 
-		this.voice = voice;
-		return this;
+		return voice;
 	}
 
-	public SendVoice setCaption(String caption) {
+	private static String validateCaption(String caption) {
 		if (caption != null && caption.length() > 200)
-			throw new InvalidParameterException("caption length exceeding maximum value (200)");
+			throw new IllegalArgumentException("caption length exceeding maximum value (200)");
 
-		this.caption = caption;
-		return this;
+		return caption;
 	}
 
-	public SendVoice setDuration(Integer duration) {
-		this.duration = duration;
-		return this;
-	}
+	public static class Builder {
 
-	public SendVoice setDisableNotification(Boolean disableNotification) {
-		this.disableNotification = disableNotification;
-		return this;
-	}
+		private ChatId chatId;
 
-	public SendVoice setReplyToMessageId(Integer replyToMessageId) {
-		this.replyToMessageId = replyToMessageId;
-		return this;
-	}
+		private Resource voice;
 
-	public SendVoice setReplyMarkup(AbstractKeyboardMarkup replyMarkup) {
-		this.replyMarkup = replyMarkup;
-		return this;
-	}
+		private String caption;
 
-	public ChatId getChatId() {
-		return this.chatId;
-	}
+		private Integer duration;
 
-	public Resource getVoice() {
-		return this.voice;
-	}
+		private Boolean disableNotification;
 
-	public String getCaption() {
-		return this.caption;
-	}
+		private Integer replyToMessageId;
 
-	public Integer getDuration() {
-		return this.duration;
-	}
+		private AbstractKeyboardMarkup replyMarkup;
 
-	public Boolean getDisableNotification() {
-		return this.disableNotification;
-	}
+		public Builder(ChatId chatId, Resource voice) {
+			this.chatId = validateChatId(chatId);
+			this.voice = validateVoice(voice);
+		}
 
-	public Integer getReplyToMessageId() {
-		return this.replyToMessageId;
-	}
+		public SendVoice build() {
+			return new SendVoice(chatId, voice, caption, duration, disableNotification, replyToMessageId, replyMarkup);
+		}
 
-	public AbstractKeyboardMarkup getReplyMarkup() {
-		return this.replyMarkup;
+		public Builder caption(String caption) {
+			this.caption = validateCaption(caption);
+			return this;
+		}
+
+		public Builder duration(Integer duration) {
+			this.duration = duration;
+			return this;
+		}
+
+		public Builder disableNotification(Boolean disableNotification) {
+			this.disableNotification = disableNotification;
+			return this;
+		}
+
+		public Builder replyToMessageId(Integer replyToMessageId) {
+			this.replyToMessageId = replyToMessageId;
+			return this;
+		}
+
+		public Builder replyMarkup(AbstractKeyboardMarkup replyMarkup) {
+			this.replyMarkup = replyMarkup;
+			return this;
+		}
+
 	}
 
 }

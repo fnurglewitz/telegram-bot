@@ -1,4 +1,4 @@
-package it.pwned.telegram.bot.api.method.game;
+package it.pwned.telegram.bot.api.method.update;
 
 import org.springframework.http.HttpMethod;
 
@@ -10,17 +10,13 @@ import it.pwned.telegram.bot.api.method.annotation.ApiMethodParameter;
 import it.pwned.telegram.bot.api.method.enums.MethodMediaType;
 import it.pwned.telegram.bot.api.type.BooleanOrMessage;
 import it.pwned.telegram.bot.api.type.ChatId;
+import it.pwned.telegram.bot.api.type.InlineKeyboardMarkup;
+import it.pwned.telegram.bot.api.type.ParseMode;
 
-@ApiMethod("setGameScore")
+@ApiMethod("editMessageText")
 @ApiMethodHttpMethod(HttpMethod.POST)
 @ApiMethodContentType(MethodMediaType.MULTIPART_FORM_DATA)
-public final class SetGameScore extends AbstractApiMethod<BooleanOrMessage> {
-
-	@ApiMethodParameter("user_id")
-	public final Integer userId;
-
-	@ApiMethodParameter("score")
-	public final Integer score;
+public final class EditMessageText extends AbstractApiMethod<BooleanOrMessage> {
 
 	@ApiMethodParameter("chat_id")
 	public final ChatId chatId;
@@ -31,46 +27,42 @@ public final class SetGameScore extends AbstractApiMethod<BooleanOrMessage> {
 	@ApiMethodParameter("inline_message_id")
 	public final String inlineMessageId;
 
-	@ApiMethodParameter("edit_message")
-	public final Boolean editMessage;
+	@ApiMethodParameter("text")
+	public final String text;
 
-	public SetGameScore(Integer userId, Integer score, ChatId chatId, Integer messageId, Boolean editMessage) {
+	@ApiMethodParameter("parse_mode")
+	public final ParseMode parseMode;
+
+	@ApiMethodParameter("disable_web_page_preview")
+	public final Boolean disableWebPagePreview;
+
+	@ApiMethodParameter("reply_markup")
+	public final InlineKeyboardMarkup replyMarkup;
+
+	public EditMessageText(ChatId chatId, Integer messageId, String text, ParseMode parseMode,
+			Boolean disableWebPagePreview, InlineKeyboardMarkup replyMarkup) {
 		super();
 
-		this.userId = validateUserId(userId);
 		this.chatId = validateChatId(chatId);
 		this.messageId = validateMessageId(messageId);
-		this.score = validateScore(score);
-		this.editMessage = editMessage;
+		this.text = validateText(text);
+		this.parseMode = parseMode;
+		this.disableWebPagePreview = disableWebPagePreview;
+		this.replyMarkup = replyMarkup;
 		this.inlineMessageId = null;
 	}
 
-	public SetGameScore(Integer userId, Integer score, String inlineMessageId, Boolean editMessage) {
+	public EditMessageText(String inlineMessageId, String text, ParseMode parseMode, Boolean disableWebPagePreview,
+			InlineKeyboardMarkup replyMarkup) {
 		super();
 
-		this.userId = validateUserId(userId);
 		this.inlineMessageId = validateInlineMessageId(inlineMessageId);
-		this.score = validateScore(score);
-		this.editMessage = editMessage;
+		this.text = validateText(text);
+		this.parseMode = parseMode;
+		this.disableWebPagePreview = disableWebPagePreview;
+		this.replyMarkup = replyMarkup;
 		this.chatId = null;
 		this.messageId = null;
-	}
-
-	private static Integer validateScore(Integer score) {
-		if (score == null)
-			throw new IllegalArgumentException("score cannot be null");
-
-		if (score < 0)
-			throw new IllegalArgumentException("score cannot be negative");
-
-		return score;
-	}
-
-	private static Integer validateUserId(Integer userId) {
-		if (userId == null)
-			throw new IllegalArgumentException("userId cannot be null");
-
-		return userId;
 	}
 
 	private static ChatId validateChatId(ChatId chatId) {
@@ -92,6 +84,13 @@ public final class SetGameScore extends AbstractApiMethod<BooleanOrMessage> {
 			throw new IllegalArgumentException("inlineMessageId cannot be null");
 
 		return inlineMessageId;
+	}
+
+	private static String validateText(String text) {
+		if (text == null || "".equals(text))
+			throw new IllegalArgumentException("text cannot be null or empty");
+
+		return text;
 	}
 
 }

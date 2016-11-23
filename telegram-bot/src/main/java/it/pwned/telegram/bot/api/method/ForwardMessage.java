@@ -62,4 +62,21 @@ public final class ForwardMessage extends AbstractApiMethod<Message> {
 		return messageId;
 	}
 
+	private static Message validateMessage(Message m) {
+		if (m == null)
+			throw new IllegalArgumentException("message cannot be null");
+
+		return m;
+	}
+
+	public static ForwardMessage fromMessage(ChatId chatId, Message m, Boolean disableNotification) {
+		validateChatId(chatId);
+		validateMessage(m);
+
+		return new ForwardMessage(chatId, new ChatId(m.chat.id), m.messageId, disableNotification);
+	}
+
+	public static ForwardMessage fromMessage(ChatId chatId, Message m) {
+		return fromMessage(chatId, m, null);
+	}
 }

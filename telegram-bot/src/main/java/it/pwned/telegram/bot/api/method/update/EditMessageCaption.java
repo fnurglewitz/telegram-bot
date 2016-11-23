@@ -1,4 +1,4 @@
-package it.pwned.telegram.bot.api.method.game;
+package it.pwned.telegram.bot.api.method.update;
 
 import org.springframework.http.HttpMethod;
 
@@ -10,17 +10,12 @@ import it.pwned.telegram.bot.api.method.annotation.ApiMethodParameter;
 import it.pwned.telegram.bot.api.method.enums.MethodMediaType;
 import it.pwned.telegram.bot.api.type.BooleanOrMessage;
 import it.pwned.telegram.bot.api.type.ChatId;
+import it.pwned.telegram.bot.api.type.InlineKeyboardMarkup;
 
-@ApiMethod("setGameScore")
+@ApiMethod("editMessageCaption")
 @ApiMethodHttpMethod(HttpMethod.POST)
 @ApiMethodContentType(MethodMediaType.MULTIPART_FORM_DATA)
-public final class SetGameScore extends AbstractApiMethod<BooleanOrMessage> {
-
-	@ApiMethodParameter("user_id")
-	public final Integer userId;
-
-	@ApiMethodParameter("score")
-	public final Integer score;
+public final class EditMessageCaption extends AbstractApiMethod<BooleanOrMessage> {
 
 	@ApiMethodParameter("chat_id")
 	public final ChatId chatId;
@@ -31,46 +26,30 @@ public final class SetGameScore extends AbstractApiMethod<BooleanOrMessage> {
 	@ApiMethodParameter("inline_message_id")
 	public final String inlineMessageId;
 
-	@ApiMethodParameter("edit_message")
-	public final Boolean editMessage;
+	@ApiMethodParameter("caption")
+	public final String caption;
 
-	public SetGameScore(Integer userId, Integer score, ChatId chatId, Integer messageId, Boolean editMessage) {
+	@ApiMethodParameter("reply_markup")
+	public final InlineKeyboardMarkup replyMarkup;
+
+	public EditMessageCaption(ChatId chatId, Integer messageId, String caption, InlineKeyboardMarkup replyMarkup) {
 		super();
 
-		this.userId = validateUserId(userId);
 		this.chatId = validateChatId(chatId);
 		this.messageId = validateMessageId(messageId);
-		this.score = validateScore(score);
-		this.editMessage = editMessage;
+		this.caption = caption;
+		this.replyMarkup = replyMarkup;
 		this.inlineMessageId = null;
 	}
 
-	public SetGameScore(Integer userId, Integer score, String inlineMessageId, Boolean editMessage) {
+	public EditMessageCaption(String inlineMessageId, String caption, InlineKeyboardMarkup replyMarkup) {
 		super();
 
-		this.userId = validateUserId(userId);
 		this.inlineMessageId = validateInlineMessageId(inlineMessageId);
-		this.score = validateScore(score);
-		this.editMessage = editMessage;
+		this.caption = caption;
+		this.replyMarkup = replyMarkup;
 		this.chatId = null;
 		this.messageId = null;
-	}
-
-	private static Integer validateScore(Integer score) {
-		if (score == null)
-			throw new IllegalArgumentException("score cannot be null");
-
-		if (score < 0)
-			throw new IllegalArgumentException("score cannot be negative");
-
-		return score;
-	}
-
-	private static Integer validateUserId(Integer userId) {
-		if (userId == null)
-			throw new IllegalArgumentException("userId cannot be null");
-
-		return userId;
 	}
 
 	private static ChatId validateChatId(ChatId chatId) {

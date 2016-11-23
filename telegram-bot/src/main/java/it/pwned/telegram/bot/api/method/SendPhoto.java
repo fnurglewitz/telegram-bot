@@ -1,7 +1,5 @@
 package it.pwned.telegram.bot.api.method;
 
-import java.security.InvalidParameterException;
-
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
 
@@ -21,91 +19,107 @@ import it.pwned.telegram.bot.api.type.Message;
 public final class SendPhoto extends AbstractApiMethod<Message> {
 
 	@ApiMethodParameter("chat_id")
-	private ChatId chatId;
+	public final ChatId chatId;
 
 	@ApiMethodParameter("photo")
-	private Resource photo;
+	public final Resource photo;
 
 	@ApiMethodParameter("caption")
-	private String caption;
+	public final String caption;
 
 	@ApiMethodParameter("disable_notification")
-	private Boolean disableNotification;
+	public final Boolean disableNotification;
 
 	@ApiMethodParameter("reply_to_message_id")
-	private Integer replyToMessageId;
+	public final Integer replyToMessageId;
 
 	@ApiMethodParameter("reply_markup")
-	private AbstractKeyboardMarkup replyMarkup;
+	public final AbstractKeyboardMarkup replyMarkup;
 
 	public SendPhoto(ChatId chatId, Resource photo) {
+		this(chatId, photo, null, null, null, null);
+	}
+
+	public SendPhoto(ChatId chatId, Resource photo, String caption) {
+		this(chatId, photo, caption, null, null, null);
+	}
+
+	public SendPhoto(ChatId chatId, Resource photo, String caption, Boolean disableNotification, Integer replyToMessageId,
+			AbstractKeyboardMarkup replyMarkup) {
 		super();
 
-		setChatId(chatId);
-		setPhoto(photo);
-	}
-
-	public SendPhoto setChatId(ChatId chatId) {
-		if (chatId == null)
-			throw new InvalidParameterException("chatId cannot be null");
-
-		this.chatId = chatId;
-		return this;
-	}
-
-	public SendPhoto setPhoto(Resource photo) {
-		if (photo == null)
-			throw new InvalidParameterException("photo cannot be null");
-
-		this.photo = photo;
-		return this;
-	}
-
-	public SendPhoto setCaption(String caption) {
-		if (caption != null && caption.length() > 200)
-			throw new InvalidParameterException("caption length exceeding maximum value (200)");
-
-		this.caption = caption;
-		return this;
-	}
-
-	public SendPhoto setDisableNotification(Boolean disableNotification) {
+		this.chatId = validateChatId(chatId);
+		this.photo = validatePhoto(photo);
+		this.caption = validateCaption(caption);
 		this.disableNotification = disableNotification;
-		return this;
-	}
-
-	public SendPhoto setReplyToMessageId(Integer replyToMessageId) {
 		this.replyToMessageId = replyToMessageId;
-		return this;
-	}
-
-	public SendPhoto setReplyMarkup(AbstractKeyboardMarkup replyMarkup) {
 		this.replyMarkup = replyMarkup;
-		return this;
 	}
 
-	public ChatId getChatId() {
-		return this.chatId;
+	private static ChatId validateChatId(ChatId chatId) {
+		if (chatId == null)
+			throw new IllegalArgumentException("chatId cannot be null");
+
+		return chatId;
 	}
 
-	public Resource getPhoto() {
-		return this.photo;
+	private static Resource validatePhoto(Resource photo) {
+		if (photo == null)
+			throw new IllegalArgumentException("photo cannot be null");
+
+		return photo;
 	}
 
-	public String getCaption() {
-		return this.caption;
+	private static String validateCaption(String caption) {
+		if (caption != null && caption.length() > 200)
+			throw new IllegalArgumentException("caption length exceeding maximum value (200)");
+
+		return caption;
 	}
 
-	public Boolean getDisableNotification() {
-		return this.disableNotification;
-	}
+	public static class Builder {
 
-	public Integer getReplyToMessageId() {
-		return this.replyToMessageId;
-	}
+		private ChatId chatId;
 
-	public AbstractKeyboardMarkup getReplyMarkup() {
-		return this.replyMarkup;
+		private Resource photo;
+
+		private String caption;
+
+		private Boolean disableNotification;
+
+		private Integer replyToMessageId;
+
+		private AbstractKeyboardMarkup replyMarkup;
+
+		public Builder(ChatId chatId, Resource photo) {
+			this.chatId = validateChatId(chatId);
+			this.photo = validatePhoto(photo);
+		}
+
+		public SendPhoto build() {
+			return new SendPhoto(chatId, photo, caption, disableNotification, replyToMessageId, replyMarkup);
+		}
+
+		public Builder caption(String caption) {
+			this.caption = validateCaption(caption);
+			return this;
+		}
+
+		public Builder disableNotification(Boolean disableNotification) {
+			this.disableNotification = disableNotification;
+			return this;
+		}
+
+		public Builder replyToMessageId(Integer replyToMessageId) {
+			this.replyToMessageId = replyToMessageId;
+			return this;
+		}
+
+		public Builder replyMarkup(AbstractKeyboardMarkup replyMarkup) {
+			this.replyMarkup = replyMarkup;
+			return this;
+		}
+
 	}
 
 }
