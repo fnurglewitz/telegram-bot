@@ -1,6 +1,7 @@
 package it.pwned.telegram.bot.collector;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
 
 import org.slf4j.Logger;
@@ -30,11 +31,11 @@ public class ApiUpdateCollector implements UpdateCollector {
 	}
 
 	@Override
-	public Update next(boolean goOn) throws InterruptedException {
+	public Optional<Update> next(boolean goOn) throws InterruptedException {
 		if (updateQueue.isEmpty() && goOn)
 			fetch();
 
-		return updateQueue.poll();
+		return Optional.ofNullable(updateQueue.poll());
 	}
 
 	private void fetch() {

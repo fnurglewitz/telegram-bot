@@ -10,5 +10,5 @@ import it.pwned.telegram.bot.api.type.User;
 @ApiMethod("getMe")
 @ApiMethodHttpMethod(HttpMethod.GET)
 public final class GetMe extends AbstractApiMethod<User> {
-	
+
 }

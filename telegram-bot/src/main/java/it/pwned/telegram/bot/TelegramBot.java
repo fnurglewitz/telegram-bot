@@ -1,5 +1,7 @@
 package it.pwned.telegram.bot;
 
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,19 +48,21 @@ public final class TelegramBot {
 
 		log.info(String.format("Bot %s(%d) initialization successful", username, id));
 
+		log.info("Initializing down update handlers");
 		manager.initHandlers();
 
-		Update u = null;
+		Optional<Update> u = null;
 
-		while (goOn || u != null) {
+		while (goOn || u.isPresent()) {
 
 			u = collector.next(goOn);
 
-			if (u != null)
-				manager.dispatch(u);
+			if (u.isPresent())
+				manager.dispatch(u.get());
 
 		}
-
+		
+		log.info("Shutting down update handlers");
 		manager.shutdownHandlers();
 
 	}
