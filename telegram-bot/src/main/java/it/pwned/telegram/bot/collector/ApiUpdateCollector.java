@@ -43,7 +43,7 @@ public class ApiUpdateCollector implements UpdateCollector {
 		List<Update> updates = null;
 
 		try {
-			updates = client.call(new GetUpdates(lastOffset++, null, timeout));
+			updates = client.call(new GetUpdates(++lastOffset, null, timeout));
 		} catch (TelegramBotApiException ae) {
 			log.error("Could not fetch updates", ae);
 			updates = null;
