@@ -26,13 +26,17 @@ public class AnswerCallbackQuery extends AbstractApiMethod<Boolean> {
 	@ApiMethodParameter("url")
 	public final String url;
 
-	public AnswerCallbackQuery(String callbackQueryId, String text, Boolean showAlert, String url) {
+	@ApiMethodParameter("cache_time")
+	public final Integer cacheTime;
+
+	public AnswerCallbackQuery(String callbackQueryId, String text, Boolean showAlert, String url, Integer cacheTime) {
 		super();
 
 		this.callbackQueryId = validateCallbackQueryId(callbackQueryId);
 		this.text = validateText(text);
 		this.showAlert = showAlert;
 		this.url = url;
+		this.cacheTime = cacheTime;
 	}
 
 	private static String validateCallbackQueryId(String callbackQueryId) {
@@ -59,12 +63,14 @@ public class AnswerCallbackQuery extends AbstractApiMethod<Boolean> {
 
 		private String url;
 
+		private Integer cacheTime;
+
 		public Builder(String callbackQueryId) {
 			this.callbackQueryId = validateCallbackQueryId(callbackQueryId);
 		}
 
 		public AnswerCallbackQuery build() {
-			return new AnswerCallbackQuery(callbackQueryId, text, showAlert, url);
+			return new AnswerCallbackQuery(callbackQueryId, text, showAlert, url, cacheTime);
 		}
 
 		public Builder text(String text) {
@@ -79,6 +85,11 @@ public class AnswerCallbackQuery extends AbstractApiMethod<Boolean> {
 
 		public Builder url(String url) {
 			this.url = url;
+			return this;
+		}
+
+		public Builder cacheTime(Integer cacheTime) {
+			this.cacheTime = cacheTime;
 			return this;
 		}
 

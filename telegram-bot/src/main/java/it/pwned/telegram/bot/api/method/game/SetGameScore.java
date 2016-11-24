@@ -22,6 +22,12 @@ public final class SetGameScore extends AbstractApiMethod<BooleanOrMessage> {
 	@ApiMethodParameter("score")
 	public final Integer score;
 
+	@ApiMethodParameter("force")
+	public final Boolean force;
+
+	@ApiMethodParameter("disable_edit_message")
+	public final Boolean disableEditMessage;
+
 	@ApiMethodParameter("chat_id")
 	public final ChatId chatId;
 
@@ -31,36 +37,37 @@ public final class SetGameScore extends AbstractApiMethod<BooleanOrMessage> {
 	@ApiMethodParameter("inline_message_id")
 	public final String inlineMessageId;
 
-	@ApiMethodParameter("edit_message")
-	public final Boolean editMessage;
-
-	public SetGameScore(Integer userId, Integer score, ChatId chatId, Integer messageId, Boolean editMessage) {
+	public SetGameScore(Integer userId, Integer score, Boolean force, Boolean disableEditMessage, ChatId chatId,
+			Integer messageId) {
 		super();
 
 		this.userId = validateUserId(userId);
 		this.chatId = validateChatId(chatId);
 		this.messageId = validateMessageId(messageId);
-		this.score = validateScore(score);
-		this.editMessage = editMessage;
+		this.score = validateScore(score, force);
+		this.force = force;
+		this.disableEditMessage = disableEditMessage;
 		this.inlineMessageId = null;
 	}
 
-	public SetGameScore(Integer userId, Integer score, String inlineMessageId, Boolean editMessage) {
+	public SetGameScore(Integer userId, Integer score, Boolean force, Boolean disableEditMessage,
+			String inlineMessageId) {
 		super();
 
 		this.userId = validateUserId(userId);
 		this.inlineMessageId = validateInlineMessageId(inlineMessageId);
-		this.score = validateScore(score);
-		this.editMessage = editMessage;
+		this.score = validateScore(score, force);
+		this.force = force;
+		this.disableEditMessage = disableEditMessage;
 		this.chatId = null;
 		this.messageId = null;
 	}
 
-	private static Integer validateScore(Integer score) {
+	private static Integer validateScore(Integer score, Boolean force) {
 		if (score == null)
 			throw new IllegalArgumentException("score cannot be null");
 
-		if (score < 0)
+		if (score < 0 && force != true)
 			throw new IllegalArgumentException("score cannot be negative");
 
 		return score;

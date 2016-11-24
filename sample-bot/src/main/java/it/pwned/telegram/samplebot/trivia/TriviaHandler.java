@@ -390,7 +390,7 @@ public class TriviaHandler implements UpdateHandler, Runnable {
 
 			if ("FAIL".equals(callbackQuery.data)) {
 
-				client.call(new AnswerCallbackQuery(callbackQuery.id, "You failed!", false, null));
+				client.call(new AnswerCallbackQuery(callbackQuery.id, "You failed!", false, null, null));
 
 				final Integer count = jdbc.update(
 						"UPDATE PUBLIC.QUESTION_FAILER SET FAIL_COUNT = FAIL_COUNT+1 WHERE QUESTION_ID = ? AND USER_ID = ? ;",

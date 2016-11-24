@@ -21,6 +21,7 @@ public class Message {
 	private final static String JSON_FIELD_CHAT = "chat";
 	private final static String JSON_FIELD_FORWARD_FROM = "forward_from";
 	private final static String JSON_FIELD_FORWARD_FROM_CHAT = "forward_from_chat";
+	private final static String JSON_FIELD_FORWARD_FROM_MESSAGE_ID = "forward_from_message_id";
 	private final static String JSON_FIELD_FORWARD_DATE = "forward_date";
 	private final static String JSON_FIELD_REPLY_TO_MESSAGE = "reply_to_message";
 	private final static String JSON_FIELD_EDIT_DATE = "edit_date";
@@ -85,6 +86,13 @@ public class Message {
 	 */
 	@JsonProperty(JSON_FIELD_FORWARD_FROM_CHAT)
 	public final Chat forwardFromChat;
+
+	/**
+	 * <em>Optional.</em> For forwarded channel posts, identifier of the original
+	 * message in the channel
+	 */
+	@JsonProperty(JSON_FIELD_FORWARD_FROM_MESSAGE_ID)
+	public final Integer forwardFromMessageID;
 
 	/**
 	 * <em>Optional.</em> For forwarded messages, date the original message was
@@ -292,6 +300,9 @@ public class Message {
 	 * @param forwardFromChat
 	 *          <em>Optional.</em> For messages forwarded from a channel,
 	 *          information about the original channel
+	 * @param forwardFromMessageId
+	 *          <em>Optional.</em> For forwarded channel posts, identifier of the
+	 *          original message in the channel
 	 * @param forwardDate
 	 *          <em>Optional.</em> For forwarded messages, date the original
 	 *          message was sent in Unix time
@@ -386,6 +397,7 @@ public class Message {
 			@JsonProperty(JSON_FIELD_DATE) Integer date, @JsonProperty(JSON_FIELD_CHAT) Chat chat,
 			@JsonProperty(JSON_FIELD_FORWARD_FROM) User forwardFrom,
 			@JsonProperty(JSON_FIELD_FORWARD_FROM_CHAT) Chat forwardFromChat,
+			@JsonProperty(JSON_FIELD_FORWARD_FROM_MESSAGE_ID) Integer forwardFromMessageID,
 			@JsonProperty(JSON_FIELD_FORWARD_DATE) Integer forwardDate,
 			@JsonProperty(JSON_FIELD_REPLY_TO_MESSAGE) Message replyToMessage,
 			@JsonProperty(JSON_FIELD_EDIT_DATE) Integer editDate, @JsonProperty(JSON_FIELD_TEXT) String text,
@@ -414,6 +426,7 @@ public class Message {
 		this.chat = chat;
 		this.forwardFrom = forwardFrom;
 		this.forwardFromChat = forwardFromChat;
+		this.forwardFromMessageID = forwardFromMessageID;
 		this.forwardDate = forwardDate;
 		this.replyToMessage = replyToMessage;
 		this.editDate = editDate;
@@ -547,21 +560,21 @@ public class Message {
 		public static boolean isForward(Message m) {
 			return m.forwardFrom != null || m.forwardFromChat != null;
 		}
-			
+
 		public static List<String> getEntitiesByType(Message m, MessageEntityType t) {
-			
+
 			List<String> entities = new LinkedList<String>();
-			
-			if(Util.hasText(m) && m.entities != null && m.entities.size() > 0) {
-				
-				for(MessageEntity ent : m.entities) {
-					
-					if(ent.type == t) {
-						entities.add(m.text.substring(ent.offset, ent.offset+ent.length));						
+
+			if (Util.hasText(m) && m.entities != null && m.entities.size() > 0) {
+
+				for (MessageEntity ent : m.entities) {
+
+					if (ent.type == t) {
+						entities.add(m.text.substring(ent.offset, ent.offset + ent.length));
 					}
 				}
 			}
-			
+
 			return entities;
 		}
 
@@ -579,6 +592,7 @@ public class Message {
 		private Chat chat;
 		private User forwardFrom;
 		private Chat forwardFromChat;
+		private Integer forwardFromMessageID;
 		private Integer forwardDate;
 		private Message replyToMessage;
 		private Integer editDate;
@@ -612,10 +626,11 @@ public class Message {
 		}
 
 		public Message build() {
-			return new Message(messageId, from, date, chat, forwardFrom, forwardFromChat, forwardDate, replyToMessage,
-					editDate, text, entities, audio, document, game, photo, sticker, video, voice, caption, contact, location,
-					venue, newChatMember, leftChatMember, newChatTitle, newChatPhoto, deleteChatPhoto, groupChatCreated,
-					supergroupChatCreated, channelChatCreated, migrateToChatId, migrateFromChatId, pinnedMessage);
+			return new Message(messageId, from, date, chat, forwardFrom, forwardFromChat, forwardFromMessageID, forwardDate,
+					replyToMessage, editDate, text, entities, audio, document, game, photo, sticker, video, voice, caption,
+					contact, location, venue, newChatMember, leftChatMember, newChatTitle, newChatPhoto, deleteChatPhoto,
+					groupChatCreated, supergroupChatCreated, channelChatCreated, migrateToChatId, migrateFromChatId,
+					pinnedMessage);
 		}
 
 		public Builder setmessageId(Integer messageId) {
@@ -645,6 +660,11 @@ public class Message {
 
 		public Builder setForwardFromChat(Chat forwardFromChat) {
 			this.forwardFromChat = forwardFromChat;
+			return this;
+		}
+
+		public Builder setForwardFromMessageId(Integer forwardFromMessageID) {
+			this.forwardFromMessageID = forwardFromMessageID;
 			return this;
 		}
 

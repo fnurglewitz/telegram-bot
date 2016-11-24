@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Upon receiving a message with this object, Telegram clients will hide the
+ * Upon receiving a message with this object, Telegram clients will remove the
  * current custom keyboard and display the default letter-keyboard. By default,
  * custom keyboards are displayed until a new keyboard is sent by a bot. An
  * exception is made for one-time keyboards that are hidden immediately after
@@ -13,19 +13,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 @JsonInclude(Include.NON_NULL)
-public final class ReplyKeyboardHide extends AbstractKeyboardMarkup {
+public final class ReplyKeyboardRemove extends AbstractKeyboardMarkup {
 
-	private final static String JSON_FIELD_HIDE_KEYBOARD = "hide_keyboard";
+	private final static String JSON_FIELD_REMOVE_KEYBOARD = "remove_keyboard";
 	private final static String JSON_FIELD_SELECTIVE = "selective";
 
 	/**
-	 * Requests clients to hide the custom keyboard
+	 * Requests clients to remove the custom keyboard (user will not be able to
+	 * summon this keyboard; if you want to hide the keyboard from sight but keep
+	 * it accessible, use one_time_keyboard in ReplyKeyboardMarkup)
 	 */
-	@JsonProperty(JSON_FIELD_HIDE_KEYBOARD)
-	public final Boolean hideKeyboard = true;
+	@JsonProperty(JSON_FIELD_REMOVE_KEYBOARD)
+	public final Boolean removeKeyboard = true;
 
 	/**
-	 * <em>Optional.</em> Use this parameter if you want to hide keyboard for
+	 * <em>Optional.</em> Use this parameter if you want to remove keyboard for
 	 * specific users only. Targets: <br>
 	 * 1) users that are @mentioned in the text of the Message object; <br>
 	 * 2) if the bot's message is a reply (has {@link Message#replyToMessageId}),
@@ -52,15 +54,15 @@ public final class ReplyKeyboardHide extends AbstractKeyboardMarkup {
 	 *          while still showing the keyboard with poll options to users who
 	 *          haven't voted yet
 	 */
-	public ReplyKeyboardHide(@JsonProperty(JSON_FIELD_SELECTIVE) Boolean selective) {
+	public ReplyKeyboardRemove(@JsonProperty(JSON_FIELD_SELECTIVE) Boolean selective) {
 		this.selective = selective;
 	}
 
 	/**
-	 * {@link ReplyKeyboardHide#ReplyKeyboardHide(Boolean)} with false as default
-	 * parameter
+	 * {@link ReplyKeyboardRemove#ReplyKeyboardHide(Boolean)} with false as
+	 * default parameter
 	 */
-	public ReplyKeyboardHide() {
+	public ReplyKeyboardRemove() {
 		this(false);
 	}
 
