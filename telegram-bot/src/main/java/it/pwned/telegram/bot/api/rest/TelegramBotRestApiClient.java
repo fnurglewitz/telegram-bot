@@ -191,13 +191,6 @@ public class TelegramBotRestApiClient implements ApiClient {
 			
 		tmp.put(GetGameHighScores.class, new ParameterizedTypeReference<Response<List<GameHighScore>>>() {
 		});
-		
-		
-		
-
-
-
-
 
 		return Collections.unmodifiableMap(tmp);
 	}

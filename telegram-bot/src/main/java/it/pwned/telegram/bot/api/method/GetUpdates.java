@@ -26,23 +26,27 @@ public final class GetUpdates extends AbstractApiMethod<List<Update>> {
 
 	@ApiMethodParameter("timeout")
 	public final Integer timeout;
+	
+	@ApiMethodParameter("allowed_updates")
+	public final String[] allowedUpdates;
 
 	public GetUpdates() {
-		this(null, null, null);
+		this(null, null, null, null);
 	}
 
-	public GetUpdates(Integer offset, Integer limit, Integer timeout) {
+	public GetUpdates(Integer offset, Integer limit, Integer timeout, String[] allowedUpdates) {
 		super();
 
 		this.offset = offset;
 		this.limit = limit;
 		this.timeout = timeout;
+		this.allowedUpdates = allowedUpdates;
 	}
 
 	public static GetUpdates nextUpdate(GetUpdates prev) {
 		final Integer oldOffset = prev.offset == null ? 0 : prev.offset;
 
-		return new GetUpdates(oldOffset + 1, prev.limit, prev.timeout);
+		return new GetUpdates(oldOffset + 1, prev.limit, prev.timeout, prev.allowedUpdates);
 	}
 
 	public List<Update> map(List<Update> input) {
