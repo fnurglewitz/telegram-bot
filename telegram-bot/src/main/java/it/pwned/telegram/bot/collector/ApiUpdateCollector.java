@@ -43,7 +43,9 @@ public class ApiUpdateCollector implements UpdateCollector {
 		List<Update> updates = null;
 
 		try {
-			updates = client.call(new GetUpdates(++lastOffset, null, timeout));
+			++lastOffset;
+			log.trace(String.format("Fetching updates, starting from offset %d", lastOffset));
+			updates = client.call(new GetUpdates(lastOffset, null, timeout, null));
 		} catch (TelegramBotApiException ae) {
 			log.error("Could not fetch updates", ae);
 			updates = null;
@@ -53,6 +55,12 @@ public class ApiUpdateCollector implements UpdateCollector {
 			log.trace(String.format("Fetched %d updates", updates.size()));
 
 			for (Update u : updates) {
+
+				if (u.updateId < lastOffset) {
+					log.trace(String.format("Ignoring update [%d] because it's id is lesser than lastOffset", u.updateId));
+					continue;
+				}
+
 				if (u.updateId > lastOffset)
 					lastOffset = u.updateId;
 
