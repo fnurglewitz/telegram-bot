@@ -43,12 +43,7 @@ public final class GetUpdates extends AbstractApiMethod<List<Update>> {
 		this.allowedUpdates = allowedUpdates;
 	}
 
-	public static GetUpdates nextUpdate(GetUpdates prev) {
-		final Integer oldOffset = prev.offset == null ? 0 : prev.offset;
-
-		return new GetUpdates(oldOffset + 1, prev.limit, prev.timeout, prev.allowedUpdates);
-	}
-
+	@Override
 	public List<Update> map(List<Update> input) {
 		Collections.sort(input);
 		return Collections.unmodifiableList(input);
