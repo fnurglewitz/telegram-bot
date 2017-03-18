@@ -37,4 +37,14 @@ public class ChatMember {
 		this.status = status;
 	}
 
+	@Override
+	public boolean equals(Object m) {
+
+		if (m instanceof ChatMember)
+			return ((ChatMember) m).user.id == this.user.id;
+		else
+			return false;
+
+	}
+
 }

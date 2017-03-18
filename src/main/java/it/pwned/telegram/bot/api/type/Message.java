@@ -467,11 +467,15 @@ public class Message {
 
 		public static class BotCommand {
 
+			public final User user;
+			public final Chat chat;
 			public final String command;
 			public final String recipient;
 			public final String parameters[];
 
-			private BotCommand(String command, String recipient, String[] parameters) {
+			private BotCommand(User user, Chat chat, String command, String recipient, String[] parameters) {
+				this.user = user;
+				this.chat = chat;
 				this.command = command;
 				this.recipient = recipient;
 				this.parameters = parameters;
@@ -511,7 +515,7 @@ public class Message {
 				else
 					parameters = EMPTY_STRING_ARRAY;
 
-				result = new BotCommand(command, recipient, parameters);
+				result = new BotCommand(m.from, m.chat, command, recipient, parameters);
 			}
 
 			return result;

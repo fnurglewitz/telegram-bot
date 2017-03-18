@@ -31,14 +31,14 @@ public class ApiUpdateCollector implements UpdateCollector {
 	}
 
 	@Override
-	public Optional<Update> next(boolean goOn) throws InterruptedException {
+	public synchronized Optional<Update> next(boolean goOn) throws InterruptedException {
 		if (updateQueue.isEmpty() && goOn)
 			fetch();
 
 		return Optional.ofNullable(updateQueue.poll());
 	}
 
-	private void fetch() {
+	private synchronized void fetch() {
 
 		List<Update> updates = null;
 
