@@ -18,35 +18,35 @@ import it.pwned.telegram.bot.api.type.Update;
 @ApiMethodContentType(MethodMediaType.MULTIPART_FORM_DATA)
 public final class GetUpdates extends AbstractApiMethod<List<Update>> {
 
-	@ApiMethodParameter("offset")
-	public final Integer offset;
+    @ApiMethodParameter("offset")
+    public final Integer offset;
 
-	@ApiMethodParameter("limit")
-	public final Integer limit;
+    @ApiMethodParameter("limit")
+    public final Integer limit;
 
-	@ApiMethodParameter("timeout")
-	public final Integer timeout;
-	
-	@ApiMethodParameter("allowed_updates")
-	public final String[] allowedUpdates;
+    @ApiMethodParameter("timeout")
+    public final Integer timeout;
 
-	public GetUpdates() {
-		this(null, null, null, null);
-	}
+    @ApiMethodParameter("allowed_updates")
+    public final List<String> allowedUpdates;
 
-	public GetUpdates(Integer offset, Integer limit, Integer timeout, String[] allowedUpdates) {
-		super();
+    public GetUpdates() {
+        this(null, null, null, null);
+    }
 
-		this.offset = offset;
-		this.limit = limit;
-		this.timeout = timeout;
-		this.allowedUpdates = allowedUpdates;
-	}
+    public GetUpdates(Integer offset, Integer limit, Integer timeout, List<String> allowedUpdates) {
+        super();
 
-	@Override
-	public List<Update> map(List<Update> input) {
-		Collections.sort(input);
-		return Collections.unmodifiableList(input);
-	}
+        this.offset = offset;
+        this.limit = limit;
+        this.timeout = timeout;
+        this.allowedUpdates = allowedUpdates;
+    }
+
+    @Override
+    public List<Update> map(List<Update> input) {
+        Collections.sort(input);
+        return Collections.unmodifiableList(input);
+    }
 
 }

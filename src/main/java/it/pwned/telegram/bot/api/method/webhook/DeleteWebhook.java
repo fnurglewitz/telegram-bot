@@ -1,13 +1,11 @@
-package it.pwned.telegram.bot.api.method;
-
-import org.springframework.http.HttpMethod;
+package it.pwned.telegram.bot.api.method.webhook;
 
 import it.pwned.telegram.bot.api.AbstractApiMethod;
 import it.pwned.telegram.bot.api.method.annotation.ApiMethod;
 import it.pwned.telegram.bot.api.method.annotation.ApiMethodHttpMethod;
-import it.pwned.telegram.bot.api.type.User;
+import org.springframework.http.HttpMethod;
 
-@ApiMethod("getMe")
+@ApiMethod("deleteWebhook")
 @ApiMethodHttpMethod(HttpMethod.GET)
-public final class GetMe extends AbstractApiMethod<User> {
+public class DeleteWebhook extends AbstractApiMethod<Boolean> {
 }
