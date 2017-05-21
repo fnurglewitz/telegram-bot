@@ -1,7 +1,5 @@
 package it.pwned.telegram.bot.api.method;
 
-import org.springframework.http.HttpMethod;
-
 import it.pwned.telegram.bot.api.AbstractApiMethod;
 import it.pwned.telegram.bot.api.method.annotation.ApiMethod;
 import it.pwned.telegram.bot.api.method.annotation.ApiMethodContentType;
@@ -9,23 +7,24 @@ import it.pwned.telegram.bot.api.method.annotation.ApiMethodHttpMethod;
 import it.pwned.telegram.bot.api.method.annotation.ApiMethodParameter;
 import it.pwned.telegram.bot.api.method.enums.MethodMediaType;
 import it.pwned.telegram.bot.api.type.ChatId;
+import org.springframework.http.HttpMethod;
 
-@ApiMethod("unbanChatMember")
+@ApiMethod("deleteMessage")
 @ApiMethodHttpMethod(HttpMethod.POST)
 @ApiMethodContentType(MethodMediaType.MULTIPART_FORM_DATA)
-public final class UnbanChatMember extends AbstractApiMethod<Boolean> {
+public class DeleteMessage extends AbstractApiMethod<Boolean> {
 
     @ApiMethodParameter("chat_id")
     public final ChatId chatId;
 
-    @ApiMethodParameter("user_id")
-    public final Integer userId;
+    @ApiMethodParameter("message_id")
+    public final Integer messageId;
 
-    public UnbanChatMember(ChatId chatId, Integer userId) {
+    public DeleteMessage(ChatId chatId, Integer messageId) {
         super();
 
         this.chatId = validateChatId(chatId);
-        this.userId = validateUserId(userId);
+        this.messageId = validateMessageId(messageId);
     }
 
     private static ChatId validateChatId(ChatId chatId) {
@@ -35,11 +34,11 @@ public final class UnbanChatMember extends AbstractApiMethod<Boolean> {
         return chatId;
     }
 
-    private static Integer validateUserId(Integer userId) {
-        if (userId == null)
-            throw new IllegalArgumentException("userId cannot be null");
+    private static Integer validateMessageId(Integer messageId) {
+        if (messageId == null)
+            throw new IllegalArgumentException("messageId cannot be null");
 
-        return userId;
+        return messageId;
     }
 
 }
