@@ -23,9 +23,11 @@ public class Message {
     private final static String JSON_FIELD_FORWARD_FROM = "forward_from";
     private final static String JSON_FIELD_FORWARD_FROM_CHAT = "forward_from_chat";
     private final static String JSON_FIELD_FORWARD_FROM_MESSAGE_ID = "forward_from_message_id";
+    private final static String JSON_FIELD_FORWARD_SIGNATURE = "forward_signature";
     private final static String JSON_FIELD_FORWARD_DATE = "forward_date";
     private final static String JSON_FIELD_REPLY_TO_MESSAGE = "reply_to_message";
     private final static String JSON_FIELD_EDIT_DATE = "edit_date";
+    private final static String JSON_FIELD_AUTHOR_SIGNATURE = "author_signature";
     private final static String JSON_FIELD_TEXT = "text";
     private final static String JSON_FIELD_ENTITIES = "entities";
     private final static String JSON_FIELD_AUDIO = "audio";
@@ -99,6 +101,12 @@ public class Message {
     public final Integer forwardFromMessageID;
 
     /**
+     * <em>Optional.</em> For messages forwarded from channels, signature of the post author if present
+     */
+    @JsonProperty(JSON_FIELD_FORWARD_SIGNATURE)
+    public final String forwardSignature;
+
+    /**
      * <em>Optional.</em> For forwarded messages, date the original message was
      * sent in Unix time
      */
@@ -118,6 +126,12 @@ public class Message {
      */
     @JsonProperty(JSON_FIELD_EDIT_DATE)
     public final Integer editDate;
+
+    /**
+     * <em>Optional.</em> Signature of the post author for messages in channels
+     */
+    @JsonProperty(JSON_FIELD_AUTHOR_SIGNATURE)
+    public final String authorSignature;
 
     /**
      * <em>Optional.</em> For text messages, the actual UTF-8 text of the message,
@@ -317,12 +331,14 @@ public class Message {
      *                              information about the original channel
      * @param forwardFromMessageID  <em>Optional.</em> For forwarded channel posts, identifier of the
      *                              original message in the channel
+     * @param forwardSignature      <em>Optional.</em> For messages forwarded from channels, signature of the post author if present
      * @param forwardDate           <em>Optional.</em> For forwarded messages, date the original
      *                              message was sent in Unix time
      * @param replyToMessage        <em>Optional.</em> For replies, the original message. Note that
      *                              the Message object in this field will not contain further
      *                              replyToMessage fields even if it itself is a reply.
      * @param editDate              <em>Optional.</em> Date the message was last edited in Unix time
+     * @param authorSignature       <em>Optional.</em> Signature of the post author for messages in channels
      * @param text                  <em>Optional.</em> For text messages, the actual UTF-8 text of the
      *                              message, 0-4096 characters.
      * @param entities              <em>Optional.</em> For text messages, special entities like
@@ -382,21 +398,32 @@ public class Message {
      * @param invoice               <em>Optional.</em> Message is an invoice for a payment, information about the invoice.
      * @param successfulPayment     <em>Optional.</em> Message is a service message about a successful payment, information about the payment.
      */
-    public Message(@JsonProperty(JSON_FIELD_MESSAGE_ID) Integer messageId, @JsonProperty(JSON_FIELD_FROM) User from,
-                   @JsonProperty(JSON_FIELD_DATE) Integer date, @JsonProperty(JSON_FIELD_CHAT) Chat chat,
+    public Message(@JsonProperty(JSON_FIELD_MESSAGE_ID) Integer messageId,
+                   @JsonProperty(JSON_FIELD_FROM) User from,
+                   @JsonProperty(JSON_FIELD_DATE) Integer date,
+                   @JsonProperty(JSON_FIELD_CHAT) Chat chat,
                    @JsonProperty(JSON_FIELD_FORWARD_FROM) User forwardFrom,
                    @JsonProperty(JSON_FIELD_FORWARD_FROM_CHAT) Chat forwardFromChat,
                    @JsonProperty(JSON_FIELD_FORWARD_FROM_MESSAGE_ID) Integer forwardFromMessageID,
+                   @JsonProperty(JSON_FIELD_FORWARD_SIGNATURE) String forwardSignature,
                    @JsonProperty(JSON_FIELD_FORWARD_DATE) Integer forwardDate,
                    @JsonProperty(JSON_FIELD_REPLY_TO_MESSAGE) Message replyToMessage,
-                   @JsonProperty(JSON_FIELD_EDIT_DATE) Integer editDate, @JsonProperty(JSON_FIELD_TEXT) String text,
-                   @JsonProperty(JSON_FIELD_ENTITIES) List<MessageEntity> entities, @JsonProperty(JSON_FIELD_AUDIO) Audio audio,
-                   @JsonProperty(JSON_FIELD_DOCUMENT) Document document, @JsonProperty(JSON_FIELD_GAME) Game game,
-                   @JsonProperty(JSON_FIELD_PHOTO) List<PhotoSize> photo, @JsonProperty(JSON_FIELD_STICKER) Sticker sticker,
-                   @JsonProperty(JSON_FIELD_VIDEO) Video video, @JsonProperty(JSON_FIELD_VOICE) Voice voice,
+                   @JsonProperty(JSON_FIELD_EDIT_DATE) Integer editDate,
+                   @JsonProperty(JSON_FIELD_AUTHOR_SIGNATURE) String authorSignature,
+                   @JsonProperty(JSON_FIELD_TEXT) String text,
+                   @JsonProperty(JSON_FIELD_ENTITIES) List<MessageEntity> entities,
+                   @JsonProperty(JSON_FIELD_AUDIO) Audio audio,
+                   @JsonProperty(JSON_FIELD_DOCUMENT) Document document,
+                   @JsonProperty(JSON_FIELD_GAME) Game game,
+                   @JsonProperty(JSON_FIELD_PHOTO) List<PhotoSize> photo,
+                   @JsonProperty(JSON_FIELD_STICKER) Sticker sticker,
+                   @JsonProperty(JSON_FIELD_VIDEO) Video video,
+                   @JsonProperty(JSON_FIELD_VOICE) Voice voice,
                    @JsonProperty(JSON_FIELD_VIDEO_NOTE) VideoNote videoNote,
-                   @JsonProperty(JSON_FIELD_CAPTION) String caption, @JsonProperty(JSON_FIELD_CONTACT) Contact contact,
-                   @JsonProperty(JSON_FIELD_LOCATION) Location location, @JsonProperty(JSON_FIELD_VENUE) Venue venue,
+                   @JsonProperty(JSON_FIELD_CAPTION) String caption,
+                   @JsonProperty(JSON_FIELD_CONTACT) Contact contact,
+                   @JsonProperty(JSON_FIELD_LOCATION) Location location,
+                   @JsonProperty(JSON_FIELD_VENUE) Venue venue,
                    @JsonProperty(JSON_FIELD_NEW_CHAT_MEMBERS) List<User> newChatMembers,
                    @JsonProperty(JSON_FIELD_LEFT_CHAT_MEMBER) User leftChatMember,
                    @JsonProperty(JSON_FIELD_NEW_CHAT_TITLE) String newChatTitle,
@@ -419,9 +446,11 @@ public class Message {
         this.forwardFrom = forwardFrom;
         this.forwardFromChat = forwardFromChat;
         this.forwardFromMessageID = forwardFromMessageID;
+        this.forwardSignature = forwardSignature;
         this.forwardDate = forwardDate;
         this.replyToMessage = replyToMessage;
         this.editDate = editDate;
+        this.authorSignature = authorSignature;
         this.text = text;
         this.entities = entities == null ? null : Collections.unmodifiableList(entities);
         this.audio = audio;
@@ -594,9 +623,11 @@ public class Message {
         private User forwardFrom;
         private Chat forwardFromChat;
         private Integer forwardFromMessageID;
+        private String forwardSignature;
         private Integer forwardDate;
         private Message replyToMessage;
         private Integer editDate;
+        private String authorSignature;
         private String text;
         private List<MessageEntity> entities;
         private Audio audio;
@@ -630,8 +661,8 @@ public class Message {
         }
 
         public Message build() {
-            return new Message(messageId, from, date, chat, forwardFrom, forwardFromChat, forwardFromMessageID, forwardDate,
-                    replyToMessage, editDate, text, entities, audio, document, game, photo, sticker, video, voice, videoNote, caption,
+            return new Message(messageId, from, date, chat, forwardFrom, forwardFromChat, forwardFromMessageID, forwardSignature, forwardDate,
+                    replyToMessage, editDate, authorSignature, text, entities, audio, document, game, photo, sticker, video, voice, videoNote, caption,
                     contact, location, venue, newChatMembers, leftChatMember, newChatTitle, newChatPhoto, deleteChatPhoto,
                     groupChatCreated, supergroupChatCreated, channelChatCreated, migrateToChatId, migrateFromChatId,
                     pinnedMessage, invoice, successfulPayment);
@@ -672,6 +703,11 @@ public class Message {
             return this;
         }
 
+        public Builder setForwardSignature(String forwardSignature) {
+            this.forwardSignature = forwardSignature;
+            return this;
+        }
+
         public Builder setForwardDate(Integer forwardDate) {
             this.forwardDate = forwardDate;
             return this;
@@ -684,6 +720,11 @@ public class Message {
 
         public Builder setEditDate(Integer editDate) {
             this.editDate = editDate;
+            return this;
+        }
+
+        public Builder setAuthorSignature(String authorSignature) {
+            this.authorSignature = authorSignature;
             return this;
         }
 

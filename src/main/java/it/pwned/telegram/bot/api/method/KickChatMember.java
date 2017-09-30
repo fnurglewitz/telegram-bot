@@ -21,11 +21,19 @@ public final class KickChatMember extends AbstractApiMethod<Boolean> {
 	@ApiMethodParameter("user_id")
 	public final Integer userId;
 
-	public KickChatMember(ChatId chatId, Integer userId) {
+	@ApiMethodParameter("until_date")
+	public final Integer untilDate;
+
+	public KickChatMember(ChatId chatId, Integer userId, Integer untilDate) {
 		super();
 
 		this.chatId = validateChatId(chatId);
 		this.userId = validateUserId(userId);
+		this.untilDate = untilDate;
+	}
+
+	public KickChatMember(ChatId chatId, Integer userId) {
+		this(chatId, userId, null);
 	}
 
 	private static ChatId validateChatId(ChatId chatId) {
