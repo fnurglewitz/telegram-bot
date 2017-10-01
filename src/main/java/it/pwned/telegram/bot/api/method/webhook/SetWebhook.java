@@ -1,5 +1,6 @@
 package it.pwned.telegram.bot.api.method.webhook;
 
+import it.pwned.telegram.bot.api.AbstractApiMethod;
 import it.pwned.telegram.bot.api.method.annotation.ApiMethod;
 import it.pwned.telegram.bot.api.method.annotation.ApiMethodContentType;
 import it.pwned.telegram.bot.api.method.annotation.ApiMethodHttpMethod;
@@ -13,7 +14,7 @@ import java.util.List;
 @ApiMethod("setWebhook")
 @ApiMethodHttpMethod(HttpMethod.POST)
 @ApiMethodContentType(MethodMediaType.MULTIPART_FORM_DATA)
-public class SetWebhook {
+public class SetWebhook extends AbstractApiMethod<Boolean> {
 
     @ApiMethodParameter("url")
     public final String url;

@@ -6,7 +6,13 @@ import java.util.List;
 import java.util.Map;
 
 import it.pwned.telegram.bot.api.method.*;
+import it.pwned.telegram.bot.api.method.payment.AnswerPreCheckoutQuery;
+import it.pwned.telegram.bot.api.method.payment.AnswerShippingQuery;
+import it.pwned.telegram.bot.api.method.payment.SendInvoice;
 import it.pwned.telegram.bot.api.method.sticker.*;
+import it.pwned.telegram.bot.api.method.webhook.DeleteWebhook;
+import it.pwned.telegram.bot.api.method.webhook.GetWebhookInfo;
+import it.pwned.telegram.bot.api.method.webhook.SetWebhook;
 import it.pwned.telegram.bot.api.type.*;
 import org.springframework.core.ParameterizedTypeReference;
 
@@ -131,6 +137,30 @@ public final class ApiMethodReturnTypes {
         });
 
         tmp.put(GetGameHighScores.class, new ParameterizedTypeReference<Response<List<GameHighScore>>>() {
+        });
+
+        tmp.put(SetWebhook.class, new ParameterizedTypeReference<Response<Boolean>>() {
+        });
+
+        tmp.put(DeleteWebhook.class, new ParameterizedTypeReference<Response<Boolean>>() {
+        });
+
+        tmp.put(GetWebhookInfo.class, new ParameterizedTypeReference<Response<WebhookInfo>>() {
+        });
+
+        tmp.put(SendVideoNote.class, new ParameterizedTypeReference<Response<Message>>() {
+        });
+
+        tmp.put(DeleteMessage.class, new ParameterizedTypeReference<Response<Boolean>>() {
+        });
+
+        tmp.put(SendInvoice.class, new ParameterizedTypeReference<Response<Message>>() {
+        });
+
+        tmp.put(AnswerShippingQuery.class, new ParameterizedTypeReference<Response<Boolean>>() {
+        });
+
+        tmp.put(AnswerPreCheckoutQuery.class, new ParameterizedTypeReference<Response<Boolean>>() {
         });
 
         tmp.put(RestrictChatMember.class, new ParameterizedTypeReference<Response<Boolean>>() {
