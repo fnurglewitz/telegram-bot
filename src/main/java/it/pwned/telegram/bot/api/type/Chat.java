@@ -1,6 +1,7 @@
 package it.pwned.telegram.bot.api.type;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /**
  * This class represents a chat.
@@ -18,6 +19,8 @@ public final class Chat {
     private final static String JSON_FIELD_DESCRIPTION = "description";
     private final static String JSON_FIELD_INVITE_LINK = "invite_link";
     private final static String JSON_FIELD_PINNED_MESSAGE = "pinned_message";
+    private final static String JSON_FIELD_STICKER_SET_NAME = "sticker_set_name";
+    private final static String JSON_FIELD_CAN_SET_STICKER_SET = "can_set_sticker_set";
 
     /**
      * Unique identifier for this chat. This number may be greater than 32 bits
@@ -90,6 +93,18 @@ public final class Chat {
     public final String pinned_message;
 
     /**
+     * <em>Optional.</em> For supergroups, name of group sticker set. Returned only in getChat.
+     */
+    @JsonProperty(JSON_FIELD_STICKER_SET_NAME)
+    public final String stickerSetName;
+
+    /**
+     * <em>Optional.</em> True, if the bot can change the group sticker set. Returned only in getChat.
+     */
+    @JsonProperty(JSON_FIELD_CAN_SET_STICKER_SET)
+    public final Boolean canSetStickerSet;
+
+    /**
      * @param id                  Unique identifier for this chat. This number may be greater than
      *                            32 bits and some programming languages may have difficulty/silent
      *                            defects in interpreting it. But it smaller than 52 bits, so a
@@ -108,6 +123,8 @@ public final class Chat {
      * @param description         <em>Optional.</em> Description, for supergroups and channel chats. Returned only in getChat.
      * @param invite_link         <em>Optional.</em> Chat invite link, for supergroups and channel chats. Returned only in getChat.
      * @param pinned_message      <em>Optional.</em> Pinned message, for supergroups. Returned only in getChat.
+     * @param stickerSetName      <em>Optional.</em> For supergroups, name of group sticker set. Returned only in getChat.
+     * @param canSetStickerSet    <em>Optional.</em> True, if the bot can change the group sticker set. Returned only in getChat.
      */
     public Chat(@JsonProperty(JSON_FIELD_ID) Long id, @JsonProperty(JSON_FIELD_TYPE) String type,
                 @JsonProperty(JSON_FIELD_TITLE) String title, @JsonProperty(JSON_FIELD_USERNAME) String username,
@@ -116,9 +133,10 @@ public final class Chat {
                 @JsonProperty(JSON_FIELD_PHOTO) ChatPhoto photo,
                 @JsonProperty(JSON_FIELD_DESCRIPTION) String description,
                 @JsonProperty(JSON_FIELD_INVITE_LINK) String invite_link,
-                @JsonProperty(JSON_FIELD_PINNED_MESSAGE) String pinned_message
+                @JsonProperty(JSON_FIELD_PINNED_MESSAGE) String pinned_message,
+                @JsonProperty(JSON_FIELD_STICKER_SET_NAME) String stickerSetName,
+                @JsonProperty(JSON_FIELD_CAN_SET_STICKER_SET) Boolean canSetStickerSet
     ) {
-
         this.id = id;
         this.type = ChatType.fromString(type);
         this.title = title;
@@ -130,6 +148,8 @@ public final class Chat {
         this.description = description;
         this.invite_link = invite_link;
         this.pinned_message = pinned_message;
+        this.stickerSetName = stickerSetName;
+        this.canSetStickerSet = canSetStickerSet;
     }
 
 }

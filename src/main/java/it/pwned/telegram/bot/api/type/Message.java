@@ -30,6 +30,7 @@ public class Message {
     private final static String JSON_FIELD_AUTHOR_SIGNATURE = "author_signature";
     private final static String JSON_FIELD_TEXT = "text";
     private final static String JSON_FIELD_ENTITIES = "entities";
+    private final static String JSON_FIELD_CAPTION_ENTITIES = "caption_entities";
     private final static String JSON_FIELD_AUDIO = "audio";
     private final static String JSON_FIELD_DOCUMENT = "document";
     private final static String JSON_FIELD_GAME = "game";
@@ -146,6 +147,13 @@ public class Message {
      */
     @JsonProperty(JSON_FIELD_ENTITIES)
     public final List<MessageEntity> entities;
+
+    /**
+     * <em>Optional.</em> For messages with a caption, special entities like usernames, URLs,
+     * bot commands, etc. that appear in the caption
+     */
+    @JsonProperty(JSON_FIELD_CAPTION_ENTITIES)
+    public final List<MessageEntity> captionEntities;
 
     /**
      * <em>Optional.</em> Message is an audio file, information about the file
@@ -343,6 +351,8 @@ public class Message {
      *                              message, 0-4096 characters.
      * @param entities              <em>Optional.</em> For text messages, special entities like
      *                              usernames, URLs, bot commands, etc. that appear in the text
+     * @param captionEntities       <em>Optional.</em> For messages with a caption, special entities like usernames,
+     *                              URLs, bot commands, etc. that appear in the caption
      * @param audio                 <em>Optional.</em> Message is an audio file, information about the
      *                              file
      * @param document              <em>Optional.</em> Message is a general file, information about
@@ -412,6 +422,7 @@ public class Message {
                    @JsonProperty(JSON_FIELD_AUTHOR_SIGNATURE) String authorSignature,
                    @JsonProperty(JSON_FIELD_TEXT) String text,
                    @JsonProperty(JSON_FIELD_ENTITIES) List<MessageEntity> entities,
+                   @JsonProperty(JSON_FIELD_CAPTION_ENTITIES) List<MessageEntity> captionEntities,
                    @JsonProperty(JSON_FIELD_AUDIO) Audio audio,
                    @JsonProperty(JSON_FIELD_DOCUMENT) Document document,
                    @JsonProperty(JSON_FIELD_GAME) Game game,
@@ -453,6 +464,7 @@ public class Message {
         this.authorSignature = authorSignature;
         this.text = text;
         this.entities = entities == null ? null : Collections.unmodifiableList(entities);
+        this.captionEntities = captionEntities == null ? null : Collections.unmodifiableList(captionEntities);
         this.audio = audio;
         this.document = document;
         this.game = game;
@@ -630,6 +642,7 @@ public class Message {
         private String authorSignature;
         private String text;
         private List<MessageEntity> entities;
+        private List<MessageEntity> captionEntities;
         private Audio audio;
         private Document document;
         private Game game;
@@ -662,7 +675,7 @@ public class Message {
 
         public Message build() {
             return new Message(messageId, from, date, chat, forwardFrom, forwardFromChat, forwardFromMessageID, forwardSignature, forwardDate,
-                    replyToMessage, editDate, authorSignature, text, entities, audio, document, game, photo, sticker, video, voice, videoNote, caption,
+                    replyToMessage, editDate, authorSignature, text, entities, captionEntities, audio, document, game, photo, sticker, video, voice, videoNote, caption,
                     contact, location, venue, newChatMembers, leftChatMember, newChatTitle, newChatPhoto, deleteChatPhoto,
                     groupChatCreated, supergroupChatCreated, channelChatCreated, migrateToChatId, migrateFromChatId,
                     pinnedMessage, invoice, successfulPayment);
@@ -735,6 +748,11 @@ public class Message {
 
         public Builder setEntities(List<MessageEntity> entities) {
             this.entities = entities;
+            return this;
+        }
+
+        public Builder setCaptionEntities(List<MessageEntity> captionEntities) {
+            this.captionEntities = captionEntities;
             return this;
         }
 

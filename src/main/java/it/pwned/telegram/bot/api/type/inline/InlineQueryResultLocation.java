@@ -21,6 +21,7 @@ public class InlineQueryResultLocation extends InlineQueryResult {
 	private final static String JSON_FIELD_LATITUDE = "latitude";
 	private final static String JSON_FIELD_LONGITUDE = "longitude";
 	private final static String JSON_FIELD_TITLE = "title";
+	private final static String JSON_FIELD_LIVE_PERIOD = "live_period";
 	private final static String JSON_FIELD_REPLY_MARKUP = "reply_markup";
 	private final static String JSON_FIELD_INPUT_MESSAGE_CONTENT = "input_message_content";
 	private final static String JSON_FIELD_THUMB_URL = "thumb_url";
@@ -56,6 +57,12 @@ public class InlineQueryResultLocation extends InlineQueryResult {
 	 */
 	@JsonProperty(JSON_FIELD_TITLE)
 	public final String title;
+
+	/**
+	 * <em>Optional.</em> Period in seconds for which the location can be updated, should be between 60 and 86400.
+	 */
+	@JsonProperty(JSON_FIELD_LIVE_PERIOD)
+	public final Integer livePeriod;
 
 	/**
 	 * <em>Optional.</em> Inline keyboard attached to the message
@@ -98,6 +105,8 @@ public class InlineQueryResultLocation extends InlineQueryResult {
 	 *            Location longitude in degrees
 	 * @param title
 	 *            Location title
+	 * @param livePeriod
+	 * 			  <em>Optional.</em> Period in seconds for which the location can be updated, should be between 60 and 86400.
 	 * @param replyMarkup
 	 *            <em>Optional.</em> Inline keyboard attached to the message
 	 * @param inputMessageContent
@@ -112,7 +121,7 @@ public class InlineQueryResultLocation extends InlineQueryResult {
 	 */
 	public InlineQueryResultLocation(@JsonProperty(JSON_FIELD_ID) String id,
 			@JsonProperty(JSON_FIELD_LATITUDE) Float latitude, @JsonProperty(JSON_FIELD_LONGITUDE) Float longitude,
-			@JsonProperty(JSON_FIELD_TITLE) String title,
+			@JsonProperty(JSON_FIELD_TITLE) String title, @JsonProperty(JSON_FIELD_LIVE_PERIOD) Integer livePeriod,
 			@JsonProperty(JSON_FIELD_REPLY_MARKUP) InlineKeyboardMarkup replyMarkup,
 			@JsonProperty(JSON_FIELD_INPUT_MESSAGE_CONTENT) InputMessageContent inputMessageContent,
 			@JsonProperty(JSON_FIELD_THUMB_URL) String thumbUrl,
@@ -122,11 +131,19 @@ public class InlineQueryResultLocation extends InlineQueryResult {
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.title = title;
+		this.livePeriod = validateLivePeriod(livePeriod);
 		this.replyMarkup = replyMarkup;
 		this.inputMessageContent = inputMessageContent;
 		this.thumbUrl = thumbUrl;
 		this.thumbWidth = thumbWidth;
 		this.thumbHeight = thumbHeight;
+	}
+
+	private static Integer validateLivePeriod(Integer livePeriod) {
+		if(livePeriod != null && (livePeriod < 60 || livePeriod > 86400))
+			throw new IllegalArgumentException("invalid livePeriod value");
+
+		return livePeriod;
 	}
 
 }

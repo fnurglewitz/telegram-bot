@@ -26,6 +26,9 @@ public final class SendLocation extends AbstractApiMethod<Message> {
 	@ApiMethodParameter("longitude")
 	public final Float longitude;
 
+	@ApiMethodParameter("live_period")
+	public final Integer livePeriod;
+
 	@ApiMethodParameter("disable_notification")
 	public final Boolean disableNotification;
 
@@ -36,16 +39,17 @@ public final class SendLocation extends AbstractApiMethod<Message> {
 	public final AbstractKeyboardMarkup replyMarkup;
 
 	public SendLocation(ChatId chatId, float latitude, float longitude) {
-		this(chatId, latitude, longitude, null, null, null);
+		this(chatId, latitude, longitude, null, null, null, null);
 	}
 
-	public SendLocation(ChatId chatId, float latitude, float longitude, Boolean disableNotification,
+	public SendLocation(ChatId chatId, float latitude, float longitude, Integer livePeriod, Boolean disableNotification,
 			Integer replyToMessageId, AbstractKeyboardMarkup replyMarkup) {
 		super();
 
 		this.chatId = validateChatId(chatId);
 		this.latitude = latitude;
 		this.longitude = longitude;
+		this.livePeriod = validateLivePeriod(livePeriod);
 		this.disableNotification = disableNotification;
 		this.replyToMessageId = replyToMessageId;
 		this.replyMarkup = replyMarkup;
@@ -56,6 +60,13 @@ public final class SendLocation extends AbstractApiMethod<Message> {
 			throw new IllegalArgumentException("chatId cannot be null");
 
 		return chatId;
+	}
+
+	private static Integer validateLivePeriod(Integer livePeriod) {
+		if(livePeriod != null && (livePeriod < 60 || livePeriod > 86400))
+			throw new IllegalArgumentException("invalid livePeriod value");
+
+		return livePeriod;
 	}
 
 }

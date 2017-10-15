@@ -208,6 +208,18 @@ public final class ApiMethodReturnTypes {
         tmp.put(DeleteStickerFromSet.class, new ParameterizedTypeReference<Response<Boolean>>() {
         });
 
+        tmp.put(EditMessageLiveLocation.class, new ParameterizedTypeReference<Response<BooleanOrMessage>>() {
+        });
+
+        tmp.put(StopMessageLiveLocation.class, new ParameterizedTypeReference<Response<BooleanOrMessage>>() {
+        });
+
+        tmp.put(SetChatStickerSet.class, new ParameterizedTypeReference<Response<Boolean>>() {
+        });
+
+        tmp.put(DeleteChatStickerSet.class, new ParameterizedTypeReference<Response<Boolean>>() {
+        });
+
         return Collections.unmodifiableMap(tmp);
     }
 
