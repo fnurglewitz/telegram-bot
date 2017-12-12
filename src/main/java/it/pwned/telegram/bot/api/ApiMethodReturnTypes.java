@@ -220,6 +220,9 @@ public final class ApiMethodReturnTypes {
         tmp.put(DeleteChatStickerSet.class, new ParameterizedTypeReference<Response<Boolean>>() {
         });
 
+        tmp.put(SendMediaGroup.class, new ParameterizedTypeReference<Response<List<Message>>>() {
+        });
+
         return Collections.unmodifiableMap(tmp);
     }
 

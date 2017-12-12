@@ -43,6 +43,9 @@ public class SendInvoice extends AbstractApiMethod<Message> {
     @ApiMethodParameter("prices")
     public final List<LabeledPrice> prices;
 
+    @ApiMethodParameter("provider_data")
+    public final String providerData;
+
     @ApiMethodParameter("photo_url")
     public final String photoUrl;
 
@@ -87,6 +90,7 @@ public class SendInvoice extends AbstractApiMethod<Message> {
                        String startParameter,
                        String currency,
                        List<LabeledPrice> prices,
+                       String providerData,
                        String photoUrl,
                        Integer photoSize,
                        Integer photoWidth,
@@ -107,6 +111,7 @@ public class SendInvoice extends AbstractApiMethod<Message> {
         this.startParameter = validateStartParameter(startParameter);
         this.currency = validateCurrency(currency);
         this.prices = validatePrices(prices);
+        this.providerData = validateProviderData(providerData);
         this.photoUrl = photoUrl;
         this.photoSize = photoSize;
         this.photoWidth = photoWidth;
@@ -176,6 +181,11 @@ public class SendInvoice extends AbstractApiMethod<Message> {
             throw new IllegalArgumentException("prices cannot be null or empty");
 
         return prices;
+    }
+
+    private static String validateProviderData(String providerData) {
+        // TODO: check that providerData is a valid JSON
+        return providerData;
     }
 
 }
