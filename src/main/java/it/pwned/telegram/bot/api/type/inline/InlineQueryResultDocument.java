@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import it.pwned.telegram.bot.api.type.InlineKeyboardMarkup;
+import it.pwned.telegram.bot.api.type.ParseMode;
 
 /**
  * Represents a link to a file. By default, this file will be sent by the user
@@ -21,6 +22,7 @@ public class InlineQueryResultDocument extends InlineQueryResult {
 	private final static String JSON_FIELD_ID = "id";
 	private final static String JSON_FIELD_TITLE = "title";
 	private final static String JSON_FIELD_CAPTION = "caption";
+	private final static String JSON_FIELD_PARSE_MODE = "parse_mode";
 	private final static String JSON_FIELD_DOCUMENT_URL = "document_url";
 	private final static String JSON_FIELD_MIME_TYPE = "mime_type";
 	private final static String JSON_FIELD_DESCRIPTION = "description";
@@ -53,6 +55,12 @@ public class InlineQueryResultDocument extends InlineQueryResult {
 	 */
 	@JsonProperty(JSON_FIELD_CAPTION)
 	public final String caption;
+
+    /**
+     * <em>Optional.</em> Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in the media caption.
+     */
+    @JsonProperty(JSON_FIELD_PARSE_MODE)
+    public final ParseMode parseMode;
 
 	/**
 	 * A valid URL for the file
@@ -112,6 +120,7 @@ public class InlineQueryResultDocument extends InlineQueryResult {
 	 * @param caption
 	 *            <em>Optional.</em> Caption of the document to be sent, 0-200
 	 *            characters
+     * @param parseMode <em>Optional.</em> Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in the media caption.
 	 * @param documentUrl
 	 *            A valid URL for the file
 	 * @param mimeType
@@ -134,6 +143,7 @@ public class InlineQueryResultDocument extends InlineQueryResult {
 	 */
 	public InlineQueryResultDocument(@JsonProperty(JSON_FIELD_ID) String id,
 			@JsonProperty(JSON_FIELD_TITLE) String title, @JsonProperty(JSON_FIELD_CAPTION) String caption,
+            @JsonProperty(JSON_FIELD_PARSE_MODE) ParseMode parseMode,
 			@JsonProperty(JSON_FIELD_DOCUMENT_URL) String documentUrl,
 			@JsonProperty(JSON_FIELD_MIME_TYPE) String mimeType,
 			@JsonProperty(JSON_FIELD_DESCRIPTION) String description,
@@ -145,6 +155,7 @@ public class InlineQueryResultDocument extends InlineQueryResult {
 		this.id = id;
 		this.title = title;
 		this.caption = caption;
+		this.parseMode = parseMode;
 		this.documentUrl = documentUrl;
 		this.mimeType = mimeType;
 		this.description = description;

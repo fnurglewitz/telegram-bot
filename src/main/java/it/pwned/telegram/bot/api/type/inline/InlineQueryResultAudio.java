@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import it.pwned.telegram.bot.api.type.InlineKeyboardMarkup;
+import it.pwned.telegram.bot.api.type.ParseMode;
 
 /**
  * Represents a link to an mp3 audio file. By default, this audio file will be
@@ -21,6 +22,7 @@ public class InlineQueryResultAudio extends InlineQueryResult {
 	private final static String JSON_FIELD_AUDIO_URL = "audio_url";
 	private final static String JSON_FIELD_TITLE = "title";
 	private final static String JSON_FIELD_CAPTION = "caption";
+	private final static String JSON_FIELD_PARSE_MODE = "parse_mode";
 	private final static String JSON_FIELD_PERFORMER = "performer";
 	private final static String JSON_FIELD_AUDIO_DURATION = "audio_duration";
 	private final static String JSON_FIELD_REPLY_MARKUP = "reply_markup";
@@ -56,6 +58,12 @@ public class InlineQueryResultAudio extends InlineQueryResult {
 	@JsonProperty(JSON_FIELD_CAPTION)
 	public final String caption;
 
+    /**
+     * <em>Optional.</em> Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in the media caption.
+     */
+    @JsonProperty(JSON_FIELD_PARSE_MODE)
+    public final ParseMode parseMode;
+
 	/**
 	 * <em>Optional.</em> Performer
 	 */
@@ -90,6 +98,7 @@ public class InlineQueryResultAudio extends InlineQueryResult {
 	 *          Title
 	 * @param caption
 	 *          <em>Optional.</em> Caption, 0-200 characters
+     * @param parseMode           <em>Optional.</em> Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in the media caption.
 	 * @param performer
 	 *          <em>Optional.</em> Performer
 	 * @param audioDuration
@@ -102,7 +111,8 @@ public class InlineQueryResultAudio extends InlineQueryResult {
 	 */
 	public InlineQueryResultAudio(@JsonProperty(JSON_FIELD_ID) String id,
 			@JsonProperty(JSON_FIELD_AUDIO_URL) String audioUrl, @JsonProperty(JSON_FIELD_TITLE) String title,
-			@JsonProperty(JSON_FIELD_CAPTION) String caption, @JsonProperty(JSON_FIELD_PERFORMER) String performer,
+			@JsonProperty(JSON_FIELD_CAPTION) String caption, @JsonProperty(JSON_FIELD_PARSE_MODE) ParseMode parseMode,
+            @JsonProperty(JSON_FIELD_PERFORMER) String performer,
 			@JsonProperty(JSON_FIELD_AUDIO_DURATION) Integer audioDuration,
 			@JsonProperty(JSON_FIELD_REPLY_MARKUP) InlineKeyboardMarkup replyMarkup,
 			@JsonProperty(JSON_FIELD_INPUT_MESSAGE_CONTENT) InputMessageContent inputMessageContent) {
@@ -110,6 +120,7 @@ public class InlineQueryResultAudio extends InlineQueryResult {
 		this.audioUrl = audioUrl;
 		this.title = title;
 		this.caption = caption;
+		this.parseMode = parseMode;
 		this.performer = performer;
 		this.audioDuration = audioDuration;
 		this.replyMarkup = replyMarkup;

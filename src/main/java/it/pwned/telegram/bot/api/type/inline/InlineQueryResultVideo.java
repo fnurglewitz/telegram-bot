@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import it.pwned.telegram.bot.api.type.InlineKeyboardMarkup;
+import it.pwned.telegram.bot.api.type.ParseMode;
 
 /**
  * Represents a link to a page containing an embedded video player or a video
@@ -24,6 +25,7 @@ public class InlineQueryResultVideo extends InlineQueryResult {
 	private final static String JSON_FIELD_THUMB_URL = "thumb_url";
 	private final static String JSON_FIELD_TITLE = "title";
 	private final static String JSON_FIELD_CAPTION = "caption";
+	private final static String JSON_FIELD_PARSE_MODE = "parse_mode";
 	private final static String JSON_FIELD_VIDEO_WIDTH = "video_width";
 	private final static String JSON_FIELD_VIDEO_HEIGHT = "video_height";
 	private final static String JSON_FIELD_VIDEO_DURATION = "video_duration";
@@ -72,6 +74,12 @@ public class InlineQueryResultVideo extends InlineQueryResult {
 	 */
 	@JsonProperty(JSON_FIELD_CAPTION)
 	public final String caption;
+
+    /**
+     * <em>Optional.</em> Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in the media caption.
+     */
+    @JsonProperty(JSON_FIELD_PARSE_MODE)
+    public final ParseMode parseMode;
 
 	/**
 	 * <em>Optional.</em> Video width
@@ -124,6 +132,7 @@ public class InlineQueryResultVideo extends InlineQueryResult {
 	 * @param caption
 	 *          <em>Optional.</em> Caption of the video to be sent, 0-200
 	 *          characters
+     * @param parseMode           <em>Optional.</em> Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in the media caption.
 	 * @param videoWidth
 	 *          <em>Optional.</em> Video width
 	 * @param videoHeight
@@ -141,7 +150,8 @@ public class InlineQueryResultVideo extends InlineQueryResult {
 	public InlineQueryResultVideo(@JsonProperty(JSON_FIELD_ID) String id,
 			@JsonProperty(JSON_FIELD_VIDEO_URL) String videoUrl, @JsonProperty(JSON_FIELD_MIME_TYPE) String mimeType,
 			@JsonProperty(JSON_FIELD_THUMB_URL) String thumbUrl, @JsonProperty(JSON_FIELD_TITLE) String title,
-			@JsonProperty(JSON_FIELD_CAPTION) String caption, @JsonProperty(JSON_FIELD_VIDEO_WIDTH) Integer videoWidth,
+			@JsonProperty(JSON_FIELD_CAPTION) String caption, @JsonProperty(JSON_FIELD_PARSE_MODE) ParseMode parseMode,
+            @JsonProperty(JSON_FIELD_VIDEO_WIDTH) Integer videoWidth,
 			@JsonProperty(JSON_FIELD_VIDEO_HEIGHT) Integer videoHeight,
 			@JsonProperty(JSON_FIELD_VIDEO_DURATION) Integer videoDuration,
 			@JsonProperty(JSON_FIELD_DESCRIPTION) String description,
@@ -153,6 +163,7 @@ public class InlineQueryResultVideo extends InlineQueryResult {
 		this.thumbUrl = thumbUrl;
 		this.title = title;
 		this.caption = caption;
+		this.parseMode = parseMode;
 		this.videoWidth = videoWidth;
 		this.videoHeight = videoHeight;
 		this.videoDuration = videoDuration;

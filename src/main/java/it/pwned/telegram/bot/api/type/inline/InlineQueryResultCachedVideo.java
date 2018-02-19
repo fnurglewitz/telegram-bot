@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import it.pwned.telegram.bot.api.type.InlineKeyboardMarkup;
+import it.pwned.telegram.bot.api.type.ParseMode;
 
 /**
  * Represents a link to a video file stored on the Telegram servers. By default,
@@ -23,6 +24,7 @@ public class InlineQueryResultCachedVideo extends InlineQueryResult {
 	private final static String JSON_FIELD_TITLE = "title";
 	private final static String JSON_FIELD_DESCRIPTION = "description";
 	private final static String JSON_FIELD_CAPTION = "caption";
+	private final static String JSON_FIELD_PARSE_MODE = "parse_mode";
 	private final static String JSON_FIELD_REPLY_MARKUP = "reply_markup";
 	private final static String JSON_FIELD_INPUT_MESSAGE_CONTENT = "input_message_content";
 
@@ -62,6 +64,12 @@ public class InlineQueryResultCachedVideo extends InlineQueryResult {
 	@JsonProperty(JSON_FIELD_CAPTION)
 	public final String caption;
 
+    /**
+     * <em>Optional.</em> Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in the media caption.
+     */
+    @JsonProperty(JSON_FIELD_PARSE_MODE)
+    public final ParseMode parseMode;
+
 	/**
 	 * <em>Optional.</em> An Inline keyboard attached to the message
 	 */
@@ -78,7 +86,7 @@ public class InlineQueryResultCachedVideo extends InlineQueryResult {
 	 * 
 	 * @param id
 	 *            Unique identifier for this result, 1-64 bytes
-	 * @param video_file_id
+	 * @param videoFileId
 	 *            A valid file identifier for the video file
 	 * @param title
 	 *            Title for the result
@@ -87,19 +95,21 @@ public class InlineQueryResultCachedVideo extends InlineQueryResult {
 	 * @param caption
 	 *            <em>Optional.</em> Caption of the video to be sent, 0-200
 	 *            characters
-	 * @param reply_markup
-	 * @param input_message_content
+     * * @param parseMode           <em>Optional.</em> Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in the media caption.
+	 * @param replyMarkup
+	 * @param inputMessageContent
 	 */
 	public InlineQueryResultCachedVideo(@JsonProperty(JSON_FIELD_ID) String id,
 			@JsonProperty(JSON_FIELD_VIDEO_FILE_ID) String videoFileId, @JsonProperty(JSON_FIELD_TITLE) String title,
 			@JsonProperty(JSON_FIELD_DESCRIPTION) String description, @JsonProperty(JSON_FIELD_CAPTION) String caption,
-			@JsonProperty(JSON_FIELD_REPLY_MARKUP) InlineKeyboardMarkup replyMarkup,
+                                        @JsonProperty(JSON_FIELD_PARSE_MODE) ParseMode parseMode, @JsonProperty(JSON_FIELD_REPLY_MARKUP) InlineKeyboardMarkup replyMarkup,
 			@JsonProperty(JSON_FIELD_INPUT_MESSAGE_CONTENT) InputMessageContent inputMessageContent) {
 		this.id = id;
 		this.videoFileId = videoFileId;
 		this.title = title;
 		this.description = description;
 		this.caption = caption;
+		this.parseMode = parseMode;
 		this.replyMarkup = replyMarkup;
 		this.inputMessageContent = inputMessageContent;
 

@@ -1,5 +1,6 @@
 package it.pwned.telegram.bot.api.method;
 
+import it.pwned.telegram.bot.api.type.ParseMode;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
 
@@ -27,6 +28,9 @@ public final class SendPhoto extends AbstractApiMethod<Message> {
 	@ApiMethodParameter("caption")
 	public final String caption;
 
+	@ApiMethodParameter("parse_mode")
+	public final ParseMode parseMode;
+
 	@ApiMethodParameter("disable_notification")
 	public final Boolean disableNotification;
 
@@ -37,20 +41,21 @@ public final class SendPhoto extends AbstractApiMethod<Message> {
 	public final AbstractKeyboardMarkup replyMarkup;
 
 	public SendPhoto(ChatId chatId, Resource photo) {
-		this(chatId, photo, null, null, null, null);
+		this(chatId, photo, null, null, null, null, null);
 	}
 
 	public SendPhoto(ChatId chatId, Resource photo, String caption) {
-		this(chatId, photo, caption, null, null, null);
+		this(chatId, photo, caption, null, null, null, null);
 	}
 
-	public SendPhoto(ChatId chatId, Resource photo, String caption, Boolean disableNotification, Integer replyToMessageId,
+	public SendPhoto(ChatId chatId, Resource photo, String caption, ParseMode parseMode, Boolean disableNotification, Integer replyToMessageId,
 			AbstractKeyboardMarkup replyMarkup) {
 		super();
 
 		this.chatId = validateChatId(chatId);
 		this.photo = validatePhoto(photo);
 		this.caption = validateCaption(caption);
+		this.parseMode = parseMode;
 		this.disableNotification = disableNotification;
 		this.replyToMessageId = replyToMessageId;
 		this.replyMarkup = replyMarkup;
@@ -85,6 +90,8 @@ public final class SendPhoto extends AbstractApiMethod<Message> {
 
 		private String caption;
 
+		private ParseMode parseMode;
+
 		private Boolean disableNotification;
 
 		private Integer replyToMessageId;
@@ -97,13 +104,18 @@ public final class SendPhoto extends AbstractApiMethod<Message> {
 		}
 
 		public SendPhoto build() {
-			return new SendPhoto(chatId, photo, caption, disableNotification, replyToMessageId, replyMarkup);
+			return new SendPhoto(chatId, photo, caption, parseMode, disableNotification, replyToMessageId, replyMarkup);
 		}
 
 		public Builder caption(String caption) {
 			this.caption = validateCaption(caption);
 			return this;
 		}
+
+		public Builder parseMode(ParseMode parseMode) {
+		    this.parseMode = parseMode;
+		    return this;
+        }
 
 		public Builder disableNotification(Boolean disableNotification) {
 			this.disableNotification = disableNotification;

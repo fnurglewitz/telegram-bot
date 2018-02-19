@@ -1,5 +1,6 @@
 package it.pwned.telegram.bot.api.method;
 
+import it.pwned.telegram.bot.api.type.ParseMode;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
 
@@ -27,6 +28,9 @@ public final class SendVoice extends AbstractApiMethod<Message> {
 	@ApiMethodParameter("caption")
 	public final String caption;
 
+	@ApiMethodParameter("parse_mode")
+	public final ParseMode parseMode;
+
 	@ApiMethodParameter("duration")
 	public final Integer duration;
 
@@ -40,20 +44,21 @@ public final class SendVoice extends AbstractApiMethod<Message> {
 	public final AbstractKeyboardMarkup replyMarkup;
 
 	public SendVoice(ChatId chatId, Resource voice) {
-		this(chatId, voice, null, null, null, null, null);
+		this(chatId, voice, null, null, null, null, null, null);
 	}
 
 	public SendVoice(ChatId chatId, Resource voice, String caption) {
-		this(chatId, voice, caption, null, null, null, null);
+		this(chatId, voice, caption, null, null, null, null, null);
 	}
 
-	public SendVoice(ChatId chatId, Resource voice, String caption, Integer duration, Boolean disableNotification,
+	public SendVoice(ChatId chatId, Resource voice, String caption, ParseMode parseMode, Integer duration, Boolean disableNotification,
 			Integer replyToMessageId, AbstractKeyboardMarkup replyMarkup) {
 		super();
 
 		this.chatId = validateChatId(chatId);
 		this.voice = validateVoice(voice);
 		this.caption = validateCaption(caption);
+		this.parseMode = parseMode;
 		this.duration = duration;
 		this.disableNotification = disableNotification;
 		this.replyToMessageId = replyToMessageId;
@@ -92,6 +97,8 @@ public final class SendVoice extends AbstractApiMethod<Message> {
 
 		private String caption;
 
+		private ParseMode parseMode;
+
 		private Integer duration;
 
 		private Boolean disableNotification;
@@ -106,11 +113,16 @@ public final class SendVoice extends AbstractApiMethod<Message> {
 		}
 
 		public SendVoice build() {
-			return new SendVoice(chatId, voice, caption, duration, disableNotification, replyToMessageId, replyMarkup);
+			return new SendVoice(chatId, voice, caption, parseMode, duration, disableNotification, replyToMessageId, replyMarkup);
 		}
 
 		public Builder caption(String caption) {
 			this.caption = validateCaption(caption);
+			return this;
+		}
+
+		public Builder parseMode(ParseMode parseMode) {
+			this.parseMode = parseMode;
 			return this;
 		}
 

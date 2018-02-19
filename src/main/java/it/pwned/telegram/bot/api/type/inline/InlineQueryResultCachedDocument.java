@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import it.pwned.telegram.bot.api.type.InlineKeyboardMarkup;
+import it.pwned.telegram.bot.api.type.ParseMode;
 
 /**
  * Represents a link to a file stored on the Telegram servers. By default, this
@@ -24,6 +25,7 @@ public class InlineQueryResultCachedDocument extends InlineQueryResult {
 	private final static String JSON_FIELD_DOCUMENT_FILE_ID = "document_file_id";
 	private final static String JSON_FIELD_DESCRIPTION = "description";
 	private final static String JSON_FIELD_CAPTION = "caption";
+    private final static String JSON_FIELD_PARSE_MODE = "parse_mode";
 	private final static String JSON_FIELD_REPLY_MARKUP = "reply_markup";
 	private final static String JSON_FIELD_INPUT_MESSAGE_CONTENT = "input_message_content";
 
@@ -63,6 +65,12 @@ public class InlineQueryResultCachedDocument extends InlineQueryResult {
 	@JsonProperty(JSON_FIELD_CAPTION)
 	public final String caption;
 
+    /**
+     * <em>Optional.</em> Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in the media caption.
+     */
+    @JsonProperty(JSON_FIELD_PARSE_MODE)
+    public final ParseMode parseMode;
+
 	/**
 	 * <em>Optional.</em> An Inline keyboard attached to the message
 	 */
@@ -88,6 +96,7 @@ public class InlineQueryResultCachedDocument extends InlineQueryResult {
 	 * @param caption
 	 *            <em>Optional.</em> Caption of the document to be sent, 0-200
 	 *            characters
+     * @param parseMode           <em>Optional.</em> Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in the media caption.
 	 * @param replyMarkup
 	 *            <em>Optional.</em> An Inline keyboard attached to the message
 	 * @param inputMessageContent
@@ -95,16 +104,18 @@ public class InlineQueryResultCachedDocument extends InlineQueryResult {
 	 *            of the file
 	 */
 	public InlineQueryResultCachedDocument(@JsonProperty(JSON_FIELD_ID) String id,
-			@JsonProperty(JSON_FIELD_TITLE) String title,
-			@JsonProperty(JSON_FIELD_DOCUMENT_FILE_ID) String documentFileId,
-			@JsonProperty(JSON_FIELD_DESCRIPTION) String description, @JsonProperty(JSON_FIELD_CAPTION) String caption,
-			@JsonProperty(JSON_FIELD_REPLY_MARKUP) InlineKeyboardMarkup replyMarkup,
-			@JsonProperty(JSON_FIELD_INPUT_MESSAGE_CONTENT) InputMessageContent inputMessageContent) {
+										   @JsonProperty(JSON_FIELD_TITLE) String title,
+										   @JsonProperty(JSON_FIELD_DOCUMENT_FILE_ID) String documentFileId,
+										   @JsonProperty(JSON_FIELD_DESCRIPTION) String description, @JsonProperty(JSON_FIELD_CAPTION) String caption,
+										   @JsonProperty(JSON_FIELD_PARSE_MODE) ParseMode parseMode,
+										   @JsonProperty(JSON_FIELD_REPLY_MARKUP) InlineKeyboardMarkup replyMarkup,
+										   @JsonProperty(JSON_FIELD_INPUT_MESSAGE_CONTENT) InputMessageContent inputMessageContent) {
 		this.id = id;
 		this.title = title;
 		this.documentFileId = documentFileId;
 		this.description = description;
 		this.caption = caption;
+		this.parseMode = parseMode;
 		this.replyMarkup = replyMarkup;
 		this.inputMessageContent = inputMessageContent;
 

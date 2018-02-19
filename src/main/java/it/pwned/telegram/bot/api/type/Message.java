@@ -56,6 +56,7 @@ public class Message {
     private final static String JSON_FIELD_PINNED_MESSAGE = "pinned_message";
     private final static String JSON_FIELD_INVOICE = "invoice";
     private final static String JSON_FIELD_SUCCESSFUL_PAYMENT = "successful_payment";
+    private final static String JSON_FIELD_CONNECTED_WEBSITE = "connected_website";
 
     /**
      * Unique message identifier
@@ -328,6 +329,12 @@ public class Message {
     public final SuccessfulPayment successfulPayment;
 
     /**
+     * <em>Optional.</em> The domain name of the website on which the user has logged in.
+     */
+    @JsonProperty(JSON_FIELD_CONNECTED_WEBSITE)
+    public final String connectedWebsite;
+
+    /**
      * @param messageId             Unique message identifier
      * @param from                  <em>Optional.</em> Sender, can be empty for messages sent to
      *                              channels
@@ -407,6 +414,7 @@ public class Message {
      *                              reply_to_message fields even if it is itself a reply.
      * @param invoice               <em>Optional.</em> Message is an invoice for a payment, information about the invoice.
      * @param successfulPayment     <em>Optional.</em> Message is a service message about a successful payment, information about the payment.
+     * @param connectedWebsite      <em>Optional.</em> The domain name of the website on which the user has logged in.
      */
     public Message(@JsonProperty(JSON_FIELD_MESSAGE_ID) Integer messageId,
                    @JsonProperty(JSON_FIELD_FROM) User from,
@@ -447,7 +455,8 @@ public class Message {
                    @JsonProperty(JSON_FIELD_MIGRATE_FROM_CHAT_ID) Integer migrateFromChatId,
                    @JsonProperty(JSON_FIELD_PINNED_MESSAGE) Message pinnedMessage,
                    @JsonProperty(JSON_FIELD_INVOICE) Invoice invoice,
-                   @JsonProperty(JSON_FIELD_SUCCESSFUL_PAYMENT) SuccessfulPayment successfulPayment
+                   @JsonProperty(JSON_FIELD_SUCCESSFUL_PAYMENT) SuccessfulPayment successfulPayment,
+                   @JsonProperty(JSON_FIELD_CONNECTED_WEBSITE) String connectedWebsite
 
     ) {
         this.messageId = messageId;
@@ -490,6 +499,7 @@ public class Message {
         this.pinnedMessage = pinnedMessage;
         this.invoice = invoice;
         this.successfulPayment = successfulPayment;
+        this.connectedWebsite = connectedWebsite;
     }
 
     /**
@@ -668,6 +678,7 @@ public class Message {
         private Message pinnedMessage;
         private Invoice invoice;
         private SuccessfulPayment successfulPayment;
+        private String connectedWebsite;
 
         public Builder() {
 
@@ -678,7 +689,7 @@ public class Message {
                     replyToMessage, editDate, authorSignature, text, entities, captionEntities, audio, document, game, photo, sticker, video, voice, videoNote, caption,
                     contact, location, venue, newChatMembers, leftChatMember, newChatTitle, newChatPhoto, deleteChatPhoto,
                     groupChatCreated, supergroupChatCreated, channelChatCreated, migrateToChatId, migrateFromChatId,
-                    pinnedMessage, invoice, successfulPayment);
+                    pinnedMessage, invoice, successfulPayment, connectedWebsite);
         }
 
         public Builder setmessageId(Integer messageId) {
@@ -878,6 +889,11 @@ public class Message {
 
         public Builder setSuccessfulPayment(SuccessfulPayment successfulPayment) {
             this.successfulPayment = successfulPayment;
+            return this;
+        }
+
+        public Builder setConnectedWebsite(String connectedWebsite) {
+            this.connectedWebsite = connectedWebsite;
             return this;
         }
     }

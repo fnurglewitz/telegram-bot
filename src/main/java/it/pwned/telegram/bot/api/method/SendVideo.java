@@ -1,5 +1,6 @@
 package it.pwned.telegram.bot.api.method;
 
+import it.pwned.telegram.bot.api.type.ParseMode;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
 
@@ -36,6 +37,12 @@ public final class SendVideo extends AbstractApiMethod<Message> {
 	@ApiMethodParameter("caption")
 	public final String caption;
 
+	@ApiMethodParameter("parse_mode")
+	public final ParseMode parseMode;
+
+	@ApiMethodParameter("supports_streaming")
+    public final Boolean supportsStreaming;
+
 	@ApiMethodParameter("disable_notification")
 	public final Boolean disableNotification;
 
@@ -46,15 +53,15 @@ public final class SendVideo extends AbstractApiMethod<Message> {
 	public final AbstractKeyboardMarkup replyMarkup;
 
 	public SendVideo(ChatId chatId, Resource video) {
-		this(chatId, video, null, null, null, null, null, null, null);
+		this(chatId, video, null, null, null, null, null, null, null, null, null);
 	}
 
 	public SendVideo(ChatId chatId, Resource video, String caption) {
-		this(chatId, video, null, null, null, caption, null, null, null);
+		this(chatId, video, null, null, null, caption, null, null, null, null, null);
 	}
 
 	public SendVideo(ChatId chatId, Resource video, Integer duration, Integer width, Integer height, String caption,
-			Boolean disableNotification, Integer replyToMessageId, AbstractKeyboardMarkup replyMarkup) {
+			ParseMode parseMode, Boolean supportsStreaming, Boolean disableNotification, Integer replyToMessageId, AbstractKeyboardMarkup replyMarkup) {
 		super();
 
 		this.chatId = validateChatId(chatId);
@@ -63,6 +70,8 @@ public final class SendVideo extends AbstractApiMethod<Message> {
 		this.width = width;
 		this.height = height;
 		this.caption = validateCaption(caption);
+		this.parseMode = parseMode;
+		this.supportsStreaming = supportsStreaming;
 		this.disableNotification = disableNotification;
 		this.replyToMessageId = replyToMessageId;
 		this.replyMarkup = replyMarkup;
@@ -106,6 +115,10 @@ public final class SendVideo extends AbstractApiMethod<Message> {
 
 		private String caption;
 
+		private ParseMode parseMode;
+
+		private Boolean supportsStreaming;
+
 		private Boolean disableNotification;
 
 		private Integer replyToMessageId;
@@ -118,7 +131,7 @@ public final class SendVideo extends AbstractApiMethod<Message> {
 		}
 
 		public SendVideo build() {
-			return new SendVideo(chatId, video, duration, width, height, caption, disableNotification, replyToMessageId,
+			return new SendVideo(chatId, video, duration, width, height, caption, parseMode, supportsStreaming, disableNotification, replyToMessageId,
 					replyMarkup);
 		}
 
@@ -141,6 +154,16 @@ public final class SendVideo extends AbstractApiMethod<Message> {
 			this.caption = validateCaption(caption);
 			return this;
 		}
+
+		public Builder parseMode(ParseMode parseMode) {
+			this.parseMode = parseMode;
+			return this;
+		}
+
+		public Builder supportsStreaming(Boolean supportsStreaming) {
+		    this.supportsStreaming = supportsStreaming;
+		    return this;
+        }
 
 		public Builder disableNotification(Boolean disableNotification) {
 			this.disableNotification = disableNotification;

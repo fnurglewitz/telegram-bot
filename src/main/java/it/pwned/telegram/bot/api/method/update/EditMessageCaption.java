@@ -1,5 +1,6 @@
 package it.pwned.telegram.bot.api.method.update;
 
+import it.pwned.telegram.bot.api.type.ParseMode;
 import org.springframework.http.HttpMethod;
 
 import it.pwned.telegram.bot.api.AbstractApiMethod;
@@ -29,24 +30,29 @@ public final class EditMessageCaption extends AbstractApiMethod<BooleanOrMessage
 	@ApiMethodParameter("caption")
 	public final String caption;
 
+	@ApiMethodParameter("parse_mode")
+	public final ParseMode parseMode;
+
 	@ApiMethodParameter("reply_markup")
 	public final InlineKeyboardMarkup replyMarkup;
 
-	public EditMessageCaption(ChatId chatId, Integer messageId, String caption, InlineKeyboardMarkup replyMarkup) {
+	public EditMessageCaption(ChatId chatId, Integer messageId, String caption, ParseMode parseMode, InlineKeyboardMarkup replyMarkup) {
 		super();
 
 		this.chatId = validateChatId(chatId);
 		this.messageId = validateMessageId(messageId);
 		this.caption = caption;
+		this.parseMode = parseMode;
 		this.replyMarkup = replyMarkup;
 		this.inlineMessageId = null;
 	}
 
-	public EditMessageCaption(String inlineMessageId, String caption, InlineKeyboardMarkup replyMarkup) {
+	public EditMessageCaption(String inlineMessageId, String caption, ParseMode parseMode, InlineKeyboardMarkup replyMarkup) {
 		super();
 
 		this.inlineMessageId = validateInlineMessageId(inlineMessageId);
 		this.caption = caption;
+		this.parseMode = parseMode;
 		this.replyMarkup = replyMarkup;
 		this.chatId = null;
 		this.messageId = null;
