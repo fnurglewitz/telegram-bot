@@ -1,18 +1,13 @@
 package it.pwned.telegram.bot.api;
 
-import java.lang.reflect.Field;
-
+import it.pwned.telegram.bot.api.method.annotation.*;
+import it.pwned.telegram.bot.api.method.enums.ApiMethodBaseUri;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import it.pwned.telegram.bot.api.method.annotation.ApiMethod;
-import it.pwned.telegram.bot.api.method.annotation.ApiMethodContentType;
-import it.pwned.telegram.bot.api.method.annotation.ApiMethodHttpMethod;
-import it.pwned.telegram.bot.api.method.annotation.ApiMethodParameter;
-import it.pwned.telegram.bot.api.method.annotation.ApiMethodURI;
-import it.pwned.telegram.bot.api.method.enums.ApiMethodBaseUri;
+import java.lang.reflect.Field;
 
 public abstract class AbstractApiMethod<R> {
 
@@ -32,7 +27,7 @@ public abstract class AbstractApiMethod<R> {
 				try {
 					Object fieldValue = null;
 
-					if (field.isAccessible())
+					if (field.canAccess(this))
 						fieldValue = field.get(this);
 					else {
 						field.setAccessible(true);
