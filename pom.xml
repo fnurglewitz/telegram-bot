@@ -11,7 +11,7 @@
 		<java.version>11</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>5.2.1.RELEASE</spring.version>
-		<jackson.version>2.10.1</jackson.version>
+		<jackson.version>2.12.7.1</jackson.version>
 	</properties>
 
 	<dependencies>
